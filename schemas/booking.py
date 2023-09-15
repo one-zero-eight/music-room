@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 __all__ = ["CreateBooking", "ViewBooking"]
 
@@ -17,5 +17,4 @@ class ViewBooking(BaseModel):
     time_start: datetime.datetime
     time_end: datetime.datetime
 
-    class Config:
-        validate_default = True
+    model_config = ConfigDict(from_attributes=True)

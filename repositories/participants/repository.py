@@ -3,7 +3,7 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from repositories.participants.abc import AbstractParticipantRepository
-from schemas import CreateParticipant, ViewParticipant
+from schemas import CreateParticipant, ViewParticipantBeforeBooking
 from storage.sql import AbstractSQLAlchemyStorage
 from storage.sql.models import Participant
 
@@ -19,9 +19,8 @@ class SqlParticipantRepository(AbstractParticipantRepository):
 
     # ----------------- CRUD ----------------- #
 
-    async def create(self, participant: "CreateParticipant") -> "ViewParticipant":
+    async def create(self, participant: "CreateParticipant") -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
-            print("SKDKDSJKDSDDKSKDJD", session)
             query = (
                 insert(Participant)
                 .values(**participant.model_dump())
@@ -29,7 +28,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             )
             obj = await session.scalar(query)
             await session.commit()
-            return ViewParticipant.model_validate(obj)
+            return ViewParticipantBeforeBooking.model_validate(obj)
 
     # async def read(self, event_id: int) -> "ViewEvent":
     #     async with self._create_session() as session:

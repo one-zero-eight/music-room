@@ -15,7 +15,7 @@ class Booking(Base, IdMixin):
     __tablename__ = "booking"
     participant_id: Mapped[int] = mapped_column(ForeignKey("participant.id"))
     participant: Mapped["Participant"] = relationship(
-        "Participant", back_populates="booking"
+        "Participant", back_populates="booking",
     )
     time_start: Mapped[datetime.datetime] = mapped_column()
     time_end: Mapped[datetime.datetime] = mapped_column()

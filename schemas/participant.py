@@ -1,23 +1,22 @@
-from pydantic import BaseModel, Field
-
+from pydantic import BaseModel, Field, ConfigDict
+import datetime
 from schemas import ViewBooking
 
 
 class CreateParticipant(BaseModel):
     name: str
     alias: str
-    selected_date: str
+    selected_date: datetime.datetime
     status: str
 
 
-class ViewParticipant(BaseModel):
+class ViewParticipantBeforeBooking(BaseModel):
     id: int
     name: str
     alias: str
-    selected_date: str
+    selected_date: datetime.datetime
     status: str
 
-    tags: list["ViewBooking"] = Field(default_factory=list)
+    # booking: list["ViewBooking"] = Field(default_factory=list)
 
-    class Config:
-        validate_default = True
+    model_config = ConfigDict(from_attributes=True)
