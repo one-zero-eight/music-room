@@ -6,7 +6,9 @@ from schemas import CreateParticipant, ViewParticipantBeforeBooking
 class AbstractParticipantRepository(metaclass=ABCMeta):
     # ------------------- CRUD ------------------- #
     @abstractmethod
-    async def create(self, event: "CreateParticipant") -> "ViewParticipantBeforeBooking":
+    async def create(
+        self, event: "CreateParticipant"
+    ) -> "ViewParticipantBeforeBooking":
         ...
 
     # @abstractmethod

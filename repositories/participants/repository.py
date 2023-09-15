@@ -1,4 +1,3 @@
-from sqlalchemy import engine
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -19,7 +18,9 @@ class SqlParticipantRepository(AbstractParticipantRepository):
 
     # ----------------- CRUD ----------------- #
 
-    async def create(self, participant: "CreateParticipant") -> "ViewParticipantBeforeBooking":
+    async def create(
+        self, participant: "CreateParticipant"
+    ) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
                 insert(Participant)

@@ -14,7 +14,6 @@ class Participant(Base, IdMixin):
     __tablename__ = "participant"
     name: Mapped[str] = mapped_column()
     alias: Mapped[str] = mapped_column()
-    selected_date: Mapped[datetime.datetime] = mapped_column()
     status: Mapped[str] = mapped_column()
 
     booking: Mapped[List["Booking"]] = relationship(back_populates="participant")
