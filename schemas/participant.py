@@ -16,6 +16,8 @@ class ViewParticipantBeforeBooking(BaseModel):
     name: str
     alias: str
     status: str
+    # max_hours_per_day: int
+    # max_hours_per_week: int
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -25,6 +27,8 @@ class ViewParticipantAfterBooking(BaseModel):
     name: str
     alias: str
     status: str
+    # max_hours_per_day: int
+    # max_hours_per_week: int
 
     booking: list["ViewBooking"] = Field(default_factory=list)
 

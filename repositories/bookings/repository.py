@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from sqlalchemy import select, extract, and_
+from sqlalchemy import and_, extract, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -35,12 +35,13 @@ class SqlBookingRepository(AbstractBookingRepository):
             end = start + timedelta(days=6)
             query = select(Booking).where(
                 and_(
-                    extract('day', Booking.time_start) >= int(str(start)[-2:]),
-                    extract('year', Booking.time_start) == int(str(start)[:4]),
-                    extract('day', Booking.time_end) <= int(str(end)[-2:]),
-                    extract('month', Booking.time_start) == int(str(start)[5:7]),
-                    extract('month', Booking.time_end) == int(str(end)[5:7])
-                ))
+                    extract("day", Booking.time_start) >= int(str(start)[-2:]),
+                    extract("year", Booking.time_start) == int(str(start)[:4]),
+                    extract("day", Booking.time_end) <= int(str(end)[-2:]),
+                    extract("month", Booking.time_start) == int(str(start)[5:7]),
+                    extract("month", Booking.time_end) == int(str(end)[5:7]),
+                )
+            )
             objs = await session.scalars(query)
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]

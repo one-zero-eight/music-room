@@ -8,7 +8,7 @@ def max_hours_to_book_per_day(status: str):
     elif status in ("Freelance", "free", "Junior"):
         return 2
     # Raise an exception for an invalid status
-    raise ValueError("Invalid status")
+    return 0
 
 
 def max_hours_to_book_per_week(status: str):
@@ -21,4 +21,4 @@ def max_hours_to_book_per_week(status: str):
     elif status in ("Junior", "Freelance", "free"):
         return 4
         # Raise an exception for an invalid status
-    raise ValueError("Invalid status")
+    return 0

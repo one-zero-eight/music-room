@@ -1,3 +1,4 @@
+from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,6 +31,26 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             obj = await session.scalar(query)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
+
+    async def change_status(
+        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+    ) -> "ViewParticipantBeforeBooking":
+        async with self._create_session() as session:
+            query = (
+                update(Participant)
+                .where(Participant.id == participant_id)
+                .values(status=new_status)
+                .returning(Participant)
+            )
+            obj = await session.scalar(query)
+            await session.commit()
+            return ViewParticipantBeforeBooking.model_validate(obj)
+
+        # async def change_daily_hours(self,
+        #                              participant_id: "ViewParticipantBeforeBooking",
+        #                              new_hours: int) -> "ViewParticipantBeforeBooking":
+        #     async with self._create_session() as session:
+        #         query = update(Participant.).where(participant)
 
     # async def read(self, event_id: int) -> "ViewEvent":
     #     async with self._create_session() as session:
