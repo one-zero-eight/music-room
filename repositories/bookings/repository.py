@@ -1,3 +1,6 @@
+from datetime import date, timedelta
+
+from sqlalchemy import select, extract, and_
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -24,3 +27,20 @@ class SqlBookingRepository(AbstractBookingRepository):
             obj = await session.scalar(query)
             await session.commit()
             return ViewBooking.model_validate(obj)
+
+    async def get_bookings_for_current_week(self) -> list["ViewBooking"]:
+        async with self._create_session() as session:
+            today = date.today()
+            start = today - timedelta(days=today.weekday())
+            end = start + timedelta(days=6)
+            query = select(Booking).where(
+                and_(
+                    extract('day', Booking.time_start) >= int(str(start)[-2:]),
+                    extract('year', Booking.time_start) == int(str(start)[:4]),
+                    extract('day', Booking.time_end) <= int(str(end)[-2:]),
+                    extract('month', Booking.time_start) == int(str(start)[5:7]),
+                    extract('month', Booking.time_end) == int(str(end)[5:7])
+                ))
+            objs = await session.scalars(query)
+            if objs:
+                return [ViewBooking.model_validate(obj) for obj in objs]

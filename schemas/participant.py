@@ -17,8 +17,6 @@ class ViewParticipantBeforeBooking(BaseModel):
     alias: str
     status: str
 
-    # booking: list["ViewBooking"] = Field(default_factory=list)
-
     model_config = ConfigDict(from_attributes=True)
 
 

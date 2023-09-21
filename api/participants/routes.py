@@ -3,7 +3,7 @@ from api.participants import router
 from schemas import CreateParticipant, ViewParticipantBeforeBooking
 
 
-@router.post("/", response_model=None)
+@router.post("/")
 async def create_participant(
     participant: CreateParticipant,
     participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,

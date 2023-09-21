@@ -8,3 +8,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
     @abstractmethod
     async def create(self, event: "CreateBooking") -> "ViewBooking":
         ...
+
+    @abstractmethod
+    async def get_bookings_for_current_week(self):
+        ...
