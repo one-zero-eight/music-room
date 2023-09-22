@@ -2,6 +2,8 @@ from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.tools.validation import (max_hours_to_book_per_day,
+                                  max_hours_to_book_per_week)
 from repositories.participants.abc import AbstractParticipantRepository
 from schemas import CreateParticipant, ViewParticipantBeforeBooking
 from storage.sql import AbstractSQLAlchemyStorage
@@ -20,12 +22,16 @@ class SqlParticipantRepository(AbstractParticipantRepository):
     # ----------------- CRUD ----------------- #
 
     async def create(
-        self, participant: "CreateParticipant"
+            self, participant: "CreateParticipant"
     ) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
                 insert(Participant)
-                .values(**participant.model_dump())
+                .values(
+                    daily_hours=max_hours_to_book_per_day(participant.status),
+                    weekly_hours=max_hours_to_book_per_week(participant.status),
+                    **participant.model_dump()
+                )
                 .returning(Participant)
             )
             obj = await session.scalar(query)
@@ -33,65 +39,47 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def change_status(
-        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+            self, participant_id: "ViewParticipantBeforeBooking", new_status: str
     ) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
                 update(Participant)
                 .where(Participant.id == participant_id)
-                .values(status=new_status)
+                .values(
+                    status=new_status,
+                    daily_hours=max_hours_to_book_per_day(new_status),
+                    weekly_hours=max_hours_to_book_per_week(new_status),
+                )
                 .returning(Participant)
             )
             obj = await session.scalar(query)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
 
-        # async def change_daily_hours(self,
-        #                              participant_id: "ViewParticipantBeforeBooking",
-        #                              new_hours: int) -> "ViewParticipantBeforeBooking":
-        #     async with self._create_session() as session:
-        #         query = update(Participant.).where(participant)
+    async def change_daily_hours(
+            self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+    ) -> "ViewParticipantBeforeBooking":
+        async with self._create_session() as session:
+            query = (
+                update(Participant)
+                .where(Participant.id == participant_id)
+                .values(daily_hours=new_hours)
+                .returning(Participant)
+            )
+            obj = await session.scalar(query)
+            await session.commit()
+            return ViewParticipantBeforeBooking.model_validate(obj)
 
-    # async def read(self, event_id: int) -> "ViewEvent":
-    #     async with self._create_session() as session:
-    #         return await CRUD.read(session, id=event_id)
-    #
-    # async def update(self, event_id: int, event: "UpdateEvent") -> "ViewEvent":
-    #     async with self._create_session() as session:
-    #         return await CRUD.update(session, event, id=event_id)
-    #
-    # async def delete(self, event_id: int) -> None:
-    #     async with self._create_session() as session:
-    #         await CRUD.delete(session, id=event_id)
-    #
-    # # ^^^^^^^^^^^^^^^^^^ CRUD ^^^^^^^^^^^^^^^ #
-    # # ----------------- PATCHES ----------------- #
-    # async def add_patch(self, event_id: int, patch: "AddEventPatch") -> "ViewEventPatch":
-    #     async with self._create_session() as session:
-    #         q = (
-    #             postgres_insert(EventPatch)
-    #             .values(parent_id=event_id, **patch.dict())
-    #             .returning(EventPatch)
-    #             .options(joinedload(EventPatch.parent))
-    #         )
-    #         event_patch = await session.scalar(q)
-    #         await session.commit()
-    #         return ViewEventPatch.from_orm(event_patch)
-    #
-    # async def read_patches(self, event_id: int) -> list["ViewEventPatch"]:
-    #     async with self._create_session() as session:
-    #         q = select(EventPatch).where(EventPatch.parent_id == event_id).options(joinedload(EventPatch.parent))
-    #         event_patches = await session.scalars(q)
-    #         return [ViewEventPatch.from_orm(event_patch) for event_patch in event_patches]
-    #
-    # async def update_patch(self, patch_id: int, patch: "UpdateEventPatch") -> "ViewEventPatch":
-    #     async with self._create_session() as session:
-    #         q = (
-    #             update(EventPatch)
-    #             .where(EventPatch.id == patch_id)
-    #             .values(**patch.dict(exclude_unset=True))
-    #             .returning(EventPatch)
-    #         )
-    #         event_patch = await session.scalar(q)
-    #         await session.commit()
-    #         return ViewEventPatch.from_orm(event_patch)
+    async def change_weekly_hours(
+            self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+    ) -> "ViewParticipantBeforeBooking":
+        async with self._create_session() as session:
+            query = (
+                update(Participant)
+                .where(Participant.id == participant_id)
+                .values(weekly_hours=new_hours)
+                .returning(Participant)
+            )
+            obj = await session.scalar(query)
+            await session.commit()
+            return ViewParticipantBeforeBooking.model_validate(obj)

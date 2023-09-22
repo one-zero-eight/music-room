@@ -5,12 +5,10 @@ from schemas import CreateBooking, ViewBooking
 
 @router.post("/create_booking")
 async def create_booking(
-    participant_id: int,
-    start_date: str,
-    end_date: str,
+    booking: "CreateBooking",
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
 ) -> ViewBooking:
-    created = await booking_repository.create()
+    created = await booking_repository.create(booking)
     return created
 
 

@@ -17,6 +17,18 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
     ) -> "ViewParticipantBeforeBooking":
         ...
 
+    @abstractmethod
+    async def change_daily_hours(
+        self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+    ) -> "ViewParticipantBeforeBooking":
+        ...
+
+    @abstractmethod
+    async def change_weekly_hours(
+        self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+    ) -> "ViewParticipantBeforeBooking":
+        ...
+
     # @abstractmethod
     # async def read(self, event_id: int) -> "ViewEvent":
     #     ...

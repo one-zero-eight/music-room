@@ -15,7 +15,7 @@ class Participant(Base, IdMixin):
     name: Mapped[str] = mapped_column()
     alias: Mapped[str] = mapped_column()
     status: Mapped[str] = mapped_column(default="free")
-    # max_hours_per_day: Mapped[int] = mapped_column()
-    # max_hours_per_week: Mapped[int] = mapped_column()
+    daily_hours: Mapped[int] = mapped_column()
+    weekly_hours: Mapped[int] = mapped_column()
 
     booking: Mapped[List["Booking"]] = relationship(back_populates="participant")
