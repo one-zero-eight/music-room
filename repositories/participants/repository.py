@@ -1,13 +1,14 @@
-from sqlalchemy import update
+from sqlalchemy import select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.tools.validation import (max_hours_to_book_per_day,
                                   max_hours_to_book_per_week)
 from repositories.participants.abc import AbstractParticipantRepository
-from schemas import CreateParticipant, ViewParticipantBeforeBooking
+from schemas import (CreateParticipant, ViewBooking,
+                     ViewParticipantBeforeBooking)
 from storage.sql import AbstractSQLAlchemyStorage
-from storage.sql.models import Participant
+from storage.sql.models import Booking, Participant
 
 
 class SqlParticipantRepository(AbstractParticipantRepository):
@@ -22,7 +23,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
     # ----------------- CRUD ----------------- #
 
     async def create(
-            self, participant: "CreateParticipant"
+        self, participant: "CreateParticipant"
     ) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
@@ -39,7 +40,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def change_status(
-            self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
     ) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
@@ -57,7 +58,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def change_daily_hours(
-            self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+        self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
     ) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
@@ -71,7 +72,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def change_weekly_hours(
-            self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+        self, participant_id: int, new_hours: int
     ) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
@@ -83,3 +84,12 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             obj = await session.scalar(query)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
+
+    async def get_participant_bookings(
+        self, participant_id: int
+    ) -> list["ViewBooking"]:
+        async with self._create_session() as session:
+            query = select(Booking).where(Booking.participant_id == participant_id)
+            objs = await session.scalars(query)
+            if objs:
+                return [ViewBooking.model_validate(obj) for obj in objs]

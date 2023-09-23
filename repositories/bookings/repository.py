@@ -1,6 +1,6 @@
 from datetime import date, timedelta
 
-from sqlalchemy import and_, extract, select
+from sqlalchemy import and_, delete, extract, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,3 +45,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             objs = await session.scalars(query)
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]
+
+    async def delete_booking(self, booking_id) -> None:
+        async with self._create_session() as session:
+            query = delete(Booking).where(Booking.id == booking_id)
+            await session.execute(query)
+            await session.commit()

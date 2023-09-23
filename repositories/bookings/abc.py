@@ -12,3 +12,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
     @abstractmethod
     async def get_bookings_for_current_week(self):
         ...
+
+    @abstractmethod
+    async def delete_booking(self, booking_id) -> None:
+        ...

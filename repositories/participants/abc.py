@@ -29,29 +29,8 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
     ) -> "ViewParticipantBeforeBooking":
         ...
 
-    # @abstractmethod
-    # async def read(self, event_id: int) -> "ViewEvent":
-    #     ...
-    #
-    # @abstractmethod
-    # async def update(self, event_id: int, event: "UpdateEvent") -> "ViewEvent":
-    #     ...
-    #
-    # @abstractmethod
-    # async def delete(self, event_id: int) -> None:
-    #     ...
-    #
-    # # ^^^^^^^^^^^^^^^^^ CRUD ^^^^^^^^^^^^^^^^^ #
-    #
-    # # ------------------- PATCHES ------------------- #
-    # @abstractmethod
-    # async def add_patch(self, event_id: int, patch: "AddEventPatch") -> "ViewEventPatch":
-    #     ...
-    #
-    # @abstractmethod
-    # async def read_patches(self, event_id: int) -> list["ViewEventPatch"]:
-    #     ...
-    #
-    # @abstractmethod
-    # async def update_patch(self, patch_id: int, patch: "UpdateEventPatch") -> "ViewEventPatch":
-    #     ...
+    @abstractmethod
+    async def get_participant_bookings(
+        self, participant_id: int
+    ) -> list["ViewBooking"]:
+        ...

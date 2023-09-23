@@ -12,9 +12,17 @@ async def create_booking(
     return created
 
 
-@router.get("/get_bookings_for_current_week")
+@router.get("/bookings")
 async def get_bookings_for_current_week(
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
 ) -> list[ViewBooking]:
     bookings = await booking_repository.get_bookings_for_current_week()
     return bookings
+
+
+@router.delete("/{booking_id}/cancel_booking/")
+async def delete_booking(
+    booking_id: int,
+    booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
+) -> None:
+    await booking_repository.delete_booking(booking_id)

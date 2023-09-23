@@ -18,7 +18,7 @@ def max_hours_to_book_per_week(status: str):
         return 8
     elif status in ("Investor", "Middle", "payer"):
         return 6
-    elif status in ("Junior", "Freelance", "free"):
+    elif status in ("Freelance", "free", "Junior"):
         return 4
         # Raise an exception for an invalid status
     return 0

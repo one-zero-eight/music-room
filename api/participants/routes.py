@@ -1,6 +1,7 @@
 from api.dependencies import PARTICIPANT_REPOSITORY_DEPENDENCY
 from api.participants import router
-from schemas import CreateParticipant, ViewParticipantBeforeBooking
+from schemas import (CreateParticipant, ViewBooking,
+                     ViewParticipantBeforeBooking)
 
 
 @router.post("/create")
@@ -42,12 +43,20 @@ async def change_status(
     new_status: str,
     participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewParticipantBeforeBooking | str:
-    from api.tools.validation import max_hours_to_book_per_day as validate
+    from api.tools.validation import max_hours_to_book_per_day as status_validate
 
-    if validate(new_status) != 0:
+    if status_validate(new_status) != 0:
         updated_participant = await participant_repository.change_status(
             participant_id, new_status
         )
         return updated_participant
     else:
         return "Invalid status"
+
+
+@router.get("/{participant_id}/bookings")
+async def get_bookings(
+    participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
+) -> list[ViewBooking]:
+    bookings = await participant_repository.get_participant_bookings(participant_id)
+    return bookings
