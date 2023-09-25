@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
-from schemas import CreateParticipant, ViewParticipantBeforeBooking
+from schemas import (CreateParticipant, ViewBooking,
+                     ViewParticipantBeforeBooking)
 
 
 class AbstractParticipantRepository(metaclass=ABCMeta):
@@ -17,17 +18,17 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
     ) -> "ViewParticipantBeforeBooking":
         ...
 
-    @abstractmethod
-    async def change_daily_hours(
-        self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
-    ) -> "ViewParticipantBeforeBooking":
-        ...
-
-    @abstractmethod
-    async def change_weekly_hours(
-        self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
-    ) -> "ViewParticipantBeforeBooking":
-        ...
+    # @abstractmethod
+    # async def change_daily_hours(
+    #     self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+    # ) -> "ViewParticipantBeforeBooking":
+    #     ...
+    #
+    # @abstractmethod
+    # async def change_weekly_hours(
+    #     self, participant_id: "ViewParticipantBeforeBooking", new_hours: int
+    # ) -> "ViewParticipantBeforeBooking":
+    #     ...
 
     @abstractmethod
     async def get_participant_bookings(

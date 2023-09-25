@@ -1,4 +1,4 @@
-from schemas.booking import CreateBooking, ViewBooking
+from schemas.booking import CreateBooking, HelpBooking, ViewBooking
 from schemas.participant import (CreateParticipant,
                                  ViewParticipantAfterBooking,
                                  ViewParticipantBeforeBooking)
@@ -6,6 +6,7 @@ from schemas.participant import (CreateParticipant,
 __all__ = [
     "ViewBooking",
     "CreateBooking",
+    "HelpBooking",
     "ViewParticipantBeforeBooking",
     "CreateParticipant",
     "ViewParticipantAfterBooking",

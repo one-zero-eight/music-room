@@ -43,7 +43,7 @@ async def change_status(
     new_status: str,
     participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewParticipantBeforeBooking | str:
-    from api.tools.validation import max_hours_to_book_per_day as status_validate
+    from api.tools.tools import max_hours_to_book_per_day as status_validate
 
     if status_validate(new_status) != 0:
         updated_participant = await participant_repository.change_status(

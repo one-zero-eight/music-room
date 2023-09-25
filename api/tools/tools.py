@@ -1,3 +1,6 @@
+import datetime
+
+
 def max_hours_to_book_per_day(status: str):
     if status == "Lord":
         return 15
@@ -22,3 +25,9 @@ def max_hours_to_book_per_week(status: str):
         return 4
         # Raise an exception for an invalid status
     return 0
+
+
+def count_duration(start_time: datetime.datetime, end_time: datetime.datetime):
+    duration = end_time - start_time
+    lst = list(str(duration).split(":"))
+    return format(float(lst[0]) + float(lst[1]) / 60, ".2f")

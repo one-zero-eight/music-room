@@ -16,8 +16,6 @@ class ViewParticipantBeforeBooking(BaseModel):
     name: str
     alias: str
     status: str
-    daily_hours: int
-    weekly_hours: int
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -27,8 +25,6 @@ class ViewParticipantAfterBooking(BaseModel):
     name: str
     alias: str
     status: str
-    daily_hours: int
-    weekly_hours: int
 
     booking: list["ViewBooking"] = Field(default_factory=list)
 

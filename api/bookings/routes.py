@@ -7,9 +7,14 @@ from schemas import CreateBooking, ViewBooking
 async def create_booking(
     booking: "CreateBooking",
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
-) -> ViewBooking:
-    created = await booking_repository.create(booking)
-    return created
+) -> ViewBooking | str:
+    if not await booking_repository.check_collision(
+        booking.time_start, booking.time_end
+    ):
+        created = await booking_repository.create(booking)
+        return created
+    else:
+        return "The slot is already booked"
 
 
 @router.get("/bookings")
