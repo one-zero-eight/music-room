@@ -1,5 +1,9 @@
 from api.bookings import router
-from api.dependencies import BOOKING_REPOSITORY_DEPENDENCY
+from api.dependencies import (
+    BOOKING_REPOSITORY_DEPENDENCY,
+    PARTICIPANT_REPOSITORY_DEPENDENCY,
+)
+from api.exceptions import CollisionInBooking, NotEnoughHoursToBook
 from schemas import CreateBooking, ViewBooking
 
 
@@ -7,14 +11,17 @@ from schemas import CreateBooking, ViewBooking
 async def create_booking(
     booking: "CreateBooking",
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
+    participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewBooking | str:
-    if not await booking_repository.check_collision(
-        booking.time_start, booking.time_end
-    ):
-        created = await booking_repository.create(booking)
-        return created
+
+    if not await booking_repository.check_collision(booking.time_start, booking.time_end):
+        if await participant_repository.get_estimated_weekly_hours(booking.participant_id) <= 0:
+            raise NotEnoughHoursToBook()
+        else:
+            created = await booking_repository.create(booking)
+            return created
     else:
-        return "The slot is already booked"
+        raise CollisionInBooking()
 
 
 @router.get("/bookings")
