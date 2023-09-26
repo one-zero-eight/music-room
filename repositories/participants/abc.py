@@ -1,6 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
-from schemas import CreateParticipant, ViewBooking, ViewParticipantBeforeBooking
+from schemas import (CreateParticipant, ViewBooking,
+                     ViewParticipantBeforeBooking)
 
 
 class AbstractParticipantRepository(metaclass=ABCMeta):
@@ -24,4 +25,8 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def get_estimated_weekly_hours(self, participant_id: int) -> float:
+        ...
+
+    @abstractmethod
+    async def get_estimated_daily_hours(self, participant_id: int, booking: "ViewBooking") -> float:
         ...

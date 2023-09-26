@@ -1,7 +1,7 @@
 import datetime
 from datetime import date, timedelta
 
-from sqlalchemy import and_, delete, extract, select
+from sqlalchemy import and_, between, delete, extract, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -21,12 +21,9 @@ class SqlBookingRepository(AbstractBookingRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    # ----------------- CRUD ----------------- #
-
     async def create(self, booking: "CreateBooking") -> "ViewBooking":
         async with self._create_session() as session:
             query = insert(Booking).values(**booking.model_dump()).returning(Booking)
-            duration = count_duration(booking.time_start, booking.time_end)
             obj = await session.scalar(query)
             await session.commit()
             return ViewBooking.model_validate(obj)
@@ -34,17 +31,11 @@ class SqlBookingRepository(AbstractBookingRepository):
     async def get_bookings_for_current_week(self) -> list["ViewBooking"]:
         async with self._create_session() as session:
             today = date.today()
-            start = today - timedelta(days=today.weekday())
-            end = start + timedelta(days=6)
-            query = select(Booking).where(
-                and_(
-                    extract("day", Booking.time_start) >= int(str(start)[-2:]),
-                    extract("year", Booking.time_start) == int(str(start)[:4]),
-                    extract("day", Booking.time_end) <= int(str(end)[-2:]),
-                    extract("month", Booking.time_start) == int(str(start)[5:7]),
-                    extract("month", Booking.time_end) == int(str(end)[5:7]),
-                )
-            )
+            start_of_week = today - timedelta(days=today.weekday())
+            end_of_week = start_of_week + timedelta(days=6)
+
+            query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
+
             objs = await session.scalars(query)
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]
@@ -60,5 +51,4 @@ class SqlBookingRepository(AbstractBookingRepository):
         async with self._create_session() as session:
             query = select(Booking).where(and_(Booking.time_start < time_end, Booking.time_end > time_start))
             collision_exists = await session.scalar(query)
-            await session.commit()
             return collision_exists is not None

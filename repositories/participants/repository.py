@@ -1,10 +1,14 @@
-from sqlalchemy import select, update
+from datetime import date, timedelta
+
+from sqlalchemy import and_, between, extract, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.tools.tools import count_duration, max_hours_to_book_per_week
+from api.tools.tools import (count_duration, max_hours_to_book_per_day,
+                             max_hours_to_book_per_week)
 from repositories.participants.abc import AbstractParticipantRepository
-from schemas import CreateParticipant, ViewBooking, ViewParticipantBeforeBooking
+from schemas import (CreateParticipant, ViewBooking,
+                     ViewParticipantBeforeBooking)
 from storage.sql import AbstractSQLAlchemyStorage
 from storage.sql.models import Booking, Participant
 
@@ -52,9 +56,31 @@ class SqlParticipantRepository(AbstractParticipantRepository):
 
     async def get_estimated_weekly_hours(self, participant_id: int) -> float:
         async with self._create_session() as session:
-            query1 = select(Booking).where(Booking.participant_id == participant_id)
-            objs = await session.scalars(query1)
+            today = date.today()
+            start_of_week = today - timedelta(days=today.weekday())
+            end_of_week = start_of_week + timedelta(days=6)
+
+            query = select(Booking).filter(
+                Booking.participant_id == participant_id, between(Booking.time_start, start_of_week, end_of_week)
+            )
+            objs = await session.scalars(query)
             spent_hours = 0
             for obj in objs:
-                spent_hours += float(count_duration(obj.time_start, obj.time_end))
+                spent_hours += float(await count_duration(obj.time_start, obj.time_end))
             return max_hours_to_book_per_week(await self.get_status(participant_id)) - spent_hours
+
+    async def get_estimated_daily_hours(self, participant_id: int, booking: "ViewBooking") -> float:
+        async with self._create_session() as session:
+            query = select(Booking).where(
+                and_(
+                    Booking.participant_id == participant_id,
+                    extract("day", Booking.time_start) == booking.time_start.day,
+                    extract("year", Booking.time_start) == booking.time_start.year,
+                    extract("month", Booking.time_start) == booking.time_start.month,
+                )
+            )
+            objs = await session.scalars(query)
+            spent_hours = 0
+            for obj in objs:
+                spent_hours += float(await count_duration(obj.time_start, obj.time_end))
+            return max_hours_to_book_per_day(await self.get_status(participant_id)) - spent_hours

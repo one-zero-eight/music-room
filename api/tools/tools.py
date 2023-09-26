@@ -1,5 +1,7 @@
 import datetime
 
+from api.exceptions import InvalidParticipantStatus
+
 
 def max_hours_to_book_per_day(status: str):
     if status == "Lord":
@@ -10,8 +12,7 @@ def max_hours_to_book_per_day(status: str):
         return 3
     elif status in ("Freelance", "free", "Junior"):
         return 2
-    # Raise an exception for an invalid status
-    return 0
+    raise InvalidParticipantStatus()
 
 
 def max_hours_to_book_per_week(status: str):
@@ -22,12 +23,17 @@ def max_hours_to_book_per_week(status: str):
     elif status in ("Investor", "Middle", "payer"):
         return 6
     elif status in ("Freelance", "free", "Junior"):
-        return 4
-        # Raise an exception for an invalid status
-    return 0
+        return 14
+    raise InvalidParticipantStatus()
 
 
-def count_duration(start_time: datetime.datetime, end_time: datetime.datetime):
+async def count_duration(start_time: datetime.datetime, end_time: datetime.datetime):
     duration = end_time - start_time
-    lst = list(str(duration).split(":"))
-    return format(float(lst[0]) + float(lst[1]) / 60, ".2f")
+    seconds = duration.seconds
+    minutes = seconds // 60
+    hours = minutes / 60
+    return hours
+
+
+async def fix_time_end(time_end: datetime.datetime):
+    return time_end - datetime.timedelta(minutes=1)
