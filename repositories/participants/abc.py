@@ -5,14 +5,13 @@ from schemas import CreateParticipant, ViewBooking, ViewParticipantBeforeBooking
 
 class AbstractParticipantRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(
-            self, event: "CreateParticipant"
-    ) -> "ViewParticipantBeforeBooking":
+    async def create(self, event: "CreateParticipant") -> "ViewParticipantBeforeBooking":
         ...
 
     @abstractmethod
-    async def change_status(self, participant_id: "ViewParticipantBeforeBooking",
-                            new_status: str) -> "ViewParticipantBeforeBooking":
+    async def change_status(
+        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+    ) -> "ViewParticipantBeforeBooking":
         ...
 
     @abstractmethod

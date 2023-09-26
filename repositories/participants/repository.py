@@ -20,11 +20,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
 
     async def create(self, participant: "CreateParticipant") -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
-            query = (
-                insert(Participant)
-                .values(**participant.model_dump())
-                .returning(Participant)
-            )
+            query = insert(Participant).values(**participant.model_dump()).returning(Participant)
             obj = await session.scalar(query)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)

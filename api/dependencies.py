@@ -25,9 +25,7 @@ class Dependencies:
         return cls._participant_repository
 
     @classmethod
-    def set_participant_repository(
-        cls, participant_repository: "AbstractParticipantRepository"
-    ):
+    def set_participant_repository(cls, participant_repository: "AbstractParticipantRepository"):
         cls._participant_repository = participant_repository
 
     @classmethod
@@ -39,13 +37,9 @@ class Dependencies:
         cls._booking_repository = booking_repository
 
 
-STORAGE_DEPENDENCY = Annotated[
-    AbstractSQLAlchemyStorage, Depends(Dependencies.get_storage)
-]
+STORAGE_DEPENDENCY = Annotated[AbstractSQLAlchemyStorage, Depends(Dependencies.get_storage)]
 PARTICIPANT_REPOSITORY_DEPENDENCY = Annotated[
     AbstractParticipantRepository, Depends(Dependencies.get_participant_repository)
 ]
 
-BOOKING_REPOSITORY_DEPENDENCY = Annotated[
-    AbstractBookingRepository, Depends(Dependencies.get_booking_repository)
-]
+BOOKING_REPOSITORY_DEPENDENCY = Annotated[AbstractBookingRepository, Depends(Dependencies.get_booking_repository)]

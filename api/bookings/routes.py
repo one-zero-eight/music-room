@@ -1,8 +1,5 @@
 from api.bookings import router
-from api.dependencies import (
-    BOOKING_REPOSITORY_DEPENDENCY,
-    PARTICIPANT_REPOSITORY_DEPENDENCY,
-)
+from api.dependencies import BOOKING_REPOSITORY_DEPENDENCY, PARTICIPANT_REPOSITORY_DEPENDENCY
 from api.exceptions import CollisionInBooking, NotEnoughHoursToBook
 from schemas import CreateBooking, ViewBooking
 
@@ -13,7 +10,6 @@ async def create_booking(
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
     participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewBooking | str:
-
     if not await booking_repository.check_collision(booking.time_start, booking.time_end):
         if await participant_repository.get_estimated_weekly_hours(booking.participant_id) <= 0:
             raise NotEnoughHoursToBook()

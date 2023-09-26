@@ -56,13 +56,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             await session.commit()
             return ViewBooking.model_validate(obj)
 
-    async def check_collision(
-        self, time_start: datetime.datetime, time_end: datetime.datetime
-    ) -> bool:
+    async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
         async with self._create_session() as session:
-            query = select(Booking).where(
-                and_(Booking.time_start < time_end, Booking.time_end > time_start)
-            )
+            query = select(Booking).where(and_(Booking.time_start < time_end, Booking.time_end > time_start))
             collision_exists = await session.scalar(query)
             await session.commit()
             return collision_exists is not None
