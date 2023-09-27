@@ -20,12 +20,13 @@ async def create_booking(
         booking_duration = await count_duration(booking.time_start, booking.time_end)
 
         if (
-            await participant_repository.get_estimated_daily_hours(booking.participant_id, booking) - booking_duration
+            await participant_repository.get_remaining_daily_hours(booking.participant_id, booking.time_start)
+            - booking_duration
             < 0
         ):
             raise NotEnoughDailyHoursToBook()
 
-        elif await participant_repository.get_estimated_weekly_hours(booking.participant_id) - booking_duration < 0:
+        elif await participant_repository.get_remaining_weekly_hours(booking.participant_id) - booking_duration < 0:
             raise NotEnoughWeeklyHoursToBook()
         else:
             created = await booking_repository.create(booking)

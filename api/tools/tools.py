@@ -1,4 +1,5 @@
 import datetime
+from datetime import datetime as dt
 
 from api.exceptions import InvalidParticipantStatus
 
@@ -37,3 +38,10 @@ async def count_duration(start_time: datetime.datetime, end_time: datetime.datet
 
 async def fix_time_end(time_end: datetime.datetime):
     return time_end - datetime.timedelta(minutes=1)
+
+
+async def get_date_from_str(date: str):
+    try:
+        return dt.strptime(date, "%d.%m.%Y").date()
+    except ValueError:
+        return "Invalid date format. Use the format 'dd.mm.yyyy'"
