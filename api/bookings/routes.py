@@ -4,8 +4,8 @@ from api.bookings import router
 from api.dependencies import (BOOKING_REPOSITORY_DEPENDENCY,
                               PARTICIPANT_REPOSITORY_DEPENDENCY)
 from api.exceptions import (CollisionInBooking, NotEnoughDailyHoursToBook,
-                            NotEnoughWeeklyHoursToBook)
-from api.tools.tools import count_duration
+                            NotEnoughWeeklyHoursToBook, NotWorkingHours)
+from api.tools.tools import count_duration, is_sc_working
 from schemas import CreateBooking, ViewBooking
 
 
@@ -16,23 +16,26 @@ async def create_booking(
     participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewBooking | str:
     booking.time_end -= datetime.timedelta(minutes=1)
-    if not await booking_repository.check_collision(booking.time_start, booking.time_end):
-        booking_duration = await count_duration(booking.time_start, booking.time_end)
-
-        if (
-            await participant_repository.get_remaining_daily_hours(booking.participant_id, booking.time_start)
-            - booking_duration
-            < 0
-        ):
-            raise NotEnoughDailyHoursToBook()
-
-        elif await participant_repository.get_remaining_weekly_hours(booking.participant_id) - booking_duration < 0:
-            raise NotEnoughWeeklyHoursToBook()
-        else:
-            created = await booking_repository.create(booking)
-            return created
+    if not await is_sc_working(booking.time_start, booking.time_end):
+        raise NotWorkingHours()
     else:
-        raise CollisionInBooking()
+        if not await booking_repository.check_collision(booking.time_start, booking.time_end):
+            booking_duration = await count_duration(booking.time_start, booking.time_end)
+
+            if (
+                await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
+                - booking_duration
+                < 0
+            ):
+                raise NotEnoughDailyHoursToBook()
+
+            elif await participant_repository.remaining_weekly_hours(booking.participant_id) - booking_duration < 0:
+                raise NotEnoughWeeklyHoursToBook()
+            else:
+                created = await booking_repository.create(booking)
+                return created
+        else:
+            raise CollisionInBooking()
 
 
 @router.get("")

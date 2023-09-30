@@ -55,7 +55,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             obj = await session.scalar(query)
             return obj.status
 
-    async def get_remaining_weekly_hours(self, participant_id: int) -> float:
+    async def remaining_weekly_hours(self, participant_id: int) -> float:
         async with self._create_session() as session:
             today = date.today()
             start_of_week = today - timedelta(days=today.weekday())
@@ -70,7 +70,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
                 spent_hours += float(await count_duration(obj.time_start, obj.time_end))
             return max_hours_to_book_per_week(await self.get_status(participant_id)) - spent_hours
 
-    async def get_remaining_daily_hours(self, participant_id: int, date: datetime.datetime) -> float:
+    async def remaining_daily_hours(self, participant_id: int, date: datetime.datetime) -> float:
         async with self._create_session() as session:
             query = select(Booking).where(
                 and_(

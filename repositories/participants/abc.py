@@ -25,9 +25,9 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def get_remaining_weekly_hours(self, participant_id: int) -> float:
+    async def remaining_weekly_hours(self, participant_id: int) -> float:
         ...
 
     @abstractmethod
-    async def get_remaining_daily_hours(self, participant_id: int, date: datetime.datetime) -> float:
+    async def remaining_daily_hours(self, participant_id: int, date: datetime.datetime) -> float:
         ...

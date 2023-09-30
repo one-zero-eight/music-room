@@ -1,5 +1,3 @@
-import datetime
-
 from api.dependencies import PARTICIPANT_REPOSITORY_DEPENDENCY
 from api.exceptions import InvalidDateFormat, InvalidParticipantStatus
 from api.participants import router
@@ -11,8 +9,8 @@ from schemas import (CreateParticipant, ViewBooking,
 
 @router.post("/create")
 async def create_participant(
-        participant: CreateParticipant,
-        participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
+    participant: CreateParticipant,
+    participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewParticipantBeforeBooking:
     try:
         status_validate(participant.status)
@@ -25,9 +23,9 @@ async def create_participant(
 
 @router.put("/{participant_id}/status")
 async def change_status(
-        participant_id: int,
-        new_status: str,
-        participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
+    participant_id: int,
+    new_status: str,
+    participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewParticipantBeforeBooking | str:
     try:
         status_validate(new_status)
@@ -40,7 +38,7 @@ async def change_status(
 
 @router.get("/{participant_id}/bookings")
 async def get_participant_bookings(
-        participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
+    participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
 ) -> list[ViewBooking]:
     bookings = await participant_repository.get_participant_bookings(participant_id)
     return bookings
@@ -48,19 +46,19 @@ async def get_participant_bookings(
 
 @router.get("/{participant_id}/remaining_weekly_hours")
 async def get_remaining_weekly_hours(
-        participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
+    participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
 ) -> float:
-    ans = await participant_repository.get_remaining_weekly_hours(participant_id)
+    ans = await participant_repository.remaining_weekly_hours(participant_id)
     return ans
 
 
 @router.get("/{participant_id}/remaining_daily_hours")
 async def get_remaining_daily_hours(
-        participant_id: int, date: str, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
+    participant_id: int, date: str, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
 ) -> float:
     try:
         parsed_date = await get_date_from_str(date)
-        ans = await participant_repository.get_remaining_daily_hours(participant_id, parsed_date)
+        ans = await participant_repository.remaining_daily_hours(participant_id, parsed_date)
     except ValueError:
         raise InvalidDateFormat()
     return ans
