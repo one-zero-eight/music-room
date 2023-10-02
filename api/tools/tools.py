@@ -48,6 +48,6 @@ async def get_date_from_str(date: str):
 
 
 async def is_sc_working(start_time: datetime.datetime, end_time: datetime.datetime):
-    if start_time.hour < 8 or (end_time.hour > 22 and end_time.minute > 30):
+    if start_time.hour < 7 or (end_time.hour > 22 and end_time.minute > 30):
         return 0
     return 1
