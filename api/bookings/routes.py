@@ -15,7 +15,6 @@ async def create_booking(
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
     participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewBooking | str:
-    booking.time_end -= datetime.timedelta(minutes=1)
     if not await is_sc_working(booking.time_start, booking.time_end):
         raise NotWorkingHours()
     else:
