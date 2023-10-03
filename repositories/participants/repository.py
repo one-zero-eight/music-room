@@ -5,7 +5,7 @@ from sqlalchemy import and_, between, extract, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.tools.tools import (count_duration, max_hours_to_book_per_day,
+from api.tools.utils import (count_duration, max_hours_to_book_per_day,
                              max_hours_to_book_per_week)
 from repositories.participants.abc import AbstractParticipantRepository
 from schemas import (CreateParticipant, ViewBooking,

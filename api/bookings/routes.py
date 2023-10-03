@@ -5,7 +5,7 @@ from api.dependencies import (BOOKING_REPOSITORY_DEPENDENCY,
                               PARTICIPANT_REPOSITORY_DEPENDENCY)
 from api.exceptions import (CollisionInBooking, NotEnoughDailyHoursToBook,
                             NotEnoughWeeklyHoursToBook, NotWorkingHours)
-from api.tools.tools import count_duration, is_sc_working
+from api.tools.utils import count_duration, is_sc_working
 from schemas import CreateBooking, ViewBooking
 
 
