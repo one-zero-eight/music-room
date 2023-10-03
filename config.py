@@ -6,5 +6,11 @@ class Settings(BaseSettings):
 
     DB_URL: str
 
+    # SMTP server config
+    SMTP_SERVER: str
+    SMTP_PORT: int
+    SMTP_USERNAME: str
+    SMTP_PASSWORD: str
+
 
 settings = Settings(_env_file=".env.local", _env_file_encoding="utf-8")

@@ -72,3 +72,27 @@ class NotWorkingHours(HTTPException):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="The Music Room is closed at this time",
         )
+
+
+class UserExists(HTTPException):
+    """
+    HTTP_400_BAD_REQUEST
+    """
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email already exists",
+        )
+
+
+class InvalidCode(HTTPException):
+    """
+    HTTP_400_BAD_REQUEST
+    """
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid code",
+        )
