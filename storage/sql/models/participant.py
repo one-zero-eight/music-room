@@ -17,6 +17,7 @@ class Participant(Base, IdMixin):
     email: Mapped[str] = mapped_column(unique=True)
     status: Mapped[str] = mapped_column(default="free")
     phone_number: Mapped[str] = mapped_column()
+    need_to_continue_reg: Mapped[bool] = mapped_column()
 
     booking: Mapped[List["Booking"]] = relationship(back_populates="participant")
 

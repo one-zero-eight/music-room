@@ -53,7 +53,8 @@ class SqlParticipantRepository(AbstractParticipantRepository):
         async with self._create_session() as session:
             query = select(Participant).where(Participant.id == participant_id)
             obj = await session.scalar(query)
-            return obj.status
+            if obj is not None:
+                return obj.status
 
     async def remaining_weekly_hours(self, participant_id: int) -> float:
         async with self._create_session() as session:

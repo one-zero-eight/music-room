@@ -1,5 +1,3 @@
-import datetime
-
 from pydantic import BaseModel, ConfigDict, Field
 
 from schemas import ViewBooking
@@ -11,6 +9,7 @@ class CreateParticipant(BaseModel):
     email: str
     phone_number: str
     status: str
+    need_to_continue_reg: bool
 
 
 class ViewParticipantBeforeBooking(BaseModel):
@@ -20,6 +19,7 @@ class ViewParticipantBeforeBooking(BaseModel):
     email: str
     phone_number: str
     status: str
+    need_to_continue_reg: bool
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -31,6 +31,7 @@ class ViewParticipantAfterBooking(BaseModel):
     email: str
     phone_number: str
     status: str
+    need_to_continue_reg: bool
 
     booking: list["ViewBooking"] = Field(default_factory=list)
 
