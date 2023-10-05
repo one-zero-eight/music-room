@@ -1,5 +1,6 @@
 import datetime
 from datetime import date, timedelta
+from typing import Union
 
 from sqlalchemy import and_, between, extract, select, update
 from sqlalchemy.dialects.postgresql import insert
@@ -61,7 +62,6 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             today = date.today()
             start_of_week = today - timedelta(days=today.weekday())
             end_of_week = start_of_week + timedelta(days=6)
-
             query = select(Booking).filter(
                 Booking.participant_id == participant_id, between(Booking.time_start, start_of_week, end_of_week)
             )

@@ -32,8 +32,11 @@ class SqlAuthRepository(AbstractAuthRepository):
             delta = datetime.timedelta(minutes=30)
             new_datetime = current_datetime + delta
 
-            query = insert(PotentialUser).values(code=code, email=email, code_expiration=new_datetime).returning(
-                PotentialUser)
+            query = (
+                insert(PotentialUser)
+                .values(code=code, email=email, code_expiration=new_datetime)
+                .returning(PotentialUser)
+            )
             await session.scalar(query)
             await session.commit()
 

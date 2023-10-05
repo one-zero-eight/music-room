@@ -4,22 +4,22 @@ from schemas import ViewBooking
 
 
 class CreateParticipant(BaseModel):
-    name: str
-    alias: str
+    name: str = ""
+    alias: str = ""
     email: str
-    phone_number: str
+    phone_number: str = ""
     status: str
-    need_to_continue_reg: bool
+    need_to_fill_profile: bool
 
 
 class ViewParticipantBeforeBooking(BaseModel):
     id: int
-    name: str
-    alias: str
+    name: str = None
+    alias: str = None
     email: str
-    phone_number: str
+    phone_number: str = None
     status: str
-    need_to_continue_reg: bool
+    need_to_fill_profile: bool
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -31,7 +31,7 @@ class ViewParticipantAfterBooking(BaseModel):
     email: str
     phone_number: str
     status: str
-    need_to_continue_reg: bool
+    need_to_fill_profile: bool
 
     booking: list["ViewBooking"] = Field(default_factory=list)
 

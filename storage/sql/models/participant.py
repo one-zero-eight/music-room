@@ -12,12 +12,12 @@ if TYPE_CHECKING:
 
 class Participant(Base, IdMixin):
     __tablename__ = "participant"
-    name: Mapped[str] = mapped_column()
-    alias: Mapped[str] = mapped_column()
-    email: Mapped[str] = mapped_column(unique=True)
-    status: Mapped[str] = mapped_column(default="free")
-    phone_number: Mapped[str] = mapped_column()
-    need_to_continue_reg: Mapped[bool] = mapped_column()
+    name: Mapped[str] = mapped_column(nullable=True)
+    alias: Mapped[str] = mapped_column(nullable=True)
+    email: Mapped[str] = mapped_column(unique=True, nullable=False)
+    status: Mapped[str] = mapped_column(nullable=False, default="free")
+    phone_number: Mapped[str] = mapped_column(nullable=True)
+    need_to_fill_profile: Mapped[bool] = mapped_column(nullable=False)
 
     booking: Mapped[List["Booking"]] = relationship(back_populates="participant")
 
