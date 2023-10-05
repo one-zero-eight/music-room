@@ -9,7 +9,7 @@ from fastapi import HTTPException
 from config import settings
 
 
-def generate_temporary_code():
+async def generate_temporary_code():
     length = 6
     characters = string.digits
     code = "".join(secrets.choice(characters) for _ in range(length))

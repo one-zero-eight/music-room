@@ -13,7 +13,7 @@ async def registration(background_task: BackgroundTasks, email: str, auth_reposi
     if await auth_repository.is_user_registered(email):
         raise UserExists()
     else:
-        code = generate_temporary_code()
+        code = await generate_temporary_code()
         await auth_repository.save_code(email, code)
         background_task.add_task(await send_email(email, code))
 
