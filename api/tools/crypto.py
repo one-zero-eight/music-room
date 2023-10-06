@@ -14,5 +14,5 @@ class Crypto:
 
     @classmethod
     def decrypt(cls, encrypted_phone_number: bytes):
-        decrypted_number = cls.cipher_suite.decrypt(encrypted_phone_number)
-        return decrypted_number
+        decrypted_phone_number = cls.cipher_suite.decrypt(encrypted_phone_number)
+        return decrypted_phone_number

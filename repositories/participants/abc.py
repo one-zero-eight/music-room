@@ -16,7 +16,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def change_status(
-            self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
     ) -> "ViewParticipantBeforeBooking":
         ...
 

@@ -38,13 +38,16 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             query = (
                 update(Participant)
                 .where(Participant.email == participant.email)
-                .values(name=participant.name, alias=participant.alias, email=participant.email,
-                        phone_number=phone_number,
-                        need_to_fill_profile=False)
+                .values(
+                    name=participant.name,
+                    alias=participant.alias,
+                    email=participant.email,
+                    phone_number=phone_number,
+                    need_to_fill_profile=False,
+                )
                 .returning(Participant)
             )
             obj = await session.scalar(query)
-            print(obj)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
 
