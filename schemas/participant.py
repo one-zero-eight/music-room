@@ -1,30 +1,32 @@
+from typing import Optional
+
 from pydantic import BaseModel, ConfigDict, Field
 
 from schemas import ViewBooking
 
 
 class CreateParticipant(BaseModel):
-    name: str = ""
-    alias: str = ""
+    name: Optional[str] = None
+    alias: Optional[str] = None
     email: str
-    phone_number: str = ""
+    phone_number: Optional[str] = None
     status: str
     need_to_fill_profile: bool
 
 
 class FillParticipantProfile(BaseModel):
-    name: str = ""
-    alias: str = ""
+    name: Optional[str] = None
+    alias: Optional[str] = None
     email: str
-    phone_number: str = ""
+    phone_number: Optional[str] = None
 
 
 class ViewParticipantBeforeBooking(BaseModel):
     id: int
-    name: str = None
-    alias: str = None
+    name: Optional[str] = None
+    alias: Optional[str] = None
     email: str
-    phone_number: str = None
+    phone_number: Optional[bytes] = None
     status: str
     need_to_fill_profile: bool
 
@@ -36,7 +38,7 @@ class ViewParticipantAfterBooking(BaseModel):
     name: str
     alias: str
     email: str
-    phone_number: str
+    phone_number: Optional[bytes] = None
     status: str
     need_to_fill_profile: bool
 

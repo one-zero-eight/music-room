@@ -16,7 +16,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def change_status(
-        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+            self, participant_id: "ViewParticipantBeforeBooking", new_status: str
     ) -> "ViewParticipantBeforeBooking":
         ...
 
@@ -38,4 +38,8 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def is_need_to_fill_profile(self, participant_id: int) -> bool:
+        ...
+
+    @abstractmethod
+    async def get_phone_number(self, participant_id: int):
         ...

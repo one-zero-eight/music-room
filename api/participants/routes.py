@@ -57,3 +57,9 @@ async def get_remaining_daily_hours(
     except ValueError:
         raise InvalidDateFormat()
     return ans
+
+
+@router.get("/{participant_id}/phone_number")
+async def get_phone_number(participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY):
+    return await participant_repository.get_phone_number(participant_id)
+

@@ -16,7 +16,7 @@ class Participant(Base, IdMixin):
     alias: Mapped[str] = mapped_column(nullable=True)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     status: Mapped[str] = mapped_column(nullable=False, default="free")
-    phone_number: Mapped[str] = mapped_column(nullable=True)
+    phone_number: Mapped[bytes] = mapped_column(nullable=True)
     need_to_fill_profile: Mapped[bool] = mapped_column(nullable=False)
 
     booking: Mapped[List["Booking"]] = relationship(back_populates="participant")

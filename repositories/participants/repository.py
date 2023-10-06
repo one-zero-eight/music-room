@@ -6,6 +6,7 @@ from sqlalchemy import and_, between, extract, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.tools import Crypto
 from api.tools.utils import (count_duration, max_hours_to_book_per_day,
                              max_hours_to_book_per_week)
 from repositories.participants.abc import AbstractParticipantRepository
@@ -28,19 +29,22 @@ class SqlParticipantRepository(AbstractParticipantRepository):
         async with self._create_session() as session:
             query = insert(Participant).values(**participant.model_dump()).returning(Participant)
             obj = await session.scalar(query)
-            print(obj)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
+            phone_number = Crypto.encrypt(participant.phone_number)
             query = (
                 update(Participant)
                 .where(Participant.email == participant.email)
-                .values(**participant.model_dump(), need_to_fill_profile=False)
+                .values(name=participant.name, alias=participant.alias, email=participant.email,
+                        phone_number=phone_number,
+                        need_to_fill_profile=False)
                 .returning(Participant)
             )
             obj = await session.scalar(query)
+            print(obj)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
 
@@ -109,3 +113,9 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             if obj:
                 return True
             return False
+
+    async def get_phone_number(self, participant_id: int):
+        async with self._create_session() as session:
+            query = select(Participant).where(Participant.id == participant_id)
+            obj = await session.scalar(query)
+            return Crypto.decrypt(obj.phone_number)

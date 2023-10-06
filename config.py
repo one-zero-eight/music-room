@@ -12,5 +12,7 @@ class Settings(BaseSettings):
     SMTP_USERNAME: str
     SMTP_PASSWORD: str
 
+    CRYPTO_SECRET_KEY: bytes
+
 
 settings = Settings(_env_file=".env.local", _env_file_encoding="utf-8")
