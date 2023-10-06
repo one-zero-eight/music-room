@@ -1,5 +1,5 @@
 from schemas.booking import CreateBooking, HelpBooking, ViewBooking
-from schemas.participant import (CreateParticipant,
+from schemas.participant import (CreateParticipant, FillParticipantProfile,
                                  ViewParticipantAfterBooking,
                                  ViewParticipantBeforeBooking)
 
@@ -10,4 +10,5 @@ __all__ = [
     "ViewParticipantBeforeBooking",
     "CreateParticipant",
     "ViewParticipantAfterBooking",
+    "FillParticipantProfile",
 ]

@@ -1,7 +1,7 @@
 import datetime
 from abc import ABCMeta, abstractmethod
 
-from schemas import (CreateParticipant, ViewBooking,
+from schemas import (CreateParticipant, FillParticipantProfile, ViewBooking,
                      ViewParticipantBeforeBooking)
 
 
@@ -11,8 +11,12 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipantBeforeBooking":
+        ...
+
+    @abstractmethod
     async def change_status(
-            self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
     ) -> "ViewParticipantBeforeBooking":
         ...
 

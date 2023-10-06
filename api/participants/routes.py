@@ -3,21 +3,16 @@ from api.exceptions import InvalidDateFormat, InvalidParticipantStatus
 from api.participants import router
 from api.tools.utils import get_date_from_str
 from api.tools.utils import max_hours_to_book_per_day as status_validate
-from schemas import (CreateParticipant, ViewBooking,
+from schemas import (CreateParticipant, FillParticipantProfile, ViewBooking,
                      ViewParticipantBeforeBooking)
 
 
-@router.post("/create")
-async def create_participant(
-    participant: CreateParticipant,
+@router.post("/fill_profile")
+async def fill_profile(
+    participant: FillParticipantProfile,
     participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewParticipantBeforeBooking:
-    try:
-        status_validate(participant.status)
-    except InvalidParticipantStatus:
-        raise InvalidParticipantStatus()
-
-    created = await participant_repository.create(participant)
+    created = await participant_repository.fill_profile(participant)
     return created
 
 

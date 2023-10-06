@@ -12,6 +12,13 @@ class CreateParticipant(BaseModel):
     need_to_fill_profile: bool
 
 
+class FillParticipantProfile(BaseModel):
+    name: str = ""
+    alias: str = ""
+    email: str
+    phone_number: str = ""
+
+
 class ViewParticipantBeforeBooking(BaseModel):
     id: int
     name: str = None

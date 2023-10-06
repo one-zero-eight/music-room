@@ -9,7 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from api.tools.utils import (count_duration, max_hours_to_book_per_day,
                              max_hours_to_book_per_week)
 from repositories.participants.abc import AbstractParticipantRepository
-from schemas import (CreateParticipant, ViewBooking,
+from schemas import (CreateParticipant, FillParticipantProfile, ViewBooking,
                      ViewParticipantBeforeBooking)
 from storage.sql import AbstractSQLAlchemyStorage
 from storage.sql.models import Booking, Participant
@@ -27,6 +27,19 @@ class SqlParticipantRepository(AbstractParticipantRepository):
     async def create(self, participant: "CreateParticipant") -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = insert(Participant).values(**participant.model_dump()).returning(Participant)
+            obj = await session.scalar(query)
+            print(obj)
+            await session.commit()
+            return ViewParticipantBeforeBooking.model_validate(obj)
+
+    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipantBeforeBooking":
+        async with self._create_session() as session:
+            query = (
+                update(Participant)
+                .where(Participant.email == participant.email)
+                .values(**participant.model_dump(), need_to_fill_profile=False)
+                .returning(Participant)
+            )
             obj = await session.scalar(query)
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
@@ -90,10 +103,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
     async def is_need_to_fill_profile(self, participant_id: int) -> bool:
         async with self._create_session() as session:
             query = select(Participant).where(
-                and_(
-                    Participant.id == participant_id,
-                    Participant.need_to_fill_profile is False
-                )
+                and_(Participant.id == participant_id, Participant.need_to_fill_profile is False)
             )
             obj = await session.scalar(query)
             if obj:
