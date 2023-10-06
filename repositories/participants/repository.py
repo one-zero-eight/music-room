@@ -86,3 +86,16 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             for obj in objs:
                 spent_hours += float(await count_duration(obj.time_start, obj.time_end))
             return max_hours_to_book_per_day(await self.get_status(participant_id)) - spent_hours
+
+    async def is_need_to_fill_profile(self, participant_id: int) -> bool:
+        async with self._create_session() as session:
+            query = select(Participant).where(
+                and_(
+                    Participant.id == participant_id,
+                    Participant.need_to_fill_profile is False
+                )
+            )
+            obj = await session.scalar(query)
+            if obj:
+                return True
+            return False

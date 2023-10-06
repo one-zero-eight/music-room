@@ -12,7 +12,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def change_status(
-        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+            self, participant_id: "ViewParticipantBeforeBooking", new_status: str
     ) -> "ViewParticipantBeforeBooking":
         ...
 
@@ -30,4 +30,8 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def remaining_daily_hours(self, participant_id: int, date: datetime.datetime) -> float:
+        ...
+
+    @abstractmethod
+    async def is_need_to_fill_profile(self, participant_id: int) -> bool:
         ...
