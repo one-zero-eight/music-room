@@ -110,9 +110,10 @@ class SqlParticipantRepository(AbstractParticipantRepository):
     async def is_need_to_fill_profile(self, participant_id: int) -> bool:
         async with self._create_session() as session:
             query = select(Participant).where(
-                and_(Participant.id == participant_id, Participant.need_to_fill_profile is False)
+                and_(Participant.id == participant_id, Participant.need_to_fill_profile is True)
             )
             obj = await session.scalar(query)
+            print(obj)
             if obj:
                 return True
             return False

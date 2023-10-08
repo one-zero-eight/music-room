@@ -17,7 +17,7 @@ async def create_booking(
     if not await is_sc_working(booking.time_start, booking.time_end):
         raise NotWorkingHours()
     else:
-        if participant_repository.is_need_to_fill_profile(booking.participant_id):
+        if await participant_repository.is_need_to_fill_profile(booking.participant_id):
             raise IncompleteProfile()
         else:
             if not await booking_repository.check_collision(booking.time_start, booking.time_end):
@@ -33,7 +33,7 @@ async def create_booking(
                 elif await participant_repository.remaining_weekly_hours(booking.participant_id) - booking_duration < 0:
                     raise NotEnoughWeeklyHoursToBook()
                 else:
-                    created = await booking_repository.fill_profile(booking)
+                    created = await booking_repository.create(booking)
                     return created
             else:
                 raise CollisionInBooking()
@@ -53,3 +53,8 @@ async def delete_booking(
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
 ) -> None:
     await booking_repository.delete_booking(booking_id)
+
+
+@router.get("/form_schedule")
+async def form_schedule(booking_repository: BOOKING_REPOSITORY_DEPENDENCY):
+    await booking_repository.form_schedule()

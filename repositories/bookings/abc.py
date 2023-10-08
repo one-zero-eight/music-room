@@ -21,3 +21,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
     @abstractmethod
     async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
         ...
+
+    @abstractmethod
+    async def form_schedule(self):
+        ...
