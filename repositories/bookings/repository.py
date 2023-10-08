@@ -93,7 +93,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             x0 = xbase + xsize * day
             y0 = ybase + int(ysize * ((booking.time_start.hour - 7) + (booking.time_start.minute / 60.0)))
             x1 = x0 + xsize
-            y1 = y0 + ylength + 30
+            y1 = (y0 + 31.5*ylength)
 
             draw.rectangle((x0, y0, x1, y1), fill=red)
             # caption = booking.participant_id
