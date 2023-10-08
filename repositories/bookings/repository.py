@@ -7,6 +7,7 @@ from sqlalchemy import and_, between, delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from api.tools.utils import count_duration
 from repositories.bookings.abc import AbstractBookingRepository
 from schemas import CreateBooking, ViewBooking
 from storage.sql import AbstractSQLAlchemyStorage
@@ -33,7 +34,7 @@ class SqlBookingRepository(AbstractBookingRepository):
         async with self._create_session() as session:
             today = date.today()
             start_of_week = today - timedelta(days=today.weekday())
-            end_of_week = start_of_week + timedelta(days=6)
+            end_of_week = start_of_week + timedelta(days=7)
 
             query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
 
@@ -55,8 +56,8 @@ class SqlBookingRepository(AbstractBookingRepository):
             return collision_exists is not None
 
     async def form_schedule(self):
-        xbase = 48
-        ybase = 73
+        xbase = 45  # origin for x
+        ybase = 73  # origin for y
         xsize = 176
         ysize = 32
 
@@ -88,28 +89,28 @@ class SqlBookingRepository(AbstractBookingRepository):
             # currentFont = fontBold if booking.Participant.Alias == participant.Alias else fontSimple
 
             # bookingBrush = lightGray if booking.Participant.Status == "free" else lightGreen
+            ylength = await count_duration(booking.time_start, booking.time_end)
+            x0 = xbase + xsize * day
+            y0 = ybase + int(ysize * ((booking.time_start.hour - 7) + (booking.time_start.minute / 60.0)))
+            x1 = x0 + xsize
+            y1 = y0 + ylength + 30
 
-            ylength = int(ysize * (booking.TimeEnd.minute - booking.TimeStart.minute) / 60.0)
-            xcorner = xbase + xsize * day
-            ycorner = ybase + int(ysize * ((booking.TimeStart.hour - 7) + (booking.TimeStart.minute / 60.0)))
+            draw.rectangle((x0, y0, x1, y1), fill=red)
+            # caption = booking.participant_id
+            # # (
+            # #     "\n" if booking.time_end.hour - booking.time_end.hour <= 1 else " ")
+            # # draw.text(
+            # #     (xcorner + 2, ycorner + 2),
+            # #     caption + booking.time_start.strftime("%H:%M") + " " + booking.time_end.strftime("%H:%M"),
+            # #     font=fontSimple,
+            # #     fill=black,
+            # # )
 
-            draw.rectangle((xcorner, ycorner, xcorner + xsize - 10, ycorner + ylength - 5), fill=lightGray)
-
-            caption = booking.participant_id
-            # (
-            #     "\n" if booking.time_end.hour - booking.time_end.hour <= 1 else " ")
-            draw.text(
-                (xcorner + 2, ycorner + 2),
-                caption + booking.time_start.strftime("%H:%M") + " " + booking.time_end.strftime("%H:%M"),
-                font=fontSimple,
-                fill=black,
-            )
-
-        nowxcorner = xbase + (xsize * day)
-        nowycorner = ybase + int(
-            ysize * ((datetime.datetime.now().hour - 7 + 3) + (datetime.datetime.now().minute / 60.0))
-        )
-        draw.rectangle((nowxcorner, nowycorner, nowxcorner + xsize, nowycorner + 2), fill=red)
+        # nowxcorner = xbase + (xsize * day)
+        # nowycorner = ybase + int(
+        #     ysize * ((datetime.datetime.now().hour - 7 + 3) + (datetime.datetime.now().minute / 60.0))
+        # )
+        # draw.rectangle((nowxcorner, nowycorner, nowxcorner + xsize, nowycorner + 2), fill=red)
 
         # Save the image to a temporary file
         image.save("result.png")
