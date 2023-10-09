@@ -1,6 +1,7 @@
 import datetime
 import io
 from datetime import date, timedelta
+from typing import Dict
 
 from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import and_, between, delete, select
@@ -23,17 +24,17 @@ class SqlBookingRepository(AbstractBookingRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def create(self, booking: "CreateBooking") -> "ViewBooking":
+    async def create(self, booking: "CreateBooking") -> ViewBooking:
         async with self._create_session() as session:
             query = insert(Booking).values(**booking.model_dump()).returning(Booking)
             obj = await session.scalar(query)
             await session.commit()
             return ViewBooking.model_validate(obj)
 
-    async def get_bookings_for_current_week(self) -> list["ViewBooking"]:
+    async def get_bookings_for_current_week(self) -> list[ViewBooking]:
         async with self._create_session() as session:
             today = date.today()
-            start_of_week = today - timedelta(days=today.weekday())
+            start_of_week = today - timedelta(days=today.weekday() + 1)
             end_of_week = start_of_week + timedelta(days=7)
 
             query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
@@ -42,12 +43,14 @@ class SqlBookingRepository(AbstractBookingRepository):
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]
 
-    async def delete_booking(self, booking_id) -> ViewBooking:
+    async def delete_booking(self, booking_id) -> ViewBooking | dict[str, str]:
         async with self._create_session() as session:
             query = delete(Booking).where(Booking.id == booking_id).returning(Booking)
             obj = await session.scalar(query)
             await session.commit()
-            return ViewBooking.model_validate(obj)
+            if obj:
+                return ViewBooking.model_validate(obj)
+            return {"message": "No such booking"}
 
     async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
         async with self._create_session() as session:
@@ -56,10 +59,10 @@ class SqlBookingRepository(AbstractBookingRepository):
             return collision_exists is not None
 
     async def form_schedule(self):
-        xbase = 45  # origin for x
+        xbase = 48  # origin for x
         ybase = 73  # origin for y
-        xsize = 176
-        ysize = 32
+        xsize = 175.5  # length of the rect by x-axis
+        ysize = 32  # length of the rect by x-axis
 
         # Create a new image using PIL
         image = Image.open("repositories/bookings/schedule.jpg")
@@ -75,42 +78,33 @@ class SqlBookingRepository(AbstractBookingRepository):
         fontSimple = ImageFont.load_default()
         fontBold = ImageFont.load_default()
 
-        xcorner = 0
-        ycorner = 0
-
         # Get bookings for the week
         bookings = await self.get_bookings_for_current_week()
-
-        today = datetime.date.today()
-
-        day = today.weekday()
 
         for booking in bookings:
             # currentFont = fontBold if booking.Participant.Alias == participant.Alias else fontSimple
 
             # bookingBrush = lightGray if booking.Participant.Status == "free" else lightGreen
+
+            day = booking.time_start.weekday()
+
             ylength = await count_duration(booking.time_start, booking.time_end)
             x0 = xbase + xsize * day
             y0 = ybase + int(ysize * ((booking.time_start.hour - 7) + (booking.time_start.minute / 60.0)))
             x1 = x0 + xsize
-            y1 = (y0 + 31.5*ylength)
+            y1 = y0 + 31.5 * ylength
 
-            draw.rectangle((x0, y0, x1, y1), fill=red)
-            # caption = booking.participant_id
-            # # (
-            # #     "\n" if booking.time_end.hour - booking.time_end.hour <= 1 else " ")
-            # # draw.text(
-            # #     (xcorner + 2, ycorner + 2),
-            # #     caption + booking.time_start.strftime("%H:%M") + " " + booking.time_end.strftime("%H:%M"),
-            # #     font=fontSimple,
-            # #     fill=black,
-            # # )
+            draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=red)
+            caption = str(booking.participant_id)
 
-        # nowxcorner = xbase + (xsize * day)
-        # nowycorner = ybase + int(
-        #     ysize * ((datetime.datetime.now().hour - 7 + 3) + (datetime.datetime.now().minute / 60.0))
-        # )
-        # draw.rectangle((nowxcorner, nowycorner, nowxcorner + xsize, nowycorner + 2), fill=red)
+            if await count_duration(booking.time_start, booking.time_end) > 1:
+                caption += "\n"
+            else:
+                caption += " "
+
+            draw.text((x0 + 2, y0 + 2),
+                      text=f"{caption}{booking.time_start.strftime('%H:%M')} {booking.time_end.strftime('%H:%M')}",
+                      fill=black, font=fontSimple)
 
         # Save the image to a temporary file
         image.save("result.png")
