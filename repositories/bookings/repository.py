@@ -102,9 +102,12 @@ class SqlBookingRepository(AbstractBookingRepository):
             else:
                 caption += " "
 
-            draw.text((x0 + 2, y0 + 2),
-                      text=f"{caption}{booking.time_start.strftime('%H:%M')} {booking.time_end.strftime('%H:%M')}",
-                      fill=black, font=fontSimple)
+            draw.text(
+                (x0 + 2, y0 + 2),
+                text=f"{caption}{booking.time_start.strftime('%H:%M')} {booking.time_end.strftime('%H:%M')}",
+                fill=black,
+                font=fontSimple,
+            )
 
         today = datetime.date.today()
         weekday = today.weekday()
@@ -116,7 +119,8 @@ class SqlBookingRepository(AbstractBookingRepository):
         if 6 < current_hour < 23:
             now_xcorner = xbase + xsize * weekday
             now_ycorner = ybase + int(
-                ysize * ((datetime.datetime.now().hour - 7 + 3) + (datetime.datetime.now().minute / 60)))
+                ysize * ((datetime.datetime.now().hour - 7) + (datetime.datetime.now().minute / 60))
+            )
             draw.rounded_rectangle((now_xcorner, now_ycorner, now_xcorner + xsize, now_ycorner + 2), 2, fill=red)
 
         # Save the image to a temporary file
