@@ -113,7 +113,6 @@ class SqlParticipantRepository(AbstractParticipantRepository):
                 and_(Participant.id == participant_id, Participant.need_to_fill_profile is True)
             )
             obj = await session.scalar(query)
-            print(obj)
             if obj:
                 return True
             return False

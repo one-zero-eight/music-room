@@ -10,9 +10,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.tools.utils import count_duration
 from repositories.bookings.abc import AbstractBookingRepository
-from schemas import CreateBooking, ViewBooking
+from repositories.participants.repository import SqlParticipantRepository
+from schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
 from storage.sql import AbstractSQLAlchemyStorage
-from storage.sql.models import Booking
+from storage.sql.models import Booking, Participant
 
 
 class SqlBookingRepository(AbstractBookingRepository):
@@ -58,6 +59,12 @@ class SqlBookingRepository(AbstractBookingRepository):
             collision_exists = await session.scalar(query)
             return collision_exists is not None
 
+    async def get_participant(self, participant_id) -> ViewParticipantBeforeBooking:
+        async with self._create_session() as session:
+            query = select(Participant).where(Participant.id == participant_id)
+            obj = await session.scalar(query)
+            return ViewParticipantBeforeBooking.model_validate(obj)
+
     async def form_schedule(self):
         xbase = 48  # origin for x
         ybase = 73  # origin for y
@@ -95,7 +102,8 @@ class SqlBookingRepository(AbstractBookingRepository):
             y1 = y0 + 31.5 * ylength
 
             draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=red)
-            caption = str(booking.participant_id)
+            participant = await self.get_participant(booking.participant_id)
+            caption = participant.alias
 
             if await count_duration(booking.time_start, booking.time_end) > 1:
                 caption += "\n"

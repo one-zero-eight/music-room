@@ -1,7 +1,7 @@
 import datetime
 from abc import ABCMeta, abstractmethod
 
-from schemas import CreateBooking, ViewBooking
+from schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
 
 
 class AbstractBookingRepository(metaclass=ABCMeta):
@@ -20,6 +20,10 @@ class AbstractBookingRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
+        ...
+
+    @abstractmethod
+    async def get_participant(self, participant_id) -> ViewParticipantBeforeBooking:
         ...
 
     @abstractmethod

@@ -43,3 +43,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
     @abstractmethod
     async def get_phone_number(self, participant_id: int):
         ...
+
+    # @abstractmethod
+    # async def get_participant(self, participant_id) -> ViewParticipantBeforeBooking:
+    #     ...
