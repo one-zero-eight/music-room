@@ -31,10 +31,16 @@ class SqlBookingRepository(AbstractBookingRepository):
             return ViewBooking.model_validate(obj)
 
     async def get_bookings_for_current_week(self) -> list[ViewBooking]:
-        async with self._create_session() as session:
+        async with (self._create_session() as session):
+            current_datetime = datetime.datetime.now()
+            next_week_delta = 0
+
+            if current_datetime.weekday() == 6 and current_datetime.hour >= 22 and current_datetime.minute > 30:
+                next_week_delta = 8
+
             today = date.today()
-            start_of_week = today - timedelta(days=today.weekday() + 1)
-            end_of_week = start_of_week + timedelta(days=7)
+            start_of_week = (today - timedelta(days=today.weekday() + 1)) + timedelta(days=next_week_delta)
+            end_of_week = start_of_week + timedelta(days=6)
 
             query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
 
@@ -101,8 +107,8 @@ class SqlBookingRepository(AbstractBookingRepository):
             participant = await self.get_participant(booking.participant_id)
 
             alias = participant.alias
-            if len(alias) > 12:
-                alias = alias[:9] + "..."
+            if len(alias) > 11:
+                alias = alias[:11] + "..."
 
             caption = alias + " "
 
