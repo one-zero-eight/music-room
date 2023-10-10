@@ -1,7 +1,6 @@
 import datetime
 import io
 from datetime import date, timedelta
-from typing import Dict
 
 from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import and_, between, delete, select
@@ -10,7 +9,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.tools.utils import count_duration
 from repositories.bookings.abc import AbstractBookingRepository
-from repositories.participants.repository import SqlParticipantRepository
 from schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
 from storage.sql import AbstractSQLAlchemyStorage
 from storage.sql.models import Booking, Participant
@@ -77,15 +75,13 @@ class SqlBookingRepository(AbstractBookingRepository):
 
         lightGreen = (123, 209, 72)
         lightGray = (211, 211, 211)
+        lightBlack = (48, 54, 59)
         lightBlue = (173, 216, 230)
         red = (255, 0, 0)
         black = (0, 0, 0)
 
-        # Define fonts
-        fontSimple = ImageFont.load_default()
-        fontBold = ImageFont.load_default()
+        fontSimple = ImageFont.truetype("repositories/bookings/open_sans.ttf", size=14)
 
-        # Get bookings for the week
         bookings = await self.get_bookings_for_current_week()
 
         for booking in bookings:
@@ -101,19 +97,19 @@ class SqlBookingRepository(AbstractBookingRepository):
             x1 = x0 + xsize
             y1 = y0 + 31.5 * ylength
 
-            draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=red)
+            draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=lightGray)
             participant = await self.get_participant(booking.participant_id)
-            caption = participant.alias
 
-            if await count_duration(booking.time_start, booking.time_end) > 1:
-                caption += "\n"
-            else:
-                caption += " "
+            alias = participant.alias
+            if len(alias) > 12:
+                alias = alias[:9] + "..."
+
+            caption = alias + " "
 
             draw.text(
-                (x0 + 2, y0 + 2),
-                text=f"{caption}{booking.time_start.strftime('%H:%M')} {booking.time_end.strftime('%H:%M')}",
-                fill=black,
+                (x0 + 2, y0 + 5),
+                text=f"{caption}{booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}",
+                fill=lightBlack,
                 font=fontSimple,
             )
 
@@ -122,19 +118,14 @@ class SqlBookingRepository(AbstractBookingRepository):
 
         current_datetime = datetime.datetime.now()
 
-        # Extract the hour component from the current datetime
         current_hour = current_datetime.hour
         if 6 < current_hour < 23:
-            now_xcorner = xbase + xsize * weekday
-            now_ycorner = ybase + int(
-                ysize * ((datetime.datetime.now().hour - 7) + (datetime.datetime.now().minute / 60))
-            )
-            draw.rounded_rectangle((now_xcorner, now_ycorner, now_xcorner + xsize, now_ycorner + 2), 2, fill=red)
+            now_x0 = xbase + xsize * weekday
+            now_y0 = ybase + int(ysize * ((datetime.datetime.now().hour - 7) + (datetime.datetime.now().minute / 60)))
+            draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
 
-        # Save the image to a temporary file
         image.save("result.png")
 
-        # Open and return the temporary file as a stream
         with open("result.png", "rb") as f:
             image_stream = io.BytesIO(f.read())
 
