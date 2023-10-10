@@ -35,11 +35,10 @@ class SqlBookingRepository(AbstractBookingRepository):
             current_datetime = datetime.datetime.now()
             next_week_delta = 0
 
-            if current_datetime.weekday() == 6 and current_datetime.hour >= 22 and current_datetime.minute > 30:
-                next_week_delta = 8
-
+            if current_datetime.weekday() == 6 and current_datetime.hour >= 22 and current_datetime.minute >= 30:
+                next_week_delta = 7
             today = date.today()
-            start_of_week = (today - timedelta(days=today.weekday() + 1)) + timedelta(days=next_week_delta)
+            start_of_week = (today - timedelta(days=today.weekday())) + timedelta(days=next_week_delta)
             end_of_week = start_of_week + timedelta(days=6)
 
             query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
