@@ -53,13 +53,3 @@ async def is_sc_working(start_time: datetime.datetime, end_time: datetime.dateti
     if start_time.hour < 7 or (end_time.hour > 22 and end_time.minute > 30):
         return 0
     return 1
-
-
-def encrypt_phone_number(phone_number):
-    encrypted_phone_number = cipher_suite.encrypt(phone_number.encode())
-    return encrypted_phone_number
-
-
-def decrypt_phone_number(encrypted_phone_number):
-    decrypted_phone_number = cipher_suite.decrypt(encrypted_phone_number).decode()
-    return decrypted_phone_number

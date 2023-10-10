@@ -90,10 +90,6 @@ class SqlBookingRepository(AbstractBookingRepository):
         bookings = await self.get_bookings_for_current_week()
 
         for booking in bookings:
-            # currentFont = fontBold if booking.Participant.Alias == participant.Alias else fontSimple
-
-            # bookingBrush = lightGray if booking.Participant.Status == "free" else lightGreen
-
             day = booking.time_start.weekday()
 
             ylength = await count_duration(booking.time_start, booking.time_end)
