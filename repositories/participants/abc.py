@@ -16,7 +16,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
 
     @abstractmethod
     async def change_status(
-        self, participant_id: "ViewParticipantBeforeBooking", new_status: str
+            self, participant_id: "ViewParticipantBeforeBooking", new_status: str
     ) -> "ViewParticipantBeforeBooking":
         ...
 
@@ -44,6 +44,6 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
     async def get_phone_number(self, participant_id: int):
         ...
 
-    # @abstractmethod
-    # async def get_participant(self, participant_id) -> ViewParticipantBeforeBooking:
-    #     ...
+    @abstractmethod
+    async def is_user_registered(self, telegram_id: str) -> bool:
+        ...

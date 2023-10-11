@@ -16,7 +16,7 @@ class Participant(Base, IdMixin):
     alias: Mapped[str] = mapped_column(nullable=True)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     status: Mapped[str] = mapped_column(nullable=False, default="free")
-    telegram_id: Mapped[int] = mapped_column(nullable=True, default="null")
+    telegram_id: Mapped[str] = mapped_column(nullable=True, default="null")
     phone_number: Mapped[bytes] = mapped_column(nullable=True)
     need_to_fill_profile: Mapped[bool] = mapped_column(nullable=False)
 
@@ -27,6 +27,5 @@ class PotentialUser(Base):
     __tablename__ = "potential_user"
 
     email: Mapped[str] = mapped_column(primary_key=True, unique=True)
-    # phone_number: Mapped[str] = mapped_column(unique=True)
     code: Mapped[str] = mapped_column()
     code_expiration: Mapped[datetime.datetime] = mapped_column()
