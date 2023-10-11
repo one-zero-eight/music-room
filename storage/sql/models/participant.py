@@ -16,6 +16,7 @@ class Participant(Base, IdMixin):
     alias: Mapped[str] = mapped_column(nullable=True)
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     status: Mapped[str] = mapped_column(nullable=False, default="free")
+    telegram_id: Mapped[int] = mapped_column(nullable=True, default="null")
     phone_number: Mapped[bytes] = mapped_column(nullable=True)
     need_to_fill_profile: Mapped[bool] = mapped_column(nullable=False)
 
