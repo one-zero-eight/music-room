@@ -1,7 +1,8 @@
 import datetime
 from abc import ABCMeta, abstractmethod
 
-from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas import (CreateBooking, ViewBooking,
+                         ViewParticipantBeforeBooking)
 
 
 class AbstractBookingRepository(metaclass=ABCMeta):

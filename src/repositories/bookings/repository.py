@@ -9,7 +9,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.tools.utils import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
-from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas import (CreateBooking, ViewBooking,
+                         ViewParticipantBeforeBooking)
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 

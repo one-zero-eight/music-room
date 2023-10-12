@@ -6,9 +6,11 @@ from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.tools import Crypto
-from src.api.tools.utils import count_duration, max_hours_to_book_per_day, max_hours_to_book_per_week
+from src.api.tools.utils import (count_duration, max_hours_to_book_per_day,
+                                 max_hours_to_book_per_week)
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas import (CreateParticipant, FillParticipantProfile,
+                         ViewBooking, ViewParticipantBeforeBooking)
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 

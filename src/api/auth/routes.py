@@ -2,7 +2,8 @@ from starlette.background import BackgroundTasks
 
 from src.api.auth import router
 from src.api.auth.service import generate_temporary_code, send_email
-from src.api.dependencies import AUTH_REPOSITORY_DEPENDENCY, PARTICIPANT_REPOSITORY_DEPENDENCY
+from src.api.dependencies import (AUTH_REPOSITORY_DEPENDENCY,
+                                  PARTICIPANT_REPOSITORY_DEPENDENCY)
 from src.api.exceptions import InvalidCode, UserExists
 from src.schemas import CreateParticipant
 
