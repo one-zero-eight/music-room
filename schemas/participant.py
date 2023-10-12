@@ -16,11 +16,10 @@ class CreateParticipant(BaseModel):
 
 
 class FillParticipantProfile(BaseModel):
-    name: Optional[str] = None
+    name: str
     email: str
-    alias: Optional[str] = None
-    telegram_id: Optional[str] = None
-    phone_number: Optional[str] = None
+    alias: str
+    phone_number: str
 
 
 class ViewParticipantBeforeBooking(BaseModel):

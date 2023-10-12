@@ -122,9 +122,3 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             query = select(Participant).where(Participant.id == participant_id)
             obj = await session.scalar(query)
             return Crypto.decrypt(obj.phone_number)
-
-    async def is_user_registered(self, telegram_id: str) -> bool:
-        async with self._create_session() as session:
-            query = select(Participant).where(Participant.telegram_id == telegram_id)
-            obj = await session.scalar(query)
-            return True if obj is not None else False

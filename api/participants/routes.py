@@ -9,8 +9,8 @@ from schemas import (CreateParticipant, FillParticipantProfile, ViewBooking,
 
 @router.post("/fill_profile")
 async def fill_profile(
-        participant: FillParticipantProfile,
-        participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
+    participant: FillParticipantProfile,
+    participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewParticipantBeforeBooking:
     created = await participant_repository.fill_profile(participant)
     return created
@@ -18,9 +18,9 @@ async def fill_profile(
 
 @router.put("/{participant_id}/status")
 async def change_status(
-        participant_id: int,
-        new_status: str,
-        participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
+    participant_id: int,
+    new_status: str,
+    participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewParticipantBeforeBooking | str:
     try:
         status_validate(new_status)
@@ -33,7 +33,7 @@ async def change_status(
 
 @router.get("/{participant_id}/bookings")
 async def get_participant_bookings(
-        participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
+    participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
 ) -> list[ViewBooking]:
     bookings = await participant_repository.get_participant_bookings(participant_id)
     return bookings
@@ -41,7 +41,7 @@ async def get_participant_bookings(
 
 @router.get("/{participant_id}/remaining_weekly_hours")
 async def get_remaining_weekly_hours(
-        participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
+    participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
 ) -> float:
     ans = await participant_repository.remaining_weekly_hours(participant_id)
     return ans
@@ -49,7 +49,7 @@ async def get_remaining_weekly_hours(
 
 @router.get("/{participant_id}/remaining_daily_hours")
 async def get_remaining_daily_hours(
-        participant_id: int, date: str, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
+    participant_id: int, date: str, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY
 ) -> float:
     try:
         parsed_date = await get_date_from_str(date)
@@ -62,8 +62,3 @@ async def get_remaining_daily_hours(
 @router.get("/{participant_id}/phone_number")
 async def get_phone_number(participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY):
     return await participant_repository.get_phone_number(participant_id)
-
-
-@router.get("/is_user_exists")
-async def is_user_exists(telegram_id: str, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY) -> bool:
-    return await participant_repository.is_user_registered(telegram_id)

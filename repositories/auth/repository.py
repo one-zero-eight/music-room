@@ -1,6 +1,6 @@
 import datetime
 
-from sqlalchemy import and_, select
+from sqlalchemy import and_, or_, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -18,13 +18,11 @@ class SqlAuthRepository(AbstractAuthRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def is_user_registered(self, email: str) -> bool:
+    async def is_user_registered(self, email: str, telegram_id: str) -> bool:
         async with self._create_session() as session:
-            query = select(Participant).where(Participant.email == email)
+            query = select(Participant).where(or_(Participant.email == email, Participant.telegram_id == telegram_id))
             obj = await session.scalar(query)
-            if obj is not None:
-                return True
-            return False
+            return False if obj is None else True
 
     async def save_code(self, email: str, code: str) -> None:
         async with self._create_session() as session:

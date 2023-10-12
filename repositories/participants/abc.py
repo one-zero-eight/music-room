@@ -43,7 +43,3 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
     @abstractmethod
     async def get_phone_number(self, participant_id: int):
         ...
-
-    @abstractmethod
-    async def is_user_registered(self, telegram_id: str) -> bool:
-        ...

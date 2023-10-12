@@ -26,6 +26,7 @@ async def setup_repositories():
     # await storage.create_all()
 
 
+
 @app.on_event("startup")
 async def startup_event():
     await setup_repositories()
