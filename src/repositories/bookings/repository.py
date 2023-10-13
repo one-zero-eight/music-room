@@ -1,11 +1,12 @@
+import base64
 import datetime
-import io
 from datetime import date, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import and_, between, delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.responses import JSONResponse
 
 from src.api.tools.utils import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
@@ -76,7 +77,7 @@ class SqlBookingRepository(AbstractBookingRepository):
         ysize = 32  # length of the rect by x-axis
 
         # Create a new image using PIL
-        image = Image.open("repositories/bookings/schedule.jpg")
+        image = Image.open("src/repositories/bookings/schedule.jpg")
         draw = ImageDraw.Draw(image)
 
         lightGreen = (123, 209, 72)
@@ -86,7 +87,7 @@ class SqlBookingRepository(AbstractBookingRepository):
         red = (255, 0, 0)
         black = (0, 0, 0)
 
-        fontSimple = ImageFont.truetype("repositories/bookings/open_sans.ttf", size=14)
+        fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
 
         bookings = await self.get_bookings_for_current_week()
 
@@ -129,6 +130,8 @@ class SqlBookingRepository(AbstractBookingRepository):
         image.save("result.png")
 
         with open("result.png", "rb") as f:
-            image_stream = io.BytesIO(f.read())
+            image_stream = f.read()
 
-        return image_stream
+        image_base64 = base64.b64encode(image_stream).decode('utf-8')
+
+        return JSONResponse(image_base64)
