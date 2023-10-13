@@ -58,5 +58,5 @@ async def delete_booking(
 
 
 @router.get("/form_schedule")
-async def form_schedule(booking_repository: BOOKING_REPOSITORY_DEPENDENCY):
-    return await booking_repository.form_schedule()
+async def form_schedule(booking_repository: BOOKING_REPOSITORY_DEPENDENCY, current_week: bool) -> str:
+    return await booking_repository.form_schedule(current_week)

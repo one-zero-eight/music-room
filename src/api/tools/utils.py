@@ -31,7 +31,7 @@ def max_hours_to_book_per_week(status: str):
 async def count_duration(start_time: datetime.datetime, end_time: datetime.datetime):
     duration = end_time - start_time
     seconds = duration.seconds
-    minutes = seconds // 60
+    minutes = seconds // 60 - 1
     hours = minutes / 60
     return hours
 

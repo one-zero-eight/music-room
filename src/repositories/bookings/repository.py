@@ -32,12 +32,11 @@ class SqlBookingRepository(AbstractBookingRepository):
             await session.commit()
             return ViewBooking.model_validate(obj)
 
-    async def get_bookings_for_current_week(self) -> list[ViewBooking]:
+    async def get_bookings_for_current_week(self, current_week: bool) -> list[ViewBooking]:
         async with (self._create_session() as session):
-            current_datetime = datetime.datetime.now()
             next_week_delta = 0
 
-            if current_datetime.weekday() == 6 and current_datetime.hour >= 22 and current_datetime.minute >= 30:
+            if not current_week:
                 next_week_delta = 7
             today = date.today()
             start_of_week = (today - timedelta(days=today.weekday())) + timedelta(days=next_week_delta)
@@ -70,7 +69,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             obj = await session.scalar(query)
             return ViewParticipantBeforeBooking.model_validate(obj)
 
-    async def form_schedule(self):
+    async def form_schedule(self, current_week: bool) -> str:
         xbase = 48  # origin for x
         ybase = 73  # origin for y
         xsize = 175.5  # length of the rect by x-axis
@@ -89,7 +88,7 @@ class SqlBookingRepository(AbstractBookingRepository):
 
         fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
 
-        bookings = await self.get_bookings_for_current_week()
+        bookings = await self.get_bookings_for_current_week(current_week)
 
         for booking in bookings:
             day = booking.time_start.weekday()
@@ -134,4 +133,4 @@ class SqlBookingRepository(AbstractBookingRepository):
 
         image_base64 = base64.b64encode(image_stream).decode('utf-8')
 
-        return JSONResponse(image_base64)
+        return image_base64
