@@ -6,8 +6,8 @@ from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import and_, between, delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
-from starlette.responses import JSONResponse
 
+from src.api.tools.calendar_numbers import sign_numbers
 from src.api.tools.utils import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.schemas import (CreateBooking, ViewBooking,
@@ -70,6 +70,8 @@ class SqlBookingRepository(AbstractBookingRepository):
             return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def form_schedule(self, current_week: bool) -> str:
+        # if current_week:
+        #     await sign_numbers()
         xbase = 48  # origin for x
         ybase = 73  # origin for y
         xsize = 175.5  # length of the rect by x-axis
@@ -89,7 +91,6 @@ class SqlBookingRepository(AbstractBookingRepository):
         fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
 
         bookings = await self.get_bookings_for_current_week(current_week)
-
         for booking in bookings:
             day = booking.time_start.weekday()
 
@@ -126,9 +127,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             now_y0 = ybase + int(ysize * ((datetime.datetime.now().hour - 7) + (datetime.datetime.now().minute / 60)))
             draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
 
-        image.save("result.png")
+        image.save("result.jpg")
 
-        with open("result.png", "rb") as f:
+        with open("result.jpg", "rb") as f:
             image_stream = f.read()
 
         image_base64 = base64.b64encode(image_stream).decode('utf-8')
