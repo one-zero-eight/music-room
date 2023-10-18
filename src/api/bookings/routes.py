@@ -1,9 +1,7 @@
-from starlette.responses import JSONResponse
-
 from src.api.bookings import router
 from src.api.dependencies import (BOOKING_REPOSITORY_DEPENDENCY,
                                   PARTICIPANT_REPOSITORY_DEPENDENCY)
-from src.api.exceptions import (CollisionInBooking, IncompleteProfile,
+from src.api.exceptions import (CollisionInBookings, IncompleteProfile,
                                 NotEnoughDailyHoursToBook,
                                 NotEnoughWeeklyHoursToBook, NotWorkingHours)
 from src.api.tools.utils import count_duration, is_sc_working
@@ -38,7 +36,7 @@ async def create_booking(
                     created = await booking_repository.create(booking)
                     return created
             else:
-                raise CollisionInBooking()
+                raise CollisionInBookings()
 
 
 @router.get("")

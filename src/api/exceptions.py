@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from starlette import status
 
 
-class CollisionInBooking(HTTPException):
+class CollisionInBookings(HTTPException):
     """
     HTTP_409_CONFLICT
     """

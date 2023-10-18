@@ -110,7 +110,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             caption = alias + " "
 
             draw.text(
-                (x0 + 2, y0 + 5),
+                (x0 + 2, (y0 + y1) / 2 - 9),
                 text=f"{caption}{booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}",
                 fill=lightBlack,
                 font=fontSimple,
