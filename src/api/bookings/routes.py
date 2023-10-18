@@ -44,8 +44,9 @@ async def create_booking(
 @router.get("")
 async def get_bookings_for_current_week(
         booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
+        current_week: bool
 ) -> list[ViewBooking]:
-    bookings = await booking_repository.get_bookings_for_current_week()
+    bookings = await booking_repository.get_bookings_for_current_week(current_week)
     return bookings
 
 
