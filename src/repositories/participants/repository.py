@@ -121,3 +121,10 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             query = select(Participant).where(Participant.id == participant_id)
             obj = await session.scalar(query)
             return Crypto.decrypt(obj.phone_number)
+
+    async def get_participant_id(self, telegram_id: str) -> int:
+        async with self._create_session() as session:
+            query = select(Participant).where(Participant.telegram_id == telegram_id)
+            obj = await session.scalar(query)
+            print(obj)
+            return obj.id

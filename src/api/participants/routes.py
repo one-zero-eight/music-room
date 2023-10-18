@@ -62,3 +62,9 @@ async def get_remaining_daily_hours(
 @router.get("/{participant_id}/phone_number")
 async def get_phone_number(participant_id: int, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY):
     return await participant_repository.get_phone_number(participant_id)
+
+
+@router.get("/participant_id")
+async def get_participant_id(telegram_id: str, participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY):
+    res = await participant_repository.get_participant_id(telegram_id)
+    return res

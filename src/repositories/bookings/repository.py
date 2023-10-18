@@ -132,6 +132,6 @@ class SqlBookingRepository(AbstractBookingRepository):
         with open("result.jpg", "rb") as f:
             image_stream = f.read()
 
-        image_base64 = base64.b64encode(image_stream).decode('utf-8')
+        image_base64 = base64.b64encode(image_stream).decode("utf-8")
 
         return image_base64

@@ -1,5 +1,6 @@
-from PIL import Image, ImageDraw, ImageFont
 from datetime import datetime, timedelta
+
+from PIL import Image, ImageDraw, ImageFont
 
 
 async def sign_numbers():
@@ -27,9 +28,12 @@ async def sign_numbers():
 
     draw.ellipse(
         (
-            (xbase - radius) + xstep * current_day, ybase - radius, (xbase + radius) + xstep * current_day,
-            ybase + radius),
-        outline=red
+            (xbase - radius) + xstep * current_day,
+            ybase - radius,
+            (xbase + radius) + xstep * current_day,
+            ybase + radius,
+        ),
+        outline=red,
     )
 
     image.save("sign.jpg")
