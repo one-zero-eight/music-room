@@ -7,7 +7,6 @@ from sqlalchemy import and_, between, delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.tools.calendar_numbers import sign_numbers
 from src.api.tools.utils import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.schemas import (CreateBooking, ViewBooking,
@@ -70,8 +69,6 @@ class SqlBookingRepository(AbstractBookingRepository):
             return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def form_schedule(self, current_week: bool) -> str:
-        # if current_week:
-        #     await sign_numbers()
         xbase = 48  # origin for x
         ybase = 73  # origin for y
         xsize = 175.5  # length of the rect by x-axis
@@ -81,12 +78,9 @@ class SqlBookingRepository(AbstractBookingRepository):
         image = Image.open("src/repositories/bookings/schedule.jpg")
         draw = ImageDraw.Draw(image)
 
-        lightGreen = (123, 209, 72)
         lightGray = (211, 211, 211)
         lightBlack = (48, 54, 59)
-        lightBlue = (173, 216, 230)
         red = (255, 0, 0)
-        black = (0, 0, 0)
 
         fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
 
@@ -105,9 +99,9 @@ class SqlBookingRepository(AbstractBookingRepository):
 
             alias = participant.alias
             if len(alias) > 11:
-                alias = alias[:11] + "..."
+                alias = f"{alias[:11]}..."
 
-            caption = alias + " "
+            caption = f"{alias} "
 
             draw.text(
                 (x0 + 2, (y0 + y1) / 2 - 9),
