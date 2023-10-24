@@ -1,5 +1,5 @@
 from src.api.dependencies import PARTICIPANT_REPOSITORY_DEPENDENCY
-from src.api.exceptions import InvalidDateFormat, InvalidParticipantStatus
+from src.exceptions import InvalidDateFormat, InvalidParticipantStatus
 from src.api.participants import router
 from src.api.tools.utils import get_date_from_str
 from src.api.tools.utils import max_hours_to_book_per_day as status_validate

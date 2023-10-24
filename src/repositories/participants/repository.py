@@ -126,5 +126,4 @@ class SqlParticipantRepository(AbstractParticipantRepository):
         async with self._create_session() as session:
             query = select(Participant).where(Participant.telegram_id == telegram_id)
             obj = await session.scalar(query)
-            print(obj)
             return obj.id

@@ -1,9 +1,9 @@
 from src.api.bookings import router
 from src.api.dependencies import (BOOKING_REPOSITORY_DEPENDENCY,
                                   PARTICIPANT_REPOSITORY_DEPENDENCY)
-from src.api.exceptions import (CollisionInBookings, IncompleteProfile,
-                                NotEnoughDailyHoursToBook,
-                                NotEnoughWeeklyHoursToBook, NotWorkingHours)
+from src.exceptions import (CollisionInBookings, IncompleteProfile,
+                            NotEnoughDailyHoursToBook,
+                            NotEnoughWeeklyHoursToBook, NotWorkingHours)
 from src.api.tools.utils import count_duration, is_sc_working
 from src.schemas import CreateBooking, ViewBooking
 

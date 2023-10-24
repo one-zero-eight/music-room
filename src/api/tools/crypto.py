@@ -1,6 +1,6 @@
 from cryptography.fernet import Fernet
 
-from config import settings
+from src.config import settings
 
 
 class Crypto:

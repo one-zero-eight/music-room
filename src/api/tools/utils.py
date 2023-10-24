@@ -1,7 +1,7 @@
 import datetime
 from datetime import datetime as dt
 
-from src.api.exceptions import InvalidParticipantStatus
+from src.exceptions import InvalidParticipantStatus
 
 
 def max_hours_to_book_per_day(status: str):

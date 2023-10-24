@@ -6,7 +6,7 @@ from email.mime.text import MIMEText
 
 from fastapi import HTTPException
 
-from config import settings
+from src.config import settings
 
 
 async def generate_temporary_code():
