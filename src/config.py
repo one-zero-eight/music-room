@@ -1,20 +1,7 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+import os
+from pathlib import Path
 
+from src.config_schema import Settings
 
-class Settings(BaseSettings):
-    DB_URL: str
-
-    # SMTP server config
-    SMTP_SERVER: str
-    SMTP_PORT: int
-    SMTP_USERNAME: str
-    SMTP_PASSWORD: str
-
-    CRYPTO_SECRET_KEY: bytes
-
-    class Config:
-        env_file = ".env.local"
-        env_file_encoding = "utf-8"
-
-
-settings = Settings()
+settings_path = os.getenv("SETTINGS_PATH", "settings.yaml")
+settings: Settings = Settings.from_yaml(Path(settings_path))

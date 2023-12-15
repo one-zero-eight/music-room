@@ -1,4 +1,11 @@
-.env.local
-/.idea
-__pycache__/
+### PyCharm ###
+.idea
+
+### Cache ###
+__pycache__
+.ruff_cache
 *.py[cod]
+
+### Environment ###
+.env
+settings.yaml

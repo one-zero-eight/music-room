@@ -1,0 +1,42 @@
+$schema: http://json-schema.org/draft-07/schema#
+properties:
+  DB_URL:
+    default: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+    example: postgresql+asyncpg://user:password@localhost:5432/db_name
+    title: Db Url
+    type: string
+  SMTP_SERVER:
+    example: smtp.gmail.com
+    title: Smtp Server
+    type: string
+  SMTP_PORT:
+    default: 587
+    title: Smtp Port
+    type: integer
+  SMTP_USERNAME:
+    example: some-username@gmail.com
+    title: Smtp Username
+    type: string
+  SMTP_PASSWORD:
+    example: xxxxxxxx
+    title: Smtp Password
+    type: string
+  CRYPTO_PASSWORD:
+    description: Run 'openssl rand -hex 32' to generate key
+    example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    format: binary
+    title: Crypto Password
+    type: string
+  CRYPTO_SALT:
+    example: xxxxxxxxxxxxxxxx
+    format: binary
+    title: Crypto Salt
+    type: string
+required:
+- SMTP_SERVER
+- SMTP_USERNAME
+- SMTP_PASSWORD
+- CRYPTO_PASSWORD
+- CRYPTO_SALT
+title: Settings
+type: object
