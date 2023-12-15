@@ -1,11 +1,23 @@
+import base64
+
 from cryptography.fernet import Fernet
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 from src.config import settings
 
 
 class Crypto:
-    secret_key = settings.CRYPTO_SECRET_KEY
-    cipher_suite = Fernet(secret_key)
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA256(),
+        length=32,
+        salt=settings.CRYPTO_SALT,
+        iterations=480000,
+    )
+
+    cipher_suite = Fernet(
+        base64.urlsafe_b64encode(kdf.derive(settings.CRYPTO_PASSWORD))
+    )
 
     @classmethod
     def encrypt(cls, phone_number: str):
