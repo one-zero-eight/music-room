@@ -5,6 +5,8 @@ from pydantic import BaseModel, Field
 
 
 class Settings(BaseModel):
+    APP_ROOT_PATH: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
+
     DB_URL: str = Field(
         "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
         example="postgresql+asyncpg://user:password@localhost:5432/db_name",
