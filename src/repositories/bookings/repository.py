@@ -7,7 +7,7 @@ from sqlalchemy import and_, between, delete, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.api.tools.utils import count_duration
+from src.tools import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
 from src.storage.sql import AbstractSQLAlchemyStorage

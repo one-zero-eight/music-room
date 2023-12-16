@@ -1,7 +1,7 @@
 from src.api.dependencies import Dependencies
 from src.api.participants import router
-from src.api.tools.utils import get_date_from_str
-from src.api.tools.utils import max_hours_to_book_per_day as status_validate
+from src.tools import get_date_from_str
+from src.tools import max_hours_to_book_per_day as status_validate
 from src.exceptions import InvalidDateFormat, InvalidParticipantStatus
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking

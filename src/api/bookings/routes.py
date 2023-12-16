@@ -1,6 +1,6 @@
 from src.api.bookings import router
 from src.api.dependencies import Dependencies
-from src.api.tools.utils import count_duration, is_sc_working
+from src.tools import count_duration, is_sc_working
 from src.exceptions import (
     CollisionInBookings,
     IncompleteProfile,
