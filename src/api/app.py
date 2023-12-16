@@ -11,7 +11,7 @@ from src.repositories.bookings.abc import AbstractBookingRepository
 from src.repositories.bookings.repository import SqlBookingRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.repositories.participants.repository import SqlParticipantRepository
-from src.storage.sql import SQLAlchemyStorage, AbstractSQLAlchemyStorage
+from src.storage.sql import SQLAlchemyStorage
 
 # App definition
 app = FastAPI(
