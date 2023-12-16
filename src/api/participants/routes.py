@@ -3,6 +3,7 @@ from src.api.participants import router
 from src.api.tools.utils import get_date_from_str
 from src.api.tools.utils import max_hours_to_book_per_day as status_validate
 from src.exceptions import InvalidDateFormat, InvalidParticipantStatus
+from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import (FillParticipantProfile, ViewBooking,
                          ViewParticipantBeforeBooking)
 
@@ -11,7 +12,7 @@ from src.schemas import (FillParticipantProfile, ViewBooking,
 async def fill_profile(
     participant: FillParticipantProfile,
 ) -> ViewParticipantBeforeBooking:
-    participant_repository = Dependencies.get_participant_repository()
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
     created = await participant_repository.fill_profile(participant)
     return created
 
@@ -21,7 +22,7 @@ async def change_status(
     participant_id: int,
     new_status: str,
 ) -> ViewParticipantBeforeBooking | str:
-    participant_repository = Dependencies.get_participant_repository()
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
 
     try:
         status_validate(new_status)
@@ -36,7 +37,7 @@ async def change_status(
 async def get_participant_bookings(
     participant_id: int
 ) -> list[ViewBooking]:
-    participant_repository = Dependencies.get_participant_repository()
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
     bookings = await participant_repository.get_participant_bookings(participant_id)
     return bookings
 
@@ -45,7 +46,7 @@ async def get_participant_bookings(
 async def get_remaining_weekly_hours(
     participant_id: int
 ) -> float:
-    participant_repository = Dependencies.get_participant_repository()
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
     ans = await participant_repository.remaining_weekly_hours(participant_id)
     return ans
 
@@ -54,7 +55,7 @@ async def get_remaining_weekly_hours(
 async def get_remaining_daily_hours(
     participant_id: int, date: str
 ) -> float:
-    participant_repository = Dependencies.get_participant_repository()
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
 
     try:
         parsed_date = await get_date_from_str(date)
@@ -66,14 +67,14 @@ async def get_remaining_daily_hours(
 
 @router.get("/{participant_id}/phone_number")
 async def get_phone_number(participant_id: int):
-    participant_repository = Dependencies.get_participant_repository()
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
 
     return await participant_repository.get_phone_number(participant_id)
 
 
 @router.get("/participant_id")
 async def get_participant_id(telegram_id: str):
-    participant_repository = Dependencies.get_participant_repository()
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
 
     res = await participant_repository.get_participant_id(telegram_id)
     return res

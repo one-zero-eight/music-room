@@ -4,12 +4,14 @@ from src.api.auth import router
 from src.api.auth.service import generate_temporary_code, send_email
 from src.api.dependencies import Dependencies
 from src.exceptions import InvalidCode, UserExists
+from src.repositories.auth.abc import AbstractAuthRepository
+from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import CreateParticipant
 
 
 @router.post("/registration")
 async def registration(background_task: BackgroundTasks, email: str):
-    auth_repository = Dependencies.get_auth_repository()
+    auth_repository = Dependencies.f(AbstractAuthRepository)
 
     if await auth_repository.is_user_registered(email, telegram_id=None):
         raise UserExists()
@@ -21,7 +23,7 @@ async def registration(background_task: BackgroundTasks, email: str):
 
 @router.get("/is_user_exists")
 async def is_user_exists(email: str = None, telegram_id: str = None) -> bool:
-    auth_repository = Dependencies.get_auth_repository()
+    auth_repository = Dependencies.f(AbstractAuthRepository)
     if await auth_repository.is_user_registered(email, telegram_id):
         return True
     return False
@@ -33,8 +35,8 @@ async def validate_code(
     code: str,
     telegram_id: str,
 ):
-    auth_repository = Dependencies.get_auth_repository()
-    participant_repository = Dependencies.get_participant_repository()
+    auth_repository = Dependencies.f(AbstractAuthRepository)
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
 
     if await auth_repository.is_code_valid(email, code):
         participant = CreateParticipant(

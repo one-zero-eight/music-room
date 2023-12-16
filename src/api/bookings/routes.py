@@ -8,6 +8,8 @@ from src.exceptions import (
     NotEnoughWeeklyHoursToBook,
     NotWorkingHours,
 )
+from src.repositories.bookings.abc import AbstractBookingRepository
+from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import CreateBooking, ViewBooking
 
 
@@ -15,8 +17,8 @@ from src.schemas import CreateBooking, ViewBooking
 async def create_booking(
     booking: "CreateBooking",
 ) -> ViewBooking | str:
-    booking_repository = Dependencies.get_booking_repository()
-    participant_repository = Dependencies.get_participant_repository()
+    booking_repository = Dependencies.f(AbstractBookingRepository)
+    participant_repository = Dependencies.f(AbstractParticipantRepository)
 
     if not await is_sc_working(booking.time_start, booking.time_end):
         raise NotWorkingHours()
@@ -57,7 +59,7 @@ async def create_booking(
 
 @router.get("")
 async def get_bookings_for_current_week(current_week: bool) -> list[ViewBooking]:
-    booking_repository = Dependencies.get_booking_repository()
+    booking_repository = Dependencies.f(AbstractBookingRepository)
     bookings = await booking_repository.get_bookings_for_current_week(current_week)
     return bookings
 
@@ -66,11 +68,11 @@ async def get_bookings_for_current_week(current_week: bool) -> list[ViewBooking]
 async def delete_booking(
     booking_id: int,
 ) -> ViewBooking:
-    booking_repository = Dependencies.get_booking_repository()
+    booking_repository = Dependencies.f(AbstractBookingRepository)
     return await booking_repository.delete_booking(booking_id)
 
 
 @router.get("/form_schedule")
 async def form_schedule(current_week: bool) -> str:
-    booking_repository = Dependencies.get_booking_repository()
+    booking_repository = Dependencies.f(AbstractBookingRepository)
     return await booking_repository.form_schedule(current_week)

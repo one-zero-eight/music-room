@@ -5,10 +5,13 @@ from src.api.docs import generate_unique_operation_id
 from src.config import settings
 from src.api.dependencies import Dependencies
 from src.api.routers import routers
+from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.auth.repository import SqlAuthRepository
+from src.repositories.bookings.abc import AbstractBookingRepository
 from src.repositories.bookings.repository import SqlBookingRepository
+from src.repositories.participants.abc import AbstractParticipantRepository
 from src.repositories.participants.repository import SqlParticipantRepository
-from src.storage.sql import SQLAlchemyStorage
+from src.storage.sql import SQLAlchemyStorage, AbstractSQLAlchemyStorage
 
 # App definition
 app = FastAPI(
@@ -35,10 +38,10 @@ async def setup_repositories():
     participant_repository = SqlParticipantRepository(storage)
     booking_repository = SqlBookingRepository(storage)
     auth_repository = SqlAuthRepository(storage)
-    Dependencies.set_storage(storage)
-    Dependencies.set_participant_repository(participant_repository)
-    Dependencies.set_booking_repository(booking_repository)
-    Dependencies.set_auth_repository(auth_repository)
+    Dependencies.register_provider(AbstractSQLAlchemyStorage, storage)
+    Dependencies.register_provider(AbstractParticipantRepository, participant_repository)
+    Dependencies.register_provider(AbstractBookingRepository, booking_repository)
+    Dependencies.register_provider(AbstractAuthRepository, auth_repository)
 
     # await storage.drop_all()
     # await storage.create_all()
