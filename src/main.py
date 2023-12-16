@@ -38,13 +38,9 @@ async def setup_repositories():
     participant_repository = SqlParticipantRepository(storage)
     booking_repository = SqlBookingRepository(storage)
     auth_repository = SqlAuthRepository(storage)
-    Dependencies.register_provider(AbstractSQLAlchemyStorage, storage)
     Dependencies.register_provider(AbstractParticipantRepository, participant_repository)
     Dependencies.register_provider(AbstractBookingRepository, booking_repository)
     Dependencies.register_provider(AbstractAuthRepository, auth_repository)
-
-    # await storage.drop_all()
-    # await storage.create_all()
 
 
 @app.on_event("startup")
