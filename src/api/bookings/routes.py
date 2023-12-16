@@ -1,6 +1,6 @@
 from src.api.bookings import router
 from src.api.dependencies import (BOOKING_REPOSITORY_DEPENDENCY,
-                                  PARTICIPANT_REPOSITORY_DEPENDENCY)
+                                  PARTICIPANT_REPOSITORY_DEPENDENCY, Dependencies)
 from src.exceptions import (CollisionInBookings, IncompleteProfile,
                             NotEnoughDailyHoursToBook,
                             NotEnoughWeeklyHoursToBook, NotWorkingHours)
@@ -12,8 +12,9 @@ from src.schemas import CreateBooking, ViewBooking
 async def create_booking(
     booking: "CreateBooking",
     booking_repository: BOOKING_REPOSITORY_DEPENDENCY,
-    participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ) -> ViewBooking | str:
+    participant_repository = Dependencies.get_participant_repository()
+
     if not await is_sc_working(booking.time_start, booking.time_end):
         raise NotWorkingHours()
     else:

@@ -3,7 +3,7 @@ from starlette.background import BackgroundTasks
 from src.api.auth import router
 from src.api.auth.service import generate_temporary_code, send_email
 from src.api.dependencies import (AUTH_REPOSITORY_DEPENDENCY,
-                                  PARTICIPANT_REPOSITORY_DEPENDENCY)
+                                  PARTICIPANT_REPOSITORY_DEPENDENCY, Dependencies)
 from src.exceptions import InvalidCode, UserExists
 from src.schemas import CreateParticipant
 
@@ -33,8 +33,9 @@ async def validate_code(
     code: str,
     telegram_id: str,
     auth_repository: AUTH_REPOSITORY_DEPENDENCY,
-    participant_repository: PARTICIPANT_REPOSITORY_DEPENDENCY,
 ):
+    participant_repository = Dependencies.get_participant_repository()
+
     if await auth_repository.is_code_valid(email, code):
         participant = CreateParticipant(email=email, need_to_fill_profile=True, status="free", telegram_id=telegram_id)
         created = await participant_repository.create(participant)
