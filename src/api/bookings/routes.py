@@ -26,29 +26,17 @@ async def create_booking(
         if await participant_repository.is_need_to_fill_profile(booking.participant_id):
             raise IncompleteProfile()
         else:
-            if not await booking_repository.check_collision(
-                booking.time_start, booking.time_end
-            ):
-                booking_duration = await count_duration(
-                    booking.time_start, booking.time_end
-                )
+            if not await booking_repository.check_collision(booking.time_start, booking.time_end):
+                booking_duration = await count_duration(booking.time_start, booking.time_end)
 
                 if (
-                    await participant_repository.remaining_daily_hours(
-                        booking.participant_id, booking.time_start
-                    )
+                    await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
                     - booking_duration
                     < 0
                 ):
                     raise NotEnoughDailyHoursToBook()
 
-                elif (
-                    await participant_repository.remaining_weekly_hours(
-                        booking.participant_id
-                    )
-                    - booking_duration
-                    < 0
-                ):
+                elif await participant_repository.remaining_weekly_hours(booking.participant_id) - booking_duration < 0:
                     raise NotEnoughWeeklyHoursToBook()
                 else:
                     created = await booking_repository.create(booking)

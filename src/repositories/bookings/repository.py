@@ -9,8 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.api.tools.utils import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
-from src.schemas import (CreateBooking, ViewBooking,
-                         ViewParticipantBeforeBooking)
+from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 
@@ -32,7 +31,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             return ViewBooking.model_validate(obj)
 
     async def get_bookings_for_current_week(self, current_week: bool) -> list[ViewBooking]:
-        async with (self._create_session() as session):
+        async with self._create_session() as session:
             next_week_delta = 0
 
             if not current_week:

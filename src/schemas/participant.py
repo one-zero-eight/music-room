@@ -1,8 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel, ConfigDict, Field
-
-from src.schemas import ViewBooking
+from pydantic import BaseModel, ConfigDict
 
 
 class CreateParticipant(BaseModel):

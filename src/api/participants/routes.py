@@ -4,8 +4,7 @@ from src.api.tools.utils import get_date_from_str
 from src.api.tools.utils import max_hours_to_book_per_day as status_validate
 from src.exceptions import InvalidDateFormat, InvalidParticipantStatus
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import (FillParticipantProfile, ViewBooking,
-                         ViewParticipantBeforeBooking)
+from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
 
 
 @router.post("/fill_profile")
@@ -34,27 +33,21 @@ async def change_status(
 
 
 @router.get("/{participant_id}/bookings")
-async def get_participant_bookings(
-    participant_id: int
-) -> list[ViewBooking]:
+async def get_participant_bookings(participant_id: int) -> list[ViewBooking]:
     participant_repository = Dependencies.f(AbstractParticipantRepository)
     bookings = await participant_repository.get_participant_bookings(participant_id)
     return bookings
 
 
 @router.get("/{participant_id}/remaining_weekly_hours")
-async def get_remaining_weekly_hours(
-    participant_id: int
-) -> float:
+async def get_remaining_weekly_hours(participant_id: int) -> float:
     participant_repository = Dependencies.f(AbstractParticipantRepository)
     ans = await participant_repository.remaining_weekly_hours(participant_id)
     return ans
 
 
 @router.get("/{participant_id}/remaining_daily_hours")
-async def get_remaining_daily_hours(
-    participant_id: int, date: str
-) -> float:
+async def get_remaining_daily_hours(participant_id: int, date: str) -> float:
     participant_repository = Dependencies.f(AbstractParticipantRepository)
 
     try:

@@ -11,7 +11,6 @@ fastapi = "^0.103.1"
 uvicorn = "^0.23.2"
 sqlalchemy = "^2.0.20"
 python-dotenv = "^1.0.0"
-black = "^23.9.1"
 isort = "^5.12.0"
 asyncpg = "^0.28.0"
 pydantic-settings = "^2.0.3"
@@ -20,10 +19,15 @@ cryptography = "^41.0.4"
 pillow = "^10.0.1"
 pyyaml = "^6.0.1"
 alembic = "^1.13.0"
+ruff = "^0.1.8"
 
-[tool.black]
-line-length = 120 # Maximum line length
-
+[tool.ruff]
+line-length = 120
+ignore = [
+    # wildcard imports are fine
+    "F403",
+    "F405",
+]
 
 [build-system]
 requires = ["poetry-core"]
