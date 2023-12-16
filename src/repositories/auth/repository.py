@@ -18,9 +18,16 @@ class SqlAuthRepository(AbstractAuthRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def is_user_registered(self, email: str, telegram_id: str) -> bool:
+    async def is_user_registered(self, email: str, telegram_id: str | None) -> bool:
         async with self._create_session() as session:
-            query = select(Participant).where(or_(Participant.email == email, Participant.telegram_id == telegram_id))
+            if email is None and telegram_id is None:
+                return False
+            clauses = []
+            if email is not None:
+                clauses.append(Participant.email == email)
+            if telegram_id is not None:
+                clauses.append(Participant.telegram_id == telegram_id)
+            query = select(Participant).where(or_(*clauses))
             obj = await session.scalar(query)
             return False if obj is None else True
 

@@ -3,7 +3,7 @@ from abc import ABCMeta, abstractmethod
 
 class AbstractAuthRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def is_user_registered(self, email: str, telegram_id: str) -> bool:
+    async def is_user_registered(self, email: str, telegram_id: str | None) -> bool:
         ...
 
     @abstractmethod
