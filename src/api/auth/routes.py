@@ -1,12 +1,20 @@
+import random
+
 from starlette.background import BackgroundTasks
 
 from src.api.auth import router
-from src.api.auth.service import generate_temporary_code, send_email
 from src.api.dependencies import Dependencies
+from src.config import settings
 from src.exceptions import InvalidCode, UserExists
 from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
+from src.repositories.smtp.repository import SMTPRepository
 from src.schemas import CreateParticipant
+
+
+def _generate_auth_code() -> str:
+    # return random 6-digit code
+    return str(random.randint(100_000, 999_999))
 
 
 @router.post("/registration")
@@ -16,9 +24,12 @@ async def registration(background_task: BackgroundTasks, email: str):
     if await auth_repository.is_user_registered(email, telegram_id=None):
         raise UserExists()
     else:
-        code = await generate_temporary_code()
+        code = _generate_auth_code()
         await auth_repository.save_code(email, code)
-        background_task.add_task(await send_email(email, code))
+        smtp = Dependencies.f(SMTPRepository)
+        message = smtp.render_message(settings.REGISTRATION_MESSAGE_TEMPLATE, email, code=code)
+        # smtp.send(message, email)
+        background_task.add_task(smtp.send, message, email)
 
 
 @router.get("/is_user_exists")

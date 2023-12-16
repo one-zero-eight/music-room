@@ -1,3 +1,4 @@
+import jinja2
 from fastapi import FastAPI
 
 from src.api import docs
@@ -11,6 +12,7 @@ from src.repositories.bookings.abc import AbstractBookingRepository
 from src.repositories.bookings.repository import SqlBookingRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.repositories.participants.repository import SqlParticipantRepository
+from src.repositories.smtp.repository import SMTPRepository
 from src.storage.sql import SQLAlchemyStorage
 
 # App definition
@@ -38,9 +40,17 @@ async def setup_repositories():
     participant_repository = SqlParticipantRepository(storage)
     booking_repository = SqlBookingRepository(storage)
     auth_repository = SqlAuthRepository(storage)
+    smtp_repository = SMTPRepository()
+
+    jinja2_env = jinja2.Environment(
+        loader=jinja2.FileSystemLoader(settings.JINJA2_TEMPLATES_DIR),
+        autoescape=True,
+    )
     Dependencies.register_provider(AbstractParticipantRepository, participant_repository)
     Dependencies.register_provider(AbstractBookingRepository, booking_repository)
     Dependencies.register_provider(AbstractAuthRepository, auth_repository)
+    Dependencies.register_provider(SMTPRepository, smtp_repository)
+    Dependencies.register_provider(jinja2.Environment, jinja2_env)
 
 
 @app.on_event("startup")
