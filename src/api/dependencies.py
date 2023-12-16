@@ -66,7 +66,9 @@ class Dependencies:
         return cls._participant_repository
 
     @classmethod
-    def set_participant_repository(cls, participant_repository: "AbstractParticipantRepository"):
+    def set_participant_repository(
+        cls, participant_repository: "AbstractParticipantRepository"
+    ):
         cls._participant_repository = participant_repository
 
     @classmethod
@@ -86,5 +88,6 @@ class Dependencies:
         cls._auth_repository = auth_repository
 
 
-BOOKING_REPOSITORY_DEPENDENCY = Annotated[AbstractBookingRepository, Depends(Dependencies.get_booking_repository)]
-AUTH_REPOSITORY_DEPENDENCY = Annotated[AbstractAuthRepository, Depends(Dependencies.get_auth_repository)]
+AUTH_REPOSITORY_DEPENDENCY = Annotated[
+    AbstractAuthRepository, Depends(Dependencies.get_auth_repository)
+]
