@@ -27,6 +27,7 @@ app = FastAPI(
     servers=[
         {"url": settings.APP_ROOT_PATH, "description": "Current"},
     ],
+    swagger_ui_parameters={"tryItOutEnabled": True, "persistAuthorization": True, "filter": True},
     root_path=settings.APP_ROOT_PATH,
     root_path_in_servers=False,
     swagger_ui_oauth2_redirect_url=None,
