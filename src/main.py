@@ -1,10 +1,10 @@
 from fastapi import FastAPI
 
 from src.api import docs
-from src.api.docs import generate_unique_operation_id
-from src.config import settings
 from src.api.dependencies import Dependencies
+from src.api.docs import generate_unique_operation_id
 from src.api.routers import routers
+from src.config import settings
 from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.auth.repository import SqlAuthRepository
 from src.repositories.bookings.abc import AbstractBookingRepository
