@@ -102,6 +102,7 @@ class SqlBookingRepository(AbstractBookingRepository):
 
             caption = f"{alias} "
 
+            # noinspection SqlAlchemyUnsafeQuery
             draw.text(
                 (x0 + 2, (y0 + y1) / 2 - 9),
                 text=f"{caption}{booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}",
