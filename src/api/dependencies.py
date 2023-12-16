@@ -1,6 +1,5 @@
-from typing import Annotated, TypeVar, Union, Callable, ClassVar, Hashable
+from typing import TypeVar, Union, Callable, ClassVar, Hashable
 
-from fastapi import Depends
 
 from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.bookings.abc import AbstractBookingRepository
@@ -86,8 +85,3 @@ class Dependencies:
     @classmethod
     def set_auth_repository(cls, auth_repository: "AbstractAuthRepository"):
         cls._auth_repository = auth_repository
-
-
-AUTH_REPOSITORY_DEPENDENCY = Annotated[
-    AbstractAuthRepository, Depends(Dependencies.get_auth_repository)
-]
