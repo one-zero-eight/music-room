@@ -3,15 +3,17 @@ import datetime
 from datetime import date, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
-from sqlalchemy import and_, between, delete, select
-from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy import and_, between, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.repositories.crud import CRUDFactory
 from src.tools import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
+
+crud: CRUDFactory[CreateBooking, ViewBooking, dict] = CRUDFactory(Booking, ViewBooking)
 
 
 class SqlBookingRepository(AbstractBookingRepository):
@@ -25,10 +27,7 @@ class SqlBookingRepository(AbstractBookingRepository):
 
     async def create(self, booking: "CreateBooking") -> ViewBooking:
         async with self._create_session() as session:
-            query = insert(Booking).values(**booking.model_dump()).returning(Booking)
-            obj = await session.scalar(query)
-            await session.commit()
-            return ViewBooking.model_validate(obj)
+            return await crud.create(session, booking)
 
     async def get_bookings_for_current_week(self, current_week: bool) -> list[ViewBooking]:
         async with self._create_session() as session:
@@ -46,14 +45,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]
 
-    async def delete_booking(self, booking_id) -> ViewBooking | dict[str, str]:
+    async def delete_booking(self, booking_id) -> bool:
         async with self._create_session() as session:
-            query = delete(Booking).where(Booking.id == booking_id).returning(Booking)
-            obj = await session.scalar(query)
-            await session.commit()
-            if obj:
-                return ViewBooking.model_validate(obj)
-            return {"message": "No such booking"}
+            return await crud.delete(session, booking_id)
 
     async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
         async with self._create_session() as session:

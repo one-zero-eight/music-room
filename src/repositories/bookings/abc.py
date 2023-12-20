@@ -15,7 +15,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def delete_booking(self, booking_id) -> ViewBooking | dict[str, str]:
+    async def delete_booking(self, booking_id) -> bool:
         ...
 
     @abstractmethod

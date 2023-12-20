@@ -55,9 +55,10 @@ async def get_bookings_for_current_week(current_week: bool) -> list[ViewBooking]
 @router.delete("/{booking_id}/cancel_booking")
 async def delete_booking(
     booking_id: int,
-) -> ViewBooking:
+) -> bool:
     booking_repository = Dependencies.f(AbstractBookingRepository)
-    return await booking_repository.delete_booking(booking_id)
+    success = await booking_repository.delete_booking(booking_id)
+    return success
 
 
 @router.get("/form_schedule")
