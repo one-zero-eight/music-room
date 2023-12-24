@@ -56,8 +56,8 @@ async def create_booking(
                 raise CollisionInBookings()
 
 
-@router.get("")
-async def get_bookings_for_current_week(
+@router.get("/")
+async def get_bookings_for_week(
     start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
 ) -> list[ViewBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
