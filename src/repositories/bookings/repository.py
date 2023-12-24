@@ -1,5 +1,6 @@
 import base64
 import datetime
+import io
 from datetime import date, timedelta
 
 from PIL import Image, ImageDraw, ImageFont
@@ -110,16 +111,15 @@ class SqlBookingRepository(AbstractBookingRepository):
         current_datetime = datetime.datetime.now()
 
         current_hour = current_datetime.hour
-        if 6 < current_hour < 23:
+        if 6 < current_hour < 23 and current_week:
             now_x0 = xbase + xsize * weekday
             now_y0 = ybase + int(ysize * ((datetime.datetime.now().hour - 7) + (datetime.datetime.now().minute / 60)))
             draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
 
-        image.save("result.jpg")
+        image_stream = io.BytesIO()
+        image.save(image_stream, format='JPEG')
 
-        with open("result.jpg", "rb") as f:
-            image_stream = f.read()
-
-        image_base64 = base64.b64encode(image_stream).decode("utf-8")
+        # Convert the binary stream to base64
+        image_base64 = base64.b64encode(image_stream.getvalue()).decode("utf-8")
 
         return image_base64

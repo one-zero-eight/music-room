@@ -1,7 +1,7 @@
 import datetime
 from typing import TYPE_CHECKING
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from src.storage.sql.__mixin__ import IdMixin
@@ -18,5 +18,5 @@ class Booking(Base, IdMixin):
         "Participant",
         back_populates="booking",
     )
-    time_start: Mapped[datetime.datetime] = mapped_column()
-    time_end: Mapped[datetime.datetime] = mapped_column()
+    time_start: Mapped[datetime.datetime] = mapped_column(DateTime)
+    time_end: Mapped[datetime.datetime] = mapped_column(DateTime)
