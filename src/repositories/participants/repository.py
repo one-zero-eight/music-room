@@ -7,10 +7,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas.participant import ParticipantStatus
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 from src.tools import Crypto
-from src.tools import count_duration, max_hours_to_book_per_day, max_hours_to_book_per_week
+from src.tools import count_duration
 
 
 class SqlParticipantRepository(AbstractParticipantRepository):
@@ -48,7 +49,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             await session.commit()
             return ViewParticipantBeforeBooking.model_validate(obj)
 
-    async def change_status(self, participant_id: int, new_status: str) -> "ViewParticipantBeforeBooking":
+    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
             query = (
                 update(Participant)
@@ -67,12 +68,13 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]
 
-    async def get_status(self, participant_id: int) -> str:
+    async def get_status(self, participant_id: int) -> ParticipantStatus:
         async with self._create_session() as session:
             query = select(Participant).where(Participant.id == participant_id)
             obj = await session.scalar(query)
-            if obj is not None:
-                return obj.status
+            if obj is None:
+                return ParticipantStatus.FREE
+            return ParticipantStatus(obj.status)
 
     async def remaining_weekly_hours(self, participant_id: int, start_of_week: Optional[datetime.date] = None) -> float:
         async with self._create_session() as session:
@@ -87,7 +89,8 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             spent_hours = 0
             for obj in objs:
                 spent_hours += float(count_duration(obj.time_start, obj.time_end))
-            return max_hours_to_book_per_week(await self.get_status(participant_id)) - spent_hours
+            status = await self.get_status(participant_id)
+            return status.max_hours_to_book_per_week() - spent_hours
 
     async def remaining_daily_hours(self, participant_id: int, date: datetime.date) -> float:
         async with self._create_session() as session:
@@ -103,7 +106,8 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             spent_hours = 0
             for obj in objs:
                 spent_hours += float(count_duration(obj.time_start, obj.time_end))
-            return max_hours_to_book_per_day(await self.get_status(participant_id)) - spent_hours
+            status = await self.get_status(participant_id)
+            return status.max_hours_to_book_per_day() - spent_hours
 
     async def is_need_to_fill_profile(self, participant_id: int) -> bool:
         async with self._create_session() as session:

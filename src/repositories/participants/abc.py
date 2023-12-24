@@ -2,7 +2,13 @@ import datetime
 from abc import ABCMeta, abstractmethod
 from typing import Optional
 
-from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas import (
+    CreateParticipant,
+    FillParticipantProfile,
+    ViewBooking,
+    ViewParticipantBeforeBooking,
+    ParticipantStatus,
+)
 
 
 class AbstractParticipantRepository(metaclass=ABCMeta):
@@ -15,7 +21,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def change_status(self, participant_id: int, new_status: str) -> "ViewParticipantBeforeBooking":
+    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipantBeforeBooking":
         ...
 
     @abstractmethod
@@ -23,7 +29,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def get_status(self, participant_id: int) -> str:
+    async def get_status(self, participant_id: int) -> "ParticipantStatus":
         ...
 
     @abstractmethod

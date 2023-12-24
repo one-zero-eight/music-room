@@ -5,10 +5,8 @@ from fastapi import Query
 
 from src.api.dependencies import Dependencies
 from src.api.participants import router
-from src.tools import max_hours_to_book_per_day as status_validate
-from src.exceptions import InvalidParticipantStatus
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking, ParticipantStatus
 
 
 @router.post("/fill_profile")
@@ -23,15 +21,9 @@ async def fill_profile(
 @router.put("/{participant_id}/status")
 async def change_status(
     participant_id: int,
-    new_status: str,
+    new_status: ParticipantStatus,
 ) -> ViewParticipantBeforeBooking | str:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
-
-    try:
-        status_validate(new_status)
-    except InvalidParticipantStatus:
-        raise InvalidParticipantStatus()
-
     updated_participant = await participant_repository.change_status(participant_id, new_status)
     return updated_participant
 
