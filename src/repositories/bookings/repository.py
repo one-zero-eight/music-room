@@ -5,17 +5,14 @@ from datetime import date, timedelta
 from datetime import datetime as datetime_datetime
 
 from PIL import Image, ImageDraw, ImageFont
-from sqlalchemy import and_, between, select
+from sqlalchemy import and_, between, select, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.repositories.crud import CRUDFactory
-from src.tools import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking, HelpBooking
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
-
-crud: CRUDFactory[CreateBooking, ViewBooking, dict] = CRUDFactory(Booking, ViewBooking)
+from src.tools import count_duration
 
 
 class SqlBookingRepository(AbstractBookingRepository):
@@ -29,7 +26,10 @@ class SqlBookingRepository(AbstractBookingRepository):
 
     async def create(self, booking: "CreateBooking") -> ViewBooking:
         async with self._create_session() as session:
-            return await crud.create(session, booking)
+            query = insert(Booking).values(**booking.model_dump()).returning(Booking)
+            obj = await session.scalar(query)
+            await session.commit()
+            return ViewBooking.model_validate(obj)
 
     async def get_bookings_for_current_week(self, current_week: bool) -> list[ViewBooking]:
         async with self._create_session() as session:
@@ -47,9 +47,14 @@ class SqlBookingRepository(AbstractBookingRepository):
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]
 
-    async def delete_booking(self, booking_id) -> bool:
+    async def delete_booking(self, booking_id) -> ViewBooking | dict[str, str]:
         async with self._create_session() as session:
-            return await crud.delete(session, booking_id)
+            query = delete(Booking).where(Booking.id == booking_id).returning(Booking)
+            obj = await session.scalar(query)
+            await session.commit()
+            if obj:
+                return ViewBooking.model_validate(obj)
+            return {"message": "No such booking"}
 
     async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
         async with self._create_session() as session:
@@ -118,7 +123,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
 
         image_stream = io.BytesIO()
-        image.save(image_stream, format='JPEG')
+        image.save(image_stream, format="JPEG")
 
         # Convert the binary stream to base64
         image_base64 = base64.b64encode(image_stream.getvalue()).decode("utf-8")
@@ -130,10 +135,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             start_of_day = datetime_datetime.combine(day.date(), datetime.time.min)
             end_of_day = datetime_datetime.combine(day.date(), datetime.time.max)
 
-            query = select(Booking).where(and_(
-                Booking.time_start >= start_of_day,
-                Booking.time_end <= end_of_day
-            ))
+            query = select(Booking).where(and_(Booking.time_start >= start_of_day, Booking.time_end <= end_of_day))
 
             objs = await session.scalars(query)
 

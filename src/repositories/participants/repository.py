@@ -1,20 +1,15 @@
 import datetime
 from datetime import date, timedelta
 
-from sqlalchemy import and_, between, extract, select, update
+from sqlalchemy import and_, between, extract, select, update, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.repositories.crud import CRUDFactory
-from src.tools import Crypto
-from src.tools import count_duration, max_hours_to_book_per_day, max_hours_to_book_per_week
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
-
-factory: CRUDFactory[CreateParticipant, ViewParticipantBeforeBooking, dict] = CRUDFactory(
-    Participant, ViewParticipantBeforeBooking
-)
+from src.tools import Crypto
+from src.tools import count_duration, max_hours_to_book_per_day, max_hours_to_book_per_week
 
 
 class SqlParticipantRepository(AbstractParticipantRepository):
@@ -28,8 +23,10 @@ class SqlParticipantRepository(AbstractParticipantRepository):
 
     async def create(self, participant: "CreateParticipant") -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
-            obj = await factory.create(session, participant)
-            return obj
+            query = insert(Participant).values(**participant.model_dump()).returning(Participant)
+            obj = await session.scalar(query)
+            await session.commit()
+            return ViewParticipantBeforeBooking.model_validate(obj)
 
     async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipantBeforeBooking":
         async with self._create_session() as session:
