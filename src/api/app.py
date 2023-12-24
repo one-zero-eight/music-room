@@ -1,5 +1,6 @@
 import jinja2
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import RedirectResponse
 
 from src.api import docs
 from src.api.dependencies import Dependencies
@@ -57,6 +58,12 @@ async def setup_repositories():
 @app.on_event("startup")
 async def startup_event():
     await setup_repositories()
+
+
+# Redirect root to docs
+@app.get("/", tags=["Root"], include_in_schema=False)
+async def redirect_to_docs(request: Request):
+    return RedirectResponse(url=request.url_for("swagger_ui_html"))
 
 
 for router in routers:
