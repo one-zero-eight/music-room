@@ -11,7 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.repositories.crud import CRUDFactory
 from src.tools import count_duration
 from src.repositories.bookings.abc import AbstractBookingRepository
-from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking, HelpBooking
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 
@@ -125,7 +125,7 @@ class SqlBookingRepository(AbstractBookingRepository):
 
         return image_base64
 
-    async def get_daily_bookings(self, day: datetime.datetime) -> list[ViewBooking]:
+    async def get_daily_bookings(self, day: datetime.datetime) -> list[HelpBooking]:
         async with self._create_session() as session:
             start_of_day = datetime_datetime.combine(day.date(), datetime.time.min)
             end_of_day = datetime_datetime.combine(day.date(), datetime.time.max)
@@ -137,4 +137,4 @@ class SqlBookingRepository(AbstractBookingRepository):
 
             objs = await session.scalars(query)
 
-            return [ViewBooking.model_validate(obj) for obj in objs]
+            return [HelpBooking.model_validate(obj) for obj in objs]

@@ -12,7 +12,7 @@ from src.exceptions import (
 )
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import CreateBooking, ViewBooking
+from src.schemas import CreateBooking, ViewBooking, HelpBooking
 
 
 @router.post("/create_booking")
@@ -56,7 +56,7 @@ async def get_bookings_for_current_week(current_week: bool) -> list[ViewBooking]
 
 @router.delete("/{booking_id}/cancel_booking")
 async def delete_booking(
-    booking_id: int,
+        booking_id: int,
 ) -> bool:
     booking_repository = Dependencies.f(AbstractBookingRepository)
     success = await booking_repository.delete_booking(booking_id)
@@ -70,6 +70,6 @@ async def form_schedule(current_week: bool) -> str:
 
 
 @router.get("/daily_bookings")
-async def daily_bookings(day: datetime.datetime) -> list[ViewBooking]:
+async def daily_bookings(day: datetime.datetime) -> list[HelpBooking]:
     booking_repository = Dependencies.f(AbstractBookingRepository)
     return await booking_repository.get_daily_bookings(day)
