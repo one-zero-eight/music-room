@@ -9,7 +9,7 @@ class MailingTemplate(BaseModel):
         from src.api.dependencies import Dependencies
         from jinja2 import Environment
 
-        main = Dependencies.f(Environment).get_template(self.file)
+        main = Dependencies.get(Environment).get_template(self.file)
 
         html = main.render(**environment)
         return html

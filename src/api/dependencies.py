@@ -14,7 +14,7 @@ class Dependencies:
         cls.providers[key] = provider
 
     @classmethod
-    def f(cls, key: type[T] | Hashable) -> T:
+    def get(cls, key: type[T] | Hashable) -> T:
         """
         Get shared dependency by key (f - fetch)
         """

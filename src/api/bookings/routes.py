@@ -19,8 +19,8 @@ from src.schemas import CreateBooking, ViewBooking, HelpBooking
 async def create_booking(
         booking: "CreateBooking",
 ) -> ViewBooking | str:
-    booking_repository = Dependencies.f(AbstractBookingRepository)
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    booking_repository = Dependencies.get(AbstractBookingRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     if not await is_sc_working(booking.time_start, booking.time_end):
         raise NotWorkingHours()
@@ -49,7 +49,7 @@ async def create_booking(
 
 @router.get("")
 async def get_bookings_for_current_week(current_week: bool) -> list[ViewBooking]:
-    booking_repository = Dependencies.f(AbstractBookingRepository)
+    booking_repository = Dependencies.get(AbstractBookingRepository)
     bookings = await booking_repository.get_bookings_for_current_week(current_week)
     return bookings
 
@@ -58,18 +58,18 @@ async def get_bookings_for_current_week(current_week: bool) -> list[ViewBooking]
 async def delete_booking(
         booking_id: int,
 ) -> bool:
-    booking_repository = Dependencies.f(AbstractBookingRepository)
+    booking_repository = Dependencies.get(AbstractBookingRepository)
     success = await booking_repository.delete_booking(booking_id)
     return success
 
 
 @router.get("/form_schedule")
 async def form_schedule(current_week: bool) -> str:
-    booking_repository = Dependencies.f(AbstractBookingRepository)
+    booking_repository = Dependencies.get(AbstractBookingRepository)
     return await booking_repository.form_schedule(current_week)
 
 
 @router.get("/daily_bookings")
 async def daily_bookings(day: datetime.datetime) -> list[HelpBooking]:
-    booking_repository = Dependencies.f(AbstractBookingRepository)
+    booking_repository = Dependencies.get(AbstractBookingRepository)
     return await booking_repository.get_daily_bookings(day)

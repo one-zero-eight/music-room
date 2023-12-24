@@ -11,7 +11,7 @@ from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBefo
 async def fill_profile(
     participant: FillParticipantProfile,
 ) -> ViewParticipantBeforeBooking:
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
     created = await participant_repository.fill_profile(participant)
     return created
 
@@ -21,7 +21,7 @@ async def change_status(
     participant_id: int,
     new_status: str,
 ) -> ViewParticipantBeforeBooking | str:
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     try:
         status_validate(new_status)
@@ -34,21 +34,21 @@ async def change_status(
 
 @router.get("/{participant_id}/bookings")
 async def get_participant_bookings(participant_id: int) -> list[ViewBooking]:
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
     bookings = await participant_repository.get_participant_bookings(participant_id)
     return bookings
 
 
 @router.get("/{participant_id}/remaining_weekly_hours")
 async def get_remaining_weekly_hours(participant_id: int) -> float:
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
     ans = await participant_repository.remaining_weekly_hours(participant_id)
     return ans
 
 
 @router.get("/{participant_id}/remaining_daily_hours")
 async def get_remaining_daily_hours(participant_id: int, date: str) -> float:
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     try:
         parsed_date = await get_date_from_str(date)
@@ -60,14 +60,14 @@ async def get_remaining_daily_hours(participant_id: int, date: str) -> float:
 
 @router.get("/{participant_id}/phone_number")
 async def get_phone_number(participant_id: int):
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     return await participant_repository.get_phone_number(participant_id)
 
 
 @router.get("/participant_id")
 async def get_participant_id(telegram_id: str):
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     res = await participant_repository.get_participant_id(telegram_id)
     return res

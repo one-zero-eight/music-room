@@ -19,14 +19,14 @@ def _generate_auth_code() -> str:
 
 @router.post("/registration")
 async def registration(background_task: BackgroundTasks, email: str):
-    auth_repository = Dependencies.f(AbstractAuthRepository)
+    auth_repository = Dependencies.get(AbstractAuthRepository)
 
     if await auth_repository.is_user_registered(email, telegram_id=None):
         raise UserExists()
     else:
         code = _generate_auth_code()
         await auth_repository.save_code(email, code)
-        smtp = Dependencies.f(SMTPRepository)
+        smtp = Dependencies.get(SMTPRepository)
         message = smtp.render_message(settings.REGISTRATION_MESSAGE_TEMPLATE, email, code=code)
         # smtp.send(message, email)
         background_task.add_task(smtp.send, message, email)
@@ -34,7 +34,7 @@ async def registration(background_task: BackgroundTasks, email: str):
 
 @router.get("/is_user_exists")
 async def is_user_exists(email: str = None, telegram_id: str = None) -> bool:
-    auth_repository = Dependencies.f(AbstractAuthRepository)
+    auth_repository = Dependencies.get(AbstractAuthRepository)
     if await auth_repository.is_user_registered(email, telegram_id):
         return True
     return False
@@ -46,8 +46,8 @@ async def validate_code(
     code: str,
     telegram_id: str,
 ):
-    auth_repository = Dependencies.f(AbstractAuthRepository)
-    participant_repository = Dependencies.f(AbstractParticipantRepository)
+    auth_repository = Dependencies.get(AbstractAuthRepository)
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     if await auth_repository.is_code_valid(email, code):
         participant = CreateParticipant(
