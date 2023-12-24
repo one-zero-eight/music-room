@@ -1,3 +1,5 @@
+import datetime
+
 from src.api.bookings import router
 from src.api.dependencies import Dependencies
 from src.tools import count_duration, is_sc_working
@@ -15,7 +17,7 @@ from src.schemas import CreateBooking, ViewBooking
 
 @router.post("/create_booking")
 async def create_booking(
-    booking: "CreateBooking",
+        booking: "CreateBooking",
 ) -> ViewBooking | str:
     booking_repository = Dependencies.f(AbstractBookingRepository)
     participant_repository = Dependencies.f(AbstractParticipantRepository)
@@ -30,9 +32,9 @@ async def create_booking(
                 booking_duration = await count_duration(booking.time_start, booking.time_end)
 
                 if (
-                    await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
-                    - booking_duration
-                    < 0
+                        await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
+                        - booking_duration
+                        < 0
                 ):
                     raise NotEnoughDailyHoursToBook()
 
@@ -65,3 +67,9 @@ async def delete_booking(
 async def form_schedule(current_week: bool) -> str:
     booking_repository = Dependencies.f(AbstractBookingRepository)
     return await booking_repository.form_schedule(current_week)
+
+
+@router.get("/daily_bookings")
+async def daily_bookings(day: datetime.datetime) -> list[ViewBooking]:
+    booking_repository = Dependencies.f(AbstractBookingRepository)
+    return await booking_repository.get_daily_bookings(day)

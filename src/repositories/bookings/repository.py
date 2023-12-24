@@ -2,6 +2,7 @@ import base64
 import datetime
 import io
 from datetime import date, timedelta
+from datetime import datetime as datetime_datetime
 
 from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import and_, between, select
@@ -123,3 +124,17 @@ class SqlBookingRepository(AbstractBookingRepository):
         image_base64 = base64.b64encode(image_stream.getvalue()).decode("utf-8")
 
         return image_base64
+
+    async def get_daily_bookings(self, day: datetime.datetime) -> list[ViewBooking]:
+        async with self._create_session() as session:
+            start_of_day = datetime_datetime.combine(day.date(), datetime.time.min)
+            end_of_day = datetime_datetime.combine(day.date(), datetime.time.max)
+
+            query = select(Booking).where(and_(
+                Booking.time_start >= start_of_day,
+                Booking.time_end <= end_of_day
+            ))
+
+            objs = await session.scalars(query)
+
+            return [ViewBooking.model_validate(obj) for obj in objs]

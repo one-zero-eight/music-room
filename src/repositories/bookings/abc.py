@@ -29,3 +29,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
     @abstractmethod
     async def form_schedule(self, current_week: bool) -> str:
         ...
+
+    @abstractmethod
+    async def get_daily_bookings(self, day: datetime) -> list[ViewBooking]:
+        ...
