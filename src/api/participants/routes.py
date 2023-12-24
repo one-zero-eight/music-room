@@ -1,8 +1,12 @@
+import datetime
+from typing import Optional
+
+from fastapi import Query
+
 from src.api.dependencies import Dependencies
 from src.api.participants import router
-from src.tools import get_date_from_str
 from src.tools import max_hours_to_book_per_day as status_validate
-from src.exceptions import InvalidDateFormat, InvalidParticipantStatus
+from src.exceptions import InvalidParticipantStatus
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
 
@@ -47,14 +51,16 @@ async def get_remaining_weekly_hours(participant_id: int) -> float:
 
 
 @router.get("/{participant_id}/remaining_daily_hours")
-async def get_remaining_daily_hours(participant_id: int, date: str) -> float:
+async def get_remaining_daily_hours(
+    participant_id: int,
+    date: Optional[datetime.date] = Query(
+        default_factory=datetime.date.today,
+        example=datetime.date.today().isoformat(),
+        description="Date for which to get remaining hours (iso format). Default: server-side today",
+    ),
+) -> float:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
-
-    try:
-        parsed_date = await get_date_from_str(date)
-        ans = await participant_repository.remaining_daily_hours(participant_id, parsed_date)
-    except ValueError:
-        raise InvalidDateFormat()
+    ans = await participant_repository.remaining_daily_hours(participant_id, date)
     return ans
 
 

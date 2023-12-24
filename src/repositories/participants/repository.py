@@ -87,7 +87,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
                 spent_hours += float(await count_duration(obj.time_start, obj.time_end))
             return max_hours_to_book_per_week(await self.get_status(participant_id)) - spent_hours
 
-    async def remaining_daily_hours(self, participant_id: int, date: datetime.datetime) -> float:
+    async def remaining_daily_hours(self, participant_id: int, date: datetime.date) -> float:
         async with self._create_session() as session:
             query = select(Booking).where(
                 and_(
