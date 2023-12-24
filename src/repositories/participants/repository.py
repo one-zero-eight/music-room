@@ -84,7 +84,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             objs = await session.scalars(query)
             spent_hours = 0
             for obj in objs:
-                spent_hours += float(await count_duration(obj.time_start, obj.time_end))
+                spent_hours += float(count_duration(obj.time_start, obj.time_end))
             return max_hours_to_book_per_week(await self.get_status(participant_id)) - spent_hours
 
     async def remaining_daily_hours(self, participant_id: int, date: datetime.date) -> float:

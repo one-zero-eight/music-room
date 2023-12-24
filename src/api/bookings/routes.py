@@ -29,7 +29,7 @@ async def create_booking(
             raise IncompleteProfile()
         else:
             if not await booking_repository.check_collision(booking.time_start, booking.time_end):
-                booking_duration = await count_duration(booking.time_start, booking.time_end)
+                booking_duration = count_duration(booking.time_start, booking.time_end)
 
                 if (
                         await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)

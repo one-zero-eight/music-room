@@ -88,7 +88,7 @@ class SqlBookingRepository(AbstractBookingRepository):
         for booking in bookings:
             day = booking.time_start.weekday()
 
-            ylength = await count_duration(booking.time_start, booking.time_end)
+            ylength = count_duration(booking.time_start, booking.time_end)
             x0 = xbase + xsize * day
             y0 = ybase + int(ysize * ((booking.time_start.hour - 7) + (booking.time_start.minute / 60.0)))
             x1 = x0 + xsize
