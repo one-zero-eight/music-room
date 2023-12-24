@@ -24,7 +24,7 @@ def _get_start_of_week() -> datetime.date:
     return _start_of_week
 
 
-@router.post("/create_booking")
+@router.post("/")
 async def create_booking(
     booking: "CreateBooking",
 ) -> ViewBooking | str:
