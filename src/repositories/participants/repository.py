@@ -1,5 +1,6 @@
 import datetime
-from datetime import date, timedelta
+from datetime import timedelta
+from typing import Optional
 
 from sqlalchemy import and_, between, extract, select, update, insert
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -73,10 +74,11 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             if obj is not None:
                 return obj.status
 
-    async def remaining_weekly_hours(self, participant_id: int) -> float:
+    async def remaining_weekly_hours(self, participant_id: int, start_of_week: Optional[datetime.date] = None) -> float:
         async with self._create_session() as session:
-            today = date.today()
-            start_of_week = today - timedelta(days=today.weekday())
+            if start_of_week is None:
+                today = datetime.date.today()
+                start_of_week = today - timedelta(days=today.weekday())
             end_of_week = start_of_week + timedelta(days=6)
             query = select(Booking).filter(
                 Booking.participant_id == participant_id, between(Booking.time_start, start_of_week, end_of_week)
@@ -100,7 +102,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             objs = await session.scalars(query)
             spent_hours = 0
             for obj in objs:
-                spent_hours += float(await count_duration(obj.time_start, obj.time_end))
+                spent_hours += float(count_duration(obj.time_start, obj.time_end))
             return max_hours_to_book_per_day(await self.get_status(participant_id)) - spent_hours
 
     async def is_need_to_fill_profile(self, participant_id: int) -> bool:

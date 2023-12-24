@@ -1,5 +1,6 @@
 import datetime
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
 from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
 
@@ -26,7 +27,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def remaining_weekly_hours(self, participant_id: int) -> float:
+    async def remaining_weekly_hours(self, participant_id: int, start_of_week: Optional[datetime.date] = None) -> float:
         ...
 
     @abstractmethod
