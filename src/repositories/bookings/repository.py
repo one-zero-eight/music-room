@@ -1,7 +1,6 @@
-import base64
 import datetime
 import io
-from datetime import date, timedelta
+from datetime import timedelta
 from datetime import datetime as datetime_datetime
 
 from PIL import Image, ImageDraw, ImageFont
@@ -31,16 +30,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             await session.commit()
             return ViewBooking.model_validate(obj)
 
-    async def get_bookings_for_current_week(self, current_week: bool) -> list[ViewBooking]:
+    async def get_bookings_for_week(self, start_of_week: datetime.date) -> list[ViewBooking]:
         async with self._create_session() as session:
-            next_week_delta = 0
-
-            if not current_week:
-                next_week_delta = 7
-            today = date.today()
-            start_of_week = (today - timedelta(days=today.weekday())) + timedelta(days=next_week_delta)
             end_of_week = start_of_week + timedelta(days=6)
-
             query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
 
             objs = await session.scalars(query)
@@ -68,7 +60,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             obj = await session.scalar(query)
             return ViewParticipantBeforeBooking.model_validate(obj)
 
-    async def form_schedule(self, current_week: bool) -> str:
+    async def form_schedule(self, start_of_week: datetime.date) -> bytes:
         xbase = 48  # origin for x
         ybase = 73  # origin for y
         xsize = 175.5  # length of the rect by x-axis
@@ -84,7 +76,7 @@ class SqlBookingRepository(AbstractBookingRepository):
 
         fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
 
-        bookings = await self.get_bookings_for_current_week(current_week)
+        bookings = await self.get_bookings_for_week(start_of_week)
         for booking in bookings:
             day = booking.time_start.weekday()
 
@@ -114,21 +106,21 @@ class SqlBookingRepository(AbstractBookingRepository):
         today = datetime.date.today()
         weekday = today.weekday()
 
-        current_datetime = datetime.datetime.now()
+        current = datetime.datetime.now()
+        is_current_week = False
+        if start_of_week <= current.date() <= start_of_week + timedelta(days=6):
+            is_current_week = True
 
-        current_hour = current_datetime.hour
-        if 6 < current_hour < 23 and current_week:
+        if 6 < current.hour < 23 and is_current_week:
             now_x0 = xbase + xsize * weekday
-            now_y0 = ybase + int(ysize * ((datetime.datetime.now().hour - 7) + (datetime.datetime.now().minute / 60)))
+            now_y0 = ybase + int(ysize * ((current.hour - 7) + (current.minute / 60)))
             draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
 
         image_stream = io.BytesIO()
-        image.save(image_stream, format="JPEG")
-
-        # Convert the binary stream to base64
-        image_base64 = base64.b64encode(image_stream.getvalue()).decode("utf-8")
-
-        return image_base64
+        image.save(image_stream, format="png")
+        val = image_stream.getvalue()
+        image_stream.close()
+        return val
 
     async def get_daily_bookings(self, day: datetime.datetime) -> list[HelpBooking]:
         async with self._create_session() as session:

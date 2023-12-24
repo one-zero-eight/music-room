@@ -11,7 +11,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def get_bookings_for_current_week(self, current_week: bool):
+    async def get_bookings_for_week(self, start_of_week: datetime.date):
         ...
 
     @abstractmethod
@@ -27,7 +27,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def form_schedule(self, current_week: bool) -> str:
+    async def form_schedule(self, start_of_week: datetime.date) -> bytes:
         ...
 
     @abstractmethod

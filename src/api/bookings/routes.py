@@ -1,4 +1,7 @@
 import datetime
+from typing import Optional
+
+from fastapi import Query, Response
 
 from src.api.bookings import router
 from src.api.dependencies import Dependencies
@@ -15,9 +18,15 @@ from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import CreateBooking, ViewBooking, HelpBooking
 
 
+def _get_start_of_week() -> datetime.date:
+    _current_date = datetime.date.today()
+    _start_of_week = _current_date - datetime.timedelta(days=_current_date.weekday())
+    return _start_of_week
+
+
 @router.post("/create_booking")
 async def create_booking(
-        booking: "CreateBooking",
+    booking: "CreateBooking",
 ) -> ViewBooking | str:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     participant_repository = Dependencies.get(AbstractParticipantRepository)
@@ -32,9 +41,9 @@ async def create_booking(
                 booking_duration = count_duration(booking.time_start, booking.time_end)
 
                 if (
-                        await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
-                        - booking_duration
-                        < 0
+                    await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
+                    - booking_duration
+                    < 0
                 ):
                     raise NotEnoughDailyHoursToBook()
 
@@ -48,25 +57,30 @@ async def create_booking(
 
 
 @router.get("")
-async def get_bookings_for_current_week(current_week: bool) -> list[ViewBooking]:
+async def get_bookings_for_current_week(
+    start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
+) -> list[ViewBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
-    bookings = await booking_repository.get_bookings_for_current_week(current_week)
+    bookings = await booking_repository.get_bookings_for_week(start_of_week)
     return bookings
 
 
 @router.delete("/{booking_id}/cancel_booking")
 async def delete_booking(
-        booking_id: int,
+    booking_id: int,
 ) -> bool:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     success = await booking_repository.delete_booking(booking_id)
     return success
 
 
-@router.get("/form_schedule")
-async def form_schedule(current_week: bool) -> str:
+@router.get("/form_schedule", responses={200: {"content": {"image/png": {}}}}, response_class=Response)
+async def form_schedule(
+    start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
+) -> Response:
     booking_repository = Dependencies.get(AbstractBookingRepository)
-    return await booking_repository.form_schedule(current_week)
+    image_bytes = await booking_repository.form_schedule(start_of_week)
+    return Response(content=image_bytes, media_type="image/png")
 
 
 @router.get("/daily_bookings")
