@@ -26,7 +26,7 @@ def _get_start_of_week() -> datetime.date:
 
 @router.post("/")
 async def create_booking(
-    booking: "CreateBooking",
+    booking: CreateBooking,
 ) -> ViewBooking | str:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     participant_repository = Dependencies.get(AbstractParticipantRepository)
