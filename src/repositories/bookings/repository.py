@@ -132,3 +132,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             objs = await session.scalars(query)
 
             return [HelpBooking.model_validate(obj) for obj in objs]
+
+    async def get_participant_bookings(self, participant_id: int) -> list[HelpBooking]:
+        async with self._create_session() as session:
+            query = select(Booking).where(Booking.participant_id == participant_id)
+            objs = await session.scalars(query)
+            return [HelpBooking.model_validate(obj) for obj in objs]

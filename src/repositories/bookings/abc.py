@@ -33,3 +33,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
     @abstractmethod
     async def get_daily_bookings(self, day: datetime) -> list[HelpBooking]:
         ...
+
+    @abstractmethod
+    async def get_participant_bookings(self, participant_id: int) -> list[HelpBooking]:
+        ...

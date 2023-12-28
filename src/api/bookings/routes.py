@@ -94,4 +94,4 @@ async def daily_bookings(day: datetime.datetime) -> list[HelpBooking]:
 @router.get("/{participant_id}")
 async def participant_bookings(participant_id: int) -> list[HelpBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
-    return await booking_repository
+    return await booking_repository.get_participant_bookings(participant_id)
