@@ -11,7 +11,7 @@ from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBefo
 
 @router.post("/fill_profile")
 async def fill_profile(
-    participant: FillParticipantProfile,
+        participant: FillParticipantProfile,
 ) -> ViewParticipantBeforeBooking:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
     created = await participant_repository.fill_profile(participant)

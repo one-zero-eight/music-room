@@ -23,7 +23,7 @@ class AbstractBookingRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def get_participant(self, participant_id) -> ViewParticipantBeforeBooking:
+    async def get_participant(self, participant_id: int) -> ViewParticipantBeforeBooking:
         ...
 
     @abstractmethod

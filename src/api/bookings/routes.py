@@ -26,7 +26,7 @@ def _get_start_of_week() -> datetime.date:
 
 @router.post("/")
 async def create_booking(
-    booking: CreateBooking,
+        booking: CreateBooking,
 ) -> ViewBooking | str:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     participant_repository = Dependencies.get(AbstractParticipantRepository)
@@ -41,9 +41,9 @@ async def create_booking(
                 booking_duration = count_duration(booking.time_start, booking.time_end)
 
                 if (
-                    await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
-                    - booking_duration
-                    < 0
+                        await participant_repository.remaining_daily_hours(booking.participant_id, booking.time_start)
+                        - booking_duration
+                        < 0
                 ):
                     raise NotEnoughDailyHoursToBook()
 
@@ -58,7 +58,8 @@ async def create_booking(
 
 @router.get("/")
 async def get_bookings_for_week(
-    start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
+        start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week,
+                                                       example=_get_start_of_week()),
 ) -> list[ViewBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     bookings = await booking_repository.get_bookings_for_week(start_of_week)
@@ -67,7 +68,7 @@ async def get_bookings_for_week(
 
 @router.delete("/{booking_id}/cancel_booking")
 async def delete_booking(
-    booking_id: int,
+        booking_id: int,
 ) -> bool:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     success = await booking_repository.delete_booking(booking_id)
@@ -76,7 +77,8 @@ async def delete_booking(
 
 @router.get("/form_schedule", responses={200: {"content": {"image/png": {}}}}, response_class=Response)
 async def form_schedule(
-    start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
+        start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week,
+                                                       example=_get_start_of_week()),
 ) -> Response:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     image_bytes = await booking_repository.form_schedule(start_of_week)
@@ -87,3 +89,9 @@ async def form_schedule(
 async def daily_bookings(day: datetime.datetime) -> list[HelpBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     return await booking_repository.get_daily_bookings(day)
+
+
+@router.get("/{participant_id}")
+async def participant_bookings(participant_id: int) -> list[HelpBooking]:
+    booking_repository = Dependencies.get(AbstractBookingRepository)
+    return await booking_repository
