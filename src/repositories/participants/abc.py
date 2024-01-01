@@ -6,22 +6,26 @@ from src.schemas import (
     CreateParticipant,
     FillParticipantProfile,
     ViewBooking,
-    ViewParticipantBeforeBooking,
+    ViewParticipant,
     ParticipantStatus,
 )
 
 
 class AbstractParticipantRepository(metaclass=ABCMeta):
     @abstractmethod
-    async def create(self, participant: "CreateParticipant") -> "ViewParticipantBeforeBooking":
+    async def create(self, participant: "CreateParticipant") -> "ViewParticipant":
         ...
 
     @abstractmethod
-    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipantBeforeBooking":
+    async def get_participant(self, participant_id: int) -> "ViewParticipant":
         ...
 
     @abstractmethod
-    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipantBeforeBooking":
+    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipant":
+        ...
+
+    @abstractmethod
+    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipant":
         ...
 
     @abstractmethod

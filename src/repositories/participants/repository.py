@@ -6,7 +6,7 @@ from sqlalchemy import and_, between, extract, select, update, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking
+from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipant
 from src.schemas.participant import ParticipantStatus
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
@@ -23,14 +23,21 @@ class SqlParticipantRepository(AbstractParticipantRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def create(self, participant: "CreateParticipant") -> "ViewParticipantBeforeBooking":
+    async def create(self, participant: "CreateParticipant") -> "ViewParticipant":
         async with self._create_session() as session:
             query = insert(Participant).values(**participant.model_dump()).returning(Participant)
             obj = await session.scalar(query)
             await session.commit()
-            return ViewParticipantBeforeBooking.model_validate(obj)
+            return ViewParticipant.model_validate(obj)
 
-    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipantBeforeBooking":
+    async def get_participant(self, participant_id: int) -> Optional["ViewParticipant"]:
+        async with self._create_session() as session:
+            query = select(Participant).where(Participant.id == participant_id)
+            obj = await session.scalar(query)
+            if obj:
+                return ViewParticipant.model_validate(obj)
+
+    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipant":
         async with self._create_session() as session:
             phone_number = Crypto.encrypt(participant.phone_number)
             query = (
@@ -47,9 +54,9 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             )
             obj = await session.scalar(query)
             await session.commit()
-            return ViewParticipantBeforeBooking.model_validate(obj)
+            return ViewParticipant.model_validate(obj)
 
-    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipantBeforeBooking":
+    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipant":
         async with self._create_session() as session:
             query = (
                 update(Participant)
@@ -59,7 +66,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             )
             obj = await session.scalar(query)
             await session.commit()
-            return ViewParticipantBeforeBooking.model_validate(obj)
+            return ViewParticipant.model_validate(obj)
 
     async def get_participant_bookings(self, participant_id: int) -> list["ViewBooking"]:
         async with self._create_session() as session:

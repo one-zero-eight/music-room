@@ -1,9 +1,47 @@
 $schema: http://json-schema.org/draft-07/schema#
+$defs:
+  MailingTemplate:
+    properties:
+      subject:
+        description: Subject of the email
+        title: Subject
+        type: string
+      file:
+        description: Path to the template file (relative to static folder)
+        title: File
+        type: string
+    required:
+    - subject
+    - file
+    title: MailingTemplate
+    type: object
 properties:
+  APP_ROOT_PATH:
+    default: ''
+    description: Prefix for the API path (e.g. "/api/v0")
+    title: App Root Path
+    type: string
   DB_URL:
     default: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
     example: postgresql+asyncpg://user:password@localhost:5432/db_name
     title: Db Url
+    type: string
+  BOT_TOKEN:
+    description: Bot token from @BotFather
+    example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    title: Bot Token
+    type: string
+  JWT_PRIVATE_KEY:
+    description: Private key for JWT. Use 'openssl genrsa -out private.pem 2048' to
+      generate keys
+    format: password
+    title: Jwt Private Key
+    type: string
+    writeOnly: true
+  JWT_PUBLIC_KEY:
+    description: Public key for JWT. Use 'openssl rsa -in private.pem -pubout -out
+      public.pem' to generate keys
+    title: Jwt Public Key
     type: string
   SMTP_SERVER:
     example: smtp.gmail.com
@@ -21,6 +59,19 @@ properties:
     example: xxxxxxxx
     title: Smtp Password
     type: string
+  REGISTRATION_MESSAGE_TEMPLATE:
+    allOf:
+    - $ref: '#/$defs/MailingTemplate'
+    default:
+      subject: Registration in InNoHassle-MusicRoom
+      file: auth-code.jinja2
+    description: Mailing template settings
+  JINJA2_TEMPLATES_DIR:
+    default: templates
+    description: Path to the templates directory
+    format: path
+    title: Jinja2 Templates Dir
+    type: string
   CRYPTO_PASSWORD:
     description: Run 'openssl rand -hex 32' to generate key
     example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
@@ -33,6 +84,9 @@ properties:
     title: Crypto Salt
     type: string
 required:
+- BOT_TOKEN
+- JWT_PRIVATE_KEY
+- JWT_PUBLIC_KEY
 - SMTP_SERVER
 - SMTP_USERNAME
 - SMTP_PASSWORD

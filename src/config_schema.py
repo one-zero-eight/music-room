@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, SecretStr
 
 from src.schemas.smtp import MailingTemplate
 
@@ -12,6 +12,20 @@ class Settings(BaseModel):
     DB_URL: str = Field(
         "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
         example="postgresql+asyncpg://user:password@localhost:5432/db_name",
+    )
+
+    # Authorization
+    BOT_TOKEN: str = Field(
+        ..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", description="Bot token from @BotFather"
+    )
+    JWT_PRIVATE_KEY: SecretStr = Field(
+        ...,
+        description="Private key for JWT. Use 'openssl genrsa -out private.pem 2048' to generate keys",
+    )
+
+    JWT_PUBLIC_KEY: str = Field(
+        ...,
+        description="Public key for JWT. Use 'openssl rsa -in private.pem -pubout -out public.pem' to generate keys",
     )
 
     # SMTP server config

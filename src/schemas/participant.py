@@ -52,7 +52,7 @@ class FillParticipantProfile(BaseModel):
     phone_number: str
 
 
-class ViewParticipantBeforeBooking(BaseModel):
+class ViewParticipant(BaseModel):
     id: int
     name: Optional[str] = None
     alias: Optional[str] = None

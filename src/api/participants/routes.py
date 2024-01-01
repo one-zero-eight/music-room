@@ -6,13 +6,13 @@ from fastapi import Query
 from src.api.dependencies import Dependencies
 from src.api.participants import router
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipantBeforeBooking, ParticipantStatus
+from src.schemas import FillParticipantProfile, ViewBooking, ViewParticipant, ParticipantStatus
 
 
 @router.post("/fill_profile")
 async def fill_profile(
-        participant: FillParticipantProfile,
-) -> ViewParticipantBeforeBooking:
+    participant: FillParticipantProfile,
+) -> ViewParticipant:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
     created = await participant_repository.fill_profile(participant)
     return created
@@ -22,7 +22,7 @@ async def fill_profile(
 async def change_status(
     participant_id: int,
     new_status: ParticipantStatus,
-) -> ViewParticipantBeforeBooking | str:
+) -> ViewParticipant:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
     updated_participant = await participant_repository.change_status(participant_id, new_status)
     return updated_participant
@@ -57,14 +57,14 @@ async def get_remaining_daily_hours(
 
 
 @router.get("/{participant_id}/phone_number")
-async def get_phone_number(participant_id: int):
+async def get_phone_number(participant_id: int) -> str:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     return await participant_repository.get_phone_number(participant_id)
 
 
 @router.get("/participant_id")
-async def get_participant_id(telegram_id: str):
+async def get_participant_id(telegram_id: str) -> int:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     res = await participant_repository.get_participant_id(telegram_id)

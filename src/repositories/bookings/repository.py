@@ -8,7 +8,7 @@ from sqlalchemy import and_, between, select, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.bookings.abc import AbstractBookingRepository
-from src.schemas import CreateBooking, ViewBooking, ViewParticipantBeforeBooking, HelpBooking
+from src.schemas import CreateBooking, ViewBooking, ViewParticipant, HelpBooking
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 from src.tools import count_duration
@@ -32,7 +32,7 @@ class SqlBookingRepository(AbstractBookingRepository):
 
     async def get_bookings_for_week(self, start_of_week: datetime.date) -> list[ViewBooking]:
         async with self._create_session() as session:
-            end_of_week = start_of_week + timedelta(days=6)
+            end_of_week = start_of_week + timedelta(days=7)
             query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
 
             objs = await session.scalars(query)
@@ -54,11 +54,11 @@ class SqlBookingRepository(AbstractBookingRepository):
             collision_exists = await session.scalar(query)
             return collision_exists is not None
 
-    async def get_participant(self, participant_id) -> ViewParticipantBeforeBooking:
+    async def get_participant(self, participant_id) -> ViewParticipant:
         async with self._create_session() as session:
             query = select(Participant).where(Participant.id == participant_id)
             obj = await session.scalar(query)
-            return ViewParticipantBeforeBooking.model_validate(obj)
+            return ViewParticipant.model_validate(obj)
 
     async def form_schedule(self, start_of_week: datetime.date) -> bytes:
         xbase = 48  # origin for x

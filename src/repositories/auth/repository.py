@@ -1,10 +1,15 @@
 import datetime
+from hmac import compare_digest
 
+from authlib.jose import jwt, JoseError
 from sqlalchemy import and_, or_, select
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.config import settings
 from src.repositories.auth.abc import AbstractAuthRepository
+from src.repositories.participants.abc import AbstractParticipantRepository
+from src.schemas.auth import VerificationResult, VerificationSource
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models.participant import Participant, PotentialUser
 
@@ -57,3 +62,63 @@ class SqlAuthRepository(AbstractAuthRepository):
             )
             obj = await session.scalar(query)
             return False if obj is None else True
+
+
+class TokenRepository:
+    ALGORITHM = "RS256"
+
+    @classmethod
+    async def verify_access_token(cls, auth_token: str) -> VerificationResult:
+        from src.api.dependencies import Dependencies
+
+        try:
+            payload = jwt.decode(auth_token, settings.JWT_PUBLIC_KEY)
+        except JoseError:
+            return VerificationResult(success=False)
+
+        user_repository = Dependencies.get(AbstractParticipantRepository)
+        user_id: str = payload.get("sub")
+
+        if user_id is None or not user_id.isdigit():
+            return VerificationResult(success=False)
+
+        converted_user_id = int(user_id)
+
+        user = await user_repository.get_participant(converted_user_id)
+
+        if user is None:
+            return VerificationResult(success=False)
+
+        return VerificationResult(success=True, user_id=converted_user_id, source=VerificationSource.USER)
+
+    @classmethod
+    def create_access_token(cls, user_id: int) -> str:
+        access_token = TokenRepository._create_access_token(
+            data={"sub": str(user_id)},
+            expires_delta=datetime.timedelta(days=1),
+        )
+        return access_token
+
+    @classmethod
+    def _create_access_token(cls, data: dict, expires_delta: datetime.timedelta) -> str:
+        payload = data.copy()
+        issued_at = datetime.datetime.utcnow()
+        expire = issued_at + expires_delta
+        payload.update({"exp": expire, "iat": issued_at})
+        encoded_jwt = jwt.encode({"alg": cls.ALGORITHM}, payload, settings.JWT_PRIVATE_KEY.get_secret_value())
+        return str(encoded_jwt, "utf-8")
+
+    @classmethod
+    def verify_bot_token(cls, auth_token: str) -> VerificationResult:
+        split_by_colon = auth_token.split(":")
+        if len(split_by_colon) == 3:
+            user_id, bot_token, _ = split_by_colon
+            user_id = int(user_id)
+            bot_token += _
+        else:
+            user_id = None
+            bot_token = auth_token
+
+        success = compare_digest(bot_token, settings.BOT_TOKEN)
+
+        return VerificationResult(success=success, user_id=user_id, source=VerificationSource.BOT)
