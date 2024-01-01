@@ -29,6 +29,7 @@ class ViewBooking(BaseModel):
 
 
 class HelpBooking(BaseModel):
+    id: int
     time_start: datetime.datetime
     time_end: datetime.datetime
 

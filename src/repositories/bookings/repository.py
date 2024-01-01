@@ -7,6 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import and_, between, select, insert, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.exceptions import NoSuchBooking
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.schemas import CreateBooking, ViewBooking, ViewParticipant, HelpBooking
 from src.storage.sql import AbstractSQLAlchemyStorage
@@ -39,14 +40,14 @@ class SqlBookingRepository(AbstractBookingRepository):
             if objs:
                 return [ViewBooking.model_validate(obj) for obj in objs]
 
-    async def delete_booking(self, booking_id) -> ViewBooking | dict[str, str]:
+    async def delete_booking(self, booking_id) -> bool:
         async with self._create_session() as session:
             query = delete(Booking).where(Booking.id == booking_id).returning(Booking)
             obj = await session.scalar(query)
             await session.commit()
             if obj:
-                return ViewBooking.model_validate(obj)
-            return {"message": "No such booking"}
+                return True
+            raise NoSuchBooking()
 
     async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
         async with self._create_session() as session:

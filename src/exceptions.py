@@ -138,3 +138,15 @@ class IncompleteProfile(HTTPException):
             status_code=status.HTTP_403_FORBIDDEN,
             detail="To continue you need to fill the profile",
         )
+
+
+class NoSuchBooking(HTTPException):
+    """
+        HTTP_404_NOT_FOUND
+        """
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No such booking",
+        )
