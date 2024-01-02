@@ -95,9 +95,9 @@ async def form_schedule(
 
 
 @router.get("/daily_bookings")
-async def daily_bookings(day: datetime.datetime) -> list[HelpBooking]:
+async def daily_bookings(date: datetime.date) -> list[HelpBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
-    return await booking_repository.get_daily_bookings(day)
+    return await booking_repository.get_daily_bookings(date)
 
 
 @router.get("/{participant_id}")

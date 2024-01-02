@@ -131,10 +131,10 @@ class SqlBookingRepository(AbstractBookingRepository):
         image_stream.close()
         return val
 
-    async def get_daily_bookings(self, day: datetime.datetime) -> list[HelpBooking]:
+    async def get_daily_bookings(self, date: datetime.date) -> list[HelpBooking]:
         async with self._create_session() as session:
-            start_of_day = datetime_datetime.combine(day.date(), datetime.time.min)
-            end_of_day = datetime_datetime.combine(day.date(), datetime.time.max)
+            start_of_day = datetime_datetime.combine(date, datetime.time.min)
+            end_of_day = datetime_datetime.combine(date, datetime.time.max)
 
             query = select(Booking).where(and_(Booking.time_start >= start_of_day, Booking.time_end <= end_of_day))
 
