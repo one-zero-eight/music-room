@@ -41,12 +41,7 @@ async def create_booking(
 
     collision = await booking_repository.check_collision(booking.time_start, booking.time_end)
     if collision is not None:
-        # check if collision is not only at the borders
-        if (
-            collision.time_start < booking.time_start < collision.time_end
-            or collision.time_start < booking.time_end < collision.time_end
-        ):
-            raise CollisionInBookings()
+        raise CollisionInBookings()
 
     booking_duration = count_duration(booking.time_start, booking.time_end)
 

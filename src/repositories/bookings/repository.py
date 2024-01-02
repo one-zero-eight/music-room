@@ -5,7 +5,7 @@ from datetime import datetime as datetime_datetime
 from typing import Optional
 
 from PIL import Image, ImageDraw, ImageFont
-from sqlalchemy import and_, between, select, insert, delete, or_
+from sqlalchemy import and_, between, select, insert, delete, or_, not_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import NoSuchBooking
@@ -56,13 +56,16 @@ class SqlBookingRepository(AbstractBookingRepository):
     ) -> Optional[ViewBooking]:
         async with self._create_session() as session:
             query = select(Booking).where(
-                or_(
-                    between(Booking.time_start, time_start, time_end),
-                    between(Booking.time_end, time_start, time_end),
+                not_(
+                    or_(
+                        and_(Booking.time_start < time_start, Booking.time_end <= time_start),
+                        and_(Booking.time_start >= time_end, Booking.time_end > time_end),
+                    )
                 )
             )
             collision = await session.scalar(query)
-            return collision
+            if collision:
+                return ViewBooking.model_validate(collision)
 
     async def get_participant(self, participant_id) -> ViewParticipant:
         async with self._create_session() as session:
