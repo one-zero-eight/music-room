@@ -4,7 +4,7 @@ import datetime
 def count_duration(start_time: datetime.datetime, end_time: datetime.datetime):
     duration = end_time - start_time
     seconds = duration.seconds
-    minutes = seconds // 60 - 1
+    minutes = seconds // 60
     hours = minutes / 60
     return hours
 
