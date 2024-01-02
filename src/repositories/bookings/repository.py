@@ -2,9 +2,10 @@ import datetime
 import io
 from datetime import timedelta
 from datetime import datetime as datetime_datetime
+from typing import Optional
 
 from PIL import Image, ImageDraw, ImageFont
-from sqlalchemy import and_, between, select, insert, delete
+from sqlalchemy import and_, between, select, insert, delete, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import NoSuchBooking
@@ -49,11 +50,18 @@ class SqlBookingRepository(AbstractBookingRepository):
                 return True
             raise NoSuchBooking()
 
-    async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
+    async def check_collision(
+        self, time_start: datetime.datetime, time_end: datetime.datetime
+    ) -> Optional[ViewBooking]:
         async with self._create_session() as session:
-            query = select(Booking).where(and_(Booking.time_start < time_end, Booking.time_end > time_start))
-            collision_exists = await session.scalar(query)
-            return collision_exists is not None
+            query = select(Booking).where(
+                or_(
+                    between(Booking.time_start, time_start, time_end),
+                    between(Booking.time_end, time_start, time_end),
+                )
+            )
+            collision = await session.scalar(query)
+            return collision
 
     async def get_participant(self, participant_id) -> ViewParticipant:
         async with self._create_session() as session:

@@ -1,5 +1,6 @@
 import datetime
 from abc import ABCMeta, abstractmethod
+from typing import Optional
 
 from src.schemas import CreateBooking, ViewBooking, ViewParticipant, HelpBooking
 
@@ -19,7 +20,9 @@ class AbstractBookingRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> bool:
+    async def check_collision(
+        self, time_start: datetime.datetime, time_end: datetime.datetime
+    ) -> Optional[ViewBooking]:
         ...
 
     @abstractmethod
