@@ -11,11 +11,12 @@ from src.exceptions import (
     IncompleteProfile,
     NotEnoughDailyHoursToBook,
     NotEnoughWeeklyHoursToBook,
-    NotWorkingHours,
+    NotWorkingHours, IncorrectOffset,
 )
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import CreateBooking, ViewBooking, HelpBooking
+from src.tools.utils import is_offset_correct
 
 
 def _get_start_of_week() -> datetime.date:
@@ -49,6 +50,8 @@ async def create_booking(
 
                 elif await participant_repository.remaining_weekly_hours(booking.participant_id) - booking_duration < 0:
                     raise NotEnoughWeeklyHoursToBook()
+                elif not await is_offset_correct(booking.time_start):
+                    raise IncorrectOffset()
                 else:
                     created = await booking_repository.create(booking)
                     return created

@@ -150,3 +150,15 @@ class NoSuchBooking(HTTPException):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="No such booking",
         )
+
+
+class IncorrectOffset(HTTPException):
+    """
+        HTTP_400_BAD_REQUEST
+        """
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You can book only for the next 7 days",
+        )
