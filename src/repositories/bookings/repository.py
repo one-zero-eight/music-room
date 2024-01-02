@@ -30,6 +30,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             query = insert(Booking).values(**booking.model_dump()).returning(Booking)
             obj = await session.scalar(query)
             await session.commit()
+            await session.refresh(obj)
             return ViewBooking.model_validate(obj)
 
     async def get_bookings_for_week(self, start_of_week: datetime.date) -> list[ViewBooking]:
