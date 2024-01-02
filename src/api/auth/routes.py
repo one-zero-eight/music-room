@@ -35,9 +35,7 @@ async def registration(background_task: BackgroundTasks, email: str):
 @router.get("/is_user_exists")
 async def is_user_exists(email: str = None, telegram_id: str = None) -> bool:
     auth_repository = Dependencies.get(AbstractAuthRepository)
-    if await auth_repository.is_user_registered(email, telegram_id):
-        return True
-    return False
+    return await auth_repository.is_user_registered(email, telegram_id)
 
 
 @router.post("/validate_code")
