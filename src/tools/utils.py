@@ -19,3 +19,4 @@ async def is_offset_correct(booking_date: datetime.datetime) -> bool:
     current_datetime = datetime.datetime.now()
     if (booking_date - current_datetime).days > 7 or (booking_date - current_datetime).days < 0:
         return False
+    return True
