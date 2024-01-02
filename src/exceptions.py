@@ -142,8 +142,8 @@ class IncompleteProfile(HTTPException):
 
 class NoSuchBooking(HTTPException):
     """
-        HTTP_404_NOT_FOUND
-        """
+    HTTP_404_NOT_FOUND
+    """
 
     def __init__(self):
         super().__init__(
@@ -154,8 +154,8 @@ class NoSuchBooking(HTTPException):
 
 class IncorrectOffset(HTTPException):
     """
-        HTTP_400_BAD_REQUEST
-        """
+    HTTP_400_BAD_REQUEST
+    """
 
     def __init__(self):
         super().__init__(
