@@ -2,7 +2,7 @@ import datetime
 from abc import ABCMeta, abstractmethod
 from typing import Optional
 
-from src.schemas import CreateBooking, ViewBooking, ViewParticipant, HelpBooking
+from src.schemas import CreateBooking, ViewBooking, ViewParticipant
 
 
 class AbstractBookingRepository(metaclass=ABCMeta):
@@ -34,9 +34,9 @@ class AbstractBookingRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def get_daily_bookings(self, date: datetime.date) -> list[HelpBooking]:
+    async def get_daily_bookings(self, date: datetime.date) -> list[ViewBooking]:
         ...
 
     @abstractmethod
-    async def get_participant_bookings(self, participant_id: int) -> list[HelpBooking]:
+    async def get_participant_bookings(self, participant_id: int) -> list[ViewBooking]:
         ...

@@ -16,7 +16,7 @@ from src.exceptions import (
 )
 from src.repositories.bookings.abc import AbstractBookingRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import CreateBooking, ViewBooking, HelpBooking
+from src.schemas import CreateBooking, ViewBooking
 from src.tools.utils import is_offset_correct
 
 
@@ -90,12 +90,12 @@ async def form_schedule(
 
 
 @router.get("/daily_bookings")
-async def daily_bookings(date: datetime.date) -> list[HelpBooking]:
+async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     return await booking_repository.get_daily_bookings(date)
 
 
 @router.get("/{participant_id}")
-async def participant_bookings(participant_id: int) -> list[HelpBooking]:
+async def participant_bookings(participant_id: int) -> list[ViewBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     return await booking_repository.get_participant_bookings(participant_id)

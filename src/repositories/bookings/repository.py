@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import NoSuchBooking
 from src.repositories.bookings.abc import AbstractBookingRepository
-from src.schemas import CreateBooking, ViewBooking, ViewParticipant, HelpBooking
+from src.schemas import CreateBooking, ViewBooking, ViewParticipant
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 from src.tools import count_duration
@@ -135,7 +135,7 @@ class SqlBookingRepository(AbstractBookingRepository):
         image_stream.close()
         return val
 
-    async def get_daily_bookings(self, date: datetime.date) -> list[HelpBooking]:
+    async def get_daily_bookings(self, date: datetime.date) -> list[ViewBooking]:
         async with self._create_session() as session:
             start_of_day = datetime_datetime.combine(date, datetime.time.min)
             end_of_day = datetime_datetime.combine(date, datetime.time.max)
@@ -144,10 +144,10 @@ class SqlBookingRepository(AbstractBookingRepository):
 
             objs = await session.scalars(query)
 
-            return [HelpBooking.model_validate(obj) for obj in objs]
+            return [ViewBooking.model_validate(obj) for obj in objs]
 
-    async def get_participant_bookings(self, participant_id: int) -> list[HelpBooking]:
+    async def get_participant_bookings(self, participant_id: int) -> list[ViewBooking]:
         async with self._create_session() as session:
             query = select(Booking).where(Booking.participant_id == participant_id)
             objs = await session.scalars(query)
-            return [HelpBooking.model_validate(obj) for obj in objs]
+            return [ViewBooking.model_validate(obj) for obj in objs]

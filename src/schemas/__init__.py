@@ -1,4 +1,4 @@
-from src.schemas.booking import CreateBooking, HelpBooking, ViewBooking
+from src.schemas.booking import CreateBooking, ViewBooking, ViewBooking
 from src.schemas.participant import (
     CreateParticipant,
     FillParticipantProfile,
@@ -9,7 +9,7 @@ from src.schemas.participant import (
 __all__ = [
     "ViewBooking",
     "CreateBooking",
-    "HelpBooking",
+    "ViewBooking",
     "ViewParticipant",
     "CreateParticipant",
     "FillParticipantProfile",
