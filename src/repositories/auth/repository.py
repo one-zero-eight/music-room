@@ -1,5 +1,4 @@
 import datetime
-from hmac import compare_digest
 
 from authlib.jose import jwt, JoseError
 from sqlalchemy import and_, or_, select
@@ -110,15 +109,13 @@ class TokenRepository:
 
     @classmethod
     def verify_bot_token(cls, auth_token: str) -> VerificationResult:
-        split_by_colon = auth_token.split(":")
-        if len(split_by_colon) == 3:
-            user_id, bot_token, _ = split_by_colon
-            user_id = int(user_id)
-            bot_token += _
+        if auth_token.endswith(settings.BOT_TOKEN):
+            user_id = auth_token[: -len(settings.BOT_TOKEN)]
+            if user_id:
+                user_id = int(user_id.strip(":"))
+            else:
+                user_id = None
+
+            return VerificationResult(success=True, user_id=user_id, source=VerificationSource.BOT)
         else:
-            user_id = None
-            bot_token = auth_token
-
-        success = compare_digest(bot_token, settings.BOT_TOKEN)
-
-        return VerificationResult(success=success, user_id=user_id, source=VerificationSource.BOT)
+            return VerificationResult(success=False)

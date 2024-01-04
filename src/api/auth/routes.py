@@ -9,7 +9,7 @@ from src.exceptions import InvalidCode, UserExists
 from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.repositories.smtp.repository import SMTPRepository
-from src.schemas import CreateParticipant
+from src.schemas import CreateParticipant, ParticipantStatus
 
 
 def _generate_auth_code() -> str:
@@ -51,7 +51,7 @@ async def validate_code(
         participant = CreateParticipant(
             email=email,
             need_to_fill_profile=True,
-            status="free",
+            status=ParticipantStatus.FREE,
             telegram_id=telegram_id,
         )
         created = await participant_repository.create(participant)

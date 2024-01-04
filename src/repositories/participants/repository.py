@@ -37,16 +37,15 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             if obj:
                 return ViewParticipant.model_validate(obj)
 
-    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipant":
+    async def fill_profile(self, participant_id: int, data: "FillParticipantProfile") -> "ViewParticipant":
         async with self._create_session() as session:
-            phone_number = Crypto.encrypt(participant.phone_number)
+            phone_number = Crypto.encrypt(data.phone_number)
             query = (
                 update(Participant)
-                .where(Participant.email == participant.email)
+                .where(Participant.id == participant_id)
                 .values(
-                    name=participant.name,
-                    alias=participant.alias,
-                    email=participant.email,
+                    name=data.name,
+                    alias=data.alias,
                     phone_number=phone_number,
                     need_to_fill_profile=False,
                 )

@@ -47,7 +47,6 @@ class CreateParticipant(BaseModel):
 
 class FillParticipantProfile(BaseModel):
     name: str
-    email: str
     alias: str
     phone_number: str
 

@@ -25,13 +25,22 @@ class SqlBookingRepository(AbstractBookingRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def create(self, booking: "CreateBooking") -> ViewBooking:
+    async def create(self, participant_id: int, booking: "CreateBooking") -> ViewBooking:
         async with self._create_session() as session:
-            query = insert(Booking).values(**booking.model_dump()).returning(Booking)
+            query = insert(Booking).values(participant_id=participant_id, **booking.model_dump()).returning(Booking)
             obj = await session.scalar(query)
             await session.commit()
             await session.refresh(obj)
             return ViewBooking.model_validate(obj)
+
+    async def get_booking(self, booking_id: int) -> Optional["ViewBooking"]:
+        async with self._create_session() as session:
+            query = select(Booking).where(Booking.id == booking_id)
+            obj = await session.scalar(query)
+            if obj:
+                return ViewBooking.model_validate(obj)
+            else:
+                return None
 
     async def get_bookings_for_week(self, start_of_week: datetime.date) -> list[ViewBooking]:
         async with self._create_session() as session:

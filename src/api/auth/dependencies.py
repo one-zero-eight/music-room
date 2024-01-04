@@ -7,8 +7,10 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import ValidationError
 
 from src.api.auth.telegram import TelegramWidgetData, telegram_webapp_check_authorization
+from src.api.dependencies import Dependencies
 from src.exceptions import NoCredentialsException, IncorrectCredentialsException
 from src.repositories.auth.repository import TokenRepository
+from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas.auth import VerificationResult
 
 bearer_scheme = HTTPBearer(
@@ -48,6 +50,10 @@ async def verify_request(
 
     bot_verification_result = TokenRepository.verify_bot_token(bearer.credentials)
     if bot_verification_result.success:
+        # replace telegram_id with user_id
+        participant_repository = Dependencies.get(AbstractParticipantRepository)
+        telegram_id = str(bot_verification_result.user_id)
+        bot_verification_result.user_id = await participant_repository.get_participant_id(telegram_id)
         return bot_verification_result
 
     try:
@@ -61,47 +67,3 @@ async def verify_request(
         return webapp_verification_result
 
     raise IncorrectCredentialsException()
-
-
-async def verify_bot_token(
-    token: Optional[str] = Depends(get_access_token),
-) -> VerificationResult:
-    """
-    :raises NoCredentialsException: if token is not provided
-    :raises IncorrectCredentialsException: if token is invalid
-    :param token: JWT token from header or cookie
-    :return: True if token is valid
-    """
-
-    if not token:
-        raise NoCredentialsException()
-
-    verification_result = TokenRepository.verify_bot_token(token)
-
-    if not verification_result.success:
-        raise IncorrectCredentialsException()
-
-    return verification_result
-
-
-def verify_webapp(
-    bearer: Optional[HTTPAuthorizationCredentials] = Depends(bearer_scheme),
-) -> VerificationResult:
-    """
-    Verify telegram data
-
-    https://core.telegram.org/widgets/login#checking-authorization
-    :raises IncorrectCredentialsException: if hash is invalid
-    """
-
-    if not bearer:
-        raise NoCredentialsException()
-
-    telegram_data = TelegramWidgetData.parse_from_string(bearer.credentials)
-
-    verification_result = telegram_webapp_check_authorization(telegram_data)
-
-    if not verification_result.success:
-        raise IncorrectCredentialsException()
-
-    return verification_result

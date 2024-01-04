@@ -8,11 +8,15 @@ from src.schemas import CreateBooking, ViewBooking, ViewParticipant
 class AbstractBookingRepository(metaclass=ABCMeta):
     # ------------------- CRUD ------------------- #
     @abstractmethod
-    async def create(self, event: "CreateBooking") -> "ViewBooking":
+    async def create(self, participant_id: int, booking: "CreateBooking") -> "ViewBooking":
         ...
 
     @abstractmethod
     async def get_bookings_for_week(self, start_of_week: datetime.date):
+        ...
+
+    @abstractmethod
+    async def get_booking(self, booking_id: int) -> Optional["ViewBooking"]:
         ...
 
     @abstractmethod

@@ -1,5 +1,6 @@
-from typing import TypeVar, Union, Callable, ClassVar, Hashable
+from typing import TypeVar, Union, Callable, ClassVar, Hashable, TypeAlias, Annotated
 
+from fastapi import Depends
 
 T = TypeVar("T")
 
@@ -41,3 +42,9 @@ class Dependencies:
             return provider()
         else:
             return provider
+
+
+from src.api.auth.dependencies import verify_request  # noqa: E402
+from src.schemas.auth import VerificationResult  # noqa: E402
+
+VerifiedDep: TypeAlias = Annotated[VerificationResult, Depends(verify_request)]

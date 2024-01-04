@@ -8,7 +8,6 @@ _now = datetime.datetime.now().replace(second=0, microsecond=0, tzinfo=None)
 
 
 class CreateBooking(BaseModel):
-    participant_id: int
     time_start: NaiveDatetime = Field(..., example=_now)
     time_end: NaiveDatetime = Field(..., example=_now + datetime.timedelta(hours=1))
 

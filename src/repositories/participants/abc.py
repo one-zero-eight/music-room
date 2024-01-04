@@ -21,7 +21,7 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def fill_profile(self, participant: "FillParticipantProfile") -> "ViewParticipant":
+    async def fill_profile(self, participant_id: int, data: "FillParticipantProfile") -> "ViewParticipant":
         ...
 
     @abstractmethod
