@@ -9,8 +9,6 @@ services:
       dockerfile: ./deploy/Dockerfile
       context: .
     restart: always
-    ports:
-      - "8000:8000"
     volumes:
      - "./settings.yaml:/code/settings.yaml"
     env_file: .env
