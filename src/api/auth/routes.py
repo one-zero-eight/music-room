@@ -48,6 +48,7 @@ async def validate_code(
     participant_repository = Dependencies.get(AbstractParticipantRepository)
 
     if await auth_repository.is_code_valid(email, code):
+        await auth_repository.delete_code(email)
         participant = CreateParticipant(
             email=email,
             need_to_fill_profile=True,

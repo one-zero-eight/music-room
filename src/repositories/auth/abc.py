@@ -11,5 +11,9 @@ class AbstractAuthRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    async def delete_code(self, email: str) -> None:
+        ...
+
+    @abstractmethod
     async def is_code_valid(self, email: str, code: str) -> bool:
         ...

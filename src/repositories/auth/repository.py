@@ -49,6 +49,14 @@ class SqlAuthRepository(AbstractAuthRepository):
             await session.scalar(query)
             await session.commit()
 
+    async def delete_code(self, email: str) -> None:
+        async with self._create_session() as session:
+            query = select(PotentialUser).where(PotentialUser.email == email)
+            objs = await session.scalars(query)
+            for obj in objs:
+                await session.delete(obj)
+            await session.commit()
+
     async def is_code_valid(self, email: str, code: str) -> bool:
         async with self._create_session() as session:
             current_datetime = datetime.datetime.now()

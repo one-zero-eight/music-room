@@ -23,9 +23,9 @@ class Participant(Base, IdMixin):
     booking: Mapped[List["Booking"]] = relationship(back_populates="participant")
 
 
-class PotentialUser(Base):
+class PotentialUser(Base, IdMixin):
     __tablename__ = "potential_user"
 
-    email: Mapped[str] = mapped_column(primary_key=True, unique=True)
+    email: Mapped[str] = mapped_column()
     code: Mapped[str] = mapped_column()
     code_expiration: Mapped[datetime.datetime] = mapped_column()
