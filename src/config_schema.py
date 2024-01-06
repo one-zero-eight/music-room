@@ -3,8 +3,6 @@ from pathlib import Path
 import yaml
 from pydantic import BaseModel, Field, SecretStr
 
-from src.schemas.smtp import MailingTemplate
-
 
 class Settings(BaseModel):
     APP_ROOT_PATH: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
@@ -33,15 +31,6 @@ class Settings(BaseModel):
     SMTP_PORT: int = Field(587)
     SMTP_USERNAME: str = Field(..., example="some-username@gmail.com")
     SMTP_PASSWORD: str = Field(..., example="xxxxxxxx")
-    REGISTRATION_MESSAGE_TEMPLATE: MailingTemplate = Field(
-        default=MailingTemplate(
-            subject="Registration in InNoHassle-MusicRoom",
-            file="auth-code.jinja2",
-        ),
-        description="Mailing template settings",
-    )
-    JINJA2_TEMPLATES_DIR: Path = Field(default=Path("templates"), description="Path to the templates directory")
-
     CRYPTO_PASSWORD: bytes = Field(
         ...,
         example=b"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",

@@ -1,4 +1,3 @@
-import jinja2
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 
@@ -44,15 +43,10 @@ async def setup_repositories():
     auth_repository = SqlAuthRepository(storage)
     smtp_repository = SMTPRepository()
 
-    jinja2_env = jinja2.Environment(
-        loader=jinja2.FileSystemLoader(settings.JINJA2_TEMPLATES_DIR),
-        autoescape=True,
-    )
     Dependencies.register_provider(AbstractParticipantRepository, participant_repository)
     Dependencies.register_provider(AbstractBookingRepository, booking_repository)
     Dependencies.register_provider(AbstractAuthRepository, auth_repository)
     Dependencies.register_provider(SMTPRepository, smtp_repository)
-    Dependencies.register_provider(jinja2.Environment, jinja2_env)
 
 
 @app.on_event("startup")

@@ -4,7 +4,6 @@ from starlette.background import BackgroundTasks
 
 from src.api.auth import router
 from src.api.dependencies import Dependencies
-from src.config import settings
 from src.exceptions import InvalidCode, UserExists
 from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
@@ -27,7 +26,7 @@ async def registration(background_task: BackgroundTasks, email: str):
         code = _generate_auth_code()
         await auth_repository.save_code(email, code)
         smtp = Dependencies.get(SMTPRepository)
-        message = smtp.render_message(settings.REGISTRATION_MESSAGE_TEMPLATE, email, code=code)
+        message = smtp.render_verification_message(email, code)
         # smtp.send(message, email)
         background_task.add_task(smtp.send, message, email)
 
