@@ -20,3 +20,17 @@ async def is_offset_correct(booking_date: datetime.datetime) -> bool:
     if (booking_date - current_datetime).days > 7 or (booking_date - current_datetime).days < 0:
         return False
     return True
+
+
+async def get_week_numbers(current_week: bool):
+    today = datetime.datetime.now()
+
+    offset = 0 if current_week else 7
+
+    start_of_week = today - datetime.timedelta(days=today.weekday()) + datetime.timedelta(offset)
+
+    current_week_dates = [start_of_week + datetime.timedelta(days=i) for i in range(7)]
+    current_week_numbers = tuple(map(lambda date: date.day, current_week_dates))
+    wide = current_week_numbers[2] > 9
+
+    return current_week_numbers, wide

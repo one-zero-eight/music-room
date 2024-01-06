@@ -14,6 +14,7 @@ from src.schemas import CreateBooking, ViewBooking, ViewParticipant
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant
 from src.tools import count_duration
+from src.tools.utils import get_week_numbers
 
 
 class SqlBookingRepository(AbstractBookingRepository):
@@ -61,7 +62,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             raise NoSuchBooking()
 
     async def check_collision(
-        self, time_start: datetime.datetime, time_end: datetime.datetime
+            self, time_start: datetime.datetime, time_end: datetime.datetime
     ) -> Optional[ViewBooking]:
         async with self._create_session() as session:
             query = select(Booking).where(
@@ -81,6 +82,37 @@ class SqlBookingRepository(AbstractBookingRepository):
             query = select(Participant).where(Participant.id == participant_id)
             obj = await session.scalar(query)
             return ViewParticipant.model_validate(obj)
+
+    async def draw_week_numbers(self, draw: ImageDraw, current_week: bool):
+        fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
+        lightBlack = (48, 54, 59)
+
+        weekdays_numbers, wide = await get_week_numbers(current_week)
+
+        x_coord = 130
+        y_coord = 30
+        week_days = 7
+        offset = 175 if wide else 176
+
+        draw.text(
+            (x_coord, y_coord),
+            text=f"{weekdays_numbers[0]}",
+            fill=lightBlack,
+            font=fontSimple,
+        )
+
+        for i in range(1, week_days):
+            draw.text(
+                (x_coord + offset * i, y_coord),
+                text=f"{weekdays_numbers[i]}",
+                fill=lightBlack,
+                font=fontSimple,
+            )
+
+    async def is_start_of_week(self, start_of_week: datetime.date):
+        today = datetime.datetime.now()
+
+        return (today - timedelta(days=today.weekday())).date() == start_of_week
 
     async def form_schedule(self, start_of_week: datetime.date) -> bytes:
         xbase = 48  # origin for x
@@ -133,11 +165,13 @@ class SqlBookingRepository(AbstractBookingRepository):
         if start_of_week <= current.date() <= start_of_week + timedelta(days=6):
             is_current_week = True
 
+        # Drawing red line
         if 6 < current.hour < 23 and is_current_week:
             now_x0 = xbase + xsize * weekday
             now_y0 = ybase + int(ysize * ((current.hour - 7) + (current.minute / 60)))
             draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
 
+        await self.draw_week_numbers(draw, await self.is_start_of_week(start_of_week))
         image_stream = io.BytesIO()
         image.save(image_stream, format="png")
         val = image_stream.getvalue()
