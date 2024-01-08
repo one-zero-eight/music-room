@@ -17,7 +17,7 @@ from src.schemas import ViewBooking, ViewParticipant, ParticipantStatus, FillPar
 
 # docx
 @router.get(
-    "/table",
+    "/export",
     response_class=Response,
 )
 async def get_list_of_all_users(
