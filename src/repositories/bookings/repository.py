@@ -62,7 +62,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             raise NoSuchBooking()
 
     async def check_collision(
-            self, time_start: datetime.datetime, time_end: datetime.datetime
+        self, time_start: datetime.datetime, time_end: datetime.datetime
     ) -> Optional[ViewBooking]:
         async with self._create_session() as session:
             query = select(Booking).where(

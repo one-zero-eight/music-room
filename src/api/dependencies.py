@@ -47,4 +47,10 @@ class Dependencies:
 from src.api.auth.dependencies import verify_request  # noqa: E402
 from src.schemas.auth import VerificationResult  # noqa: E402
 
-VerifiedDep: TypeAlias = Annotated[VerificationResult, Depends(verify_request)]
+
+class SucceedVerificationResult(VerificationResult):
+    success: bool = True
+    user_id: int  # not optional
+
+
+VerifiedDep: TypeAlias = Annotated[SucceedVerificationResult, Depends(verify_request)]

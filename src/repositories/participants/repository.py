@@ -37,6 +37,12 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             if obj:
                 return ViewParticipant.model_validate(obj)
 
+    async def get_all_participants(self) -> list["ViewParticipant"]:
+        async with self._create_session() as session:
+            query = select(Participant)
+            objs = await session.scalars(query)
+            return [ViewParticipant.model_validate(obj) for obj in objs]
+
     async def fill_profile(self, participant_id: int, data: "FillParticipantProfile") -> "ViewParticipant":
         async with self._create_session() as session:
             phone_number = Crypto.encrypt(data.phone_number)

@@ -1,13 +1,76 @@
 import datetime
+import io
 from typing import Optional
 
-from fastapi import Query
+from docx import Document as create_docx
+from docx.document import Document
+from docx.shared import Emu
+from docx.table import _Cell
+from fastapi import Query, Response
 
 from src.api.dependencies import Dependencies, VerifiedDep
 from src.api.participants import router
 from src.exceptions import ForbiddenException
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import ViewBooking, ViewParticipant, ParticipantStatus, FillParticipantProfile
+
+
+# docx
+@router.get(
+    "/table",
+    response_class=Response,
+)
+async def get_list_of_all_users(
+    verified: VerifiedDep,
+):
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
+    issuer = await participant_repository.get_participant(verified.user_id)
+    if issuer.status != ParticipantStatus.LORD:
+        raise ForbiddenException()
+
+    participants = await participant_repository.get_all_participants()
+
+    document: Document = create_docx()
+    document.add_heading("Список музыкальной комнаты", 0)
+
+    table = document.add_table(rows=1, cols=3, style="TableGrid")
+
+    hdr_cells: tuple[_Cell] = table.rows[0].cells
+    hdr_cells[0].text = "№"
+    hdr_cells[1].text = "Фамилия Имя"
+    hdr_cells[2].text = "Telegram"
+
+    # set bold for header
+    for cell in table.rows[0].cells:
+        for paragraph in cell.paragraphs:
+            for run in paragraph.runs:
+                run.bold = True
+
+    for i, participant in enumerate(participants, 1):
+        row_cells = table.add_row().cells
+        row_cells[0].text = str(i)
+        row_cells[1].text = participant.name
+        row_cells[2].text = f"@{participant.alias}"
+
+    # set width for columns
+    for cell in table.columns[0].cells:
+        cell.width = Emu(500000)
+
+    document.add_page_break()
+
+    bytes_stream = io.BytesIO()
+    document.save(bytes_stream)
+    val = bytes_stream.getvalue()
+    bytes_stream.close()
+    date = datetime.datetime.now().strftime("%d.%m.%Y")
+    headers = {
+        "Content-Disposition": f"attachment; filename={date}.docx",
+    }
+    return Response(
+        content=val,
+        headers=headers,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    )
 
 
 @router.put("/{participant_id}/status")
