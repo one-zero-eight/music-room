@@ -7,6 +7,10 @@ class AbstractAuthRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    async def code_exists(self, email: str) -> bool:
+        ...
+
+    @abstractmethod
     async def save_code(self, email: str, code: str) -> None:
         ...
 

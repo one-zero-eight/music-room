@@ -1,7 +1,7 @@
 import datetime
 
 from authlib.jose import jwt, JoseError
-from sqlalchemy import and_, or_, select
+from sqlalchemy import and_, or_, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -35,17 +35,31 @@ class SqlAuthRepository(AbstractAuthRepository):
             obj = await session.scalar(query)
             return False if obj is None else True
 
+    async def code_exists(self, email: str) -> bool:
+        async with self._create_session() as session:
+            query = select(PotentialUser).where(PotentialUser.email == email)
+            res = await session.scalar(query)
+            return True if res else False
+
     async def save_code(self, email: str, code: str) -> None:
         async with self._create_session() as session:
             current_datetime = datetime.datetime.now()
             delta = datetime.timedelta(minutes=30)
             new_datetime = current_datetime + delta
 
-            query = (
-                insert(PotentialUser)
-                .values(code=code, email=email, code_expiration=new_datetime)
-                .returning(PotentialUser)
-            )
+            if await self.code_exists(email):
+                query = (
+                    update(PotentialUser)
+                    .where(PotentialUser.email == email)
+                    .values(code=code, email=email, code_expiration=new_datetime)
+                    .returning(PotentialUser)
+                )
+            else:
+                query = (
+                    insert(PotentialUser)
+                    .values(code=code, email=email, code_expiration=new_datetime)
+                    .returning(PotentialUser)
+                )
             await session.scalar(query)
             await session.commit()
 
