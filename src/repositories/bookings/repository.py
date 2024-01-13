@@ -62,7 +62,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             raise NoSuchBooking()
 
     async def check_collision(
-        self, time_start: datetime.datetime, time_end: datetime.datetime
+            self, time_start: datetime.datetime, time_end: datetime.datetime
     ) -> Optional[ViewBooking]:
         async with self._create_session() as session:
             query = select(Booking).where(
@@ -109,6 +109,18 @@ class SqlBookingRepository(AbstractBookingRepository):
                 font=fontSimple,
             )
 
+    async def draw_month_and_year(self, draw: ImageDraw, current_week: bool):
+
+        fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
+        lightBlack = (48, 54, 59)
+
+        offset = 7 if not current_week else 0
+        current_datetime = datetime.datetime.now() + datetime.timedelta(offset)
+        current_year = current_datetime.year
+        current_month = current_datetime.strftime("%b")
+        draw.text((12, 12), text=f"{current_month} {current_year}", fill=lightBlack,
+                  font=fontSimple)
+
     async def is_start_of_week(self, start_of_week: datetime.date):
         today = datetime.datetime.now()
 
@@ -144,8 +156,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             participant = await self.get_participant(booking.participant_id)
 
             alias = participant.alias
-            if len(alias) > 11:
-                alias = f"{alias[:11]}..."
+            max_alias_length: int = 10
+            if len(alias) > max_alias_length:
+                alias = f"{alias[:max_alias_length]}..."
 
             caption = f"{alias} "
 
@@ -161,17 +174,18 @@ class SqlBookingRepository(AbstractBookingRepository):
         weekday = today.weekday()
 
         current = datetime.datetime.now()
-        is_current_week = False
+        current_week = False
         if start_of_week <= current.date() <= start_of_week + timedelta(days=6):
-            is_current_week = True
+            current_week = True
 
         # Drawing red line
-        if 6 < current.hour < 23 and is_current_week:
+        if 6 < current.hour < 23 and current_week:
             now_x0 = xbase + xsize * weekday
             now_y0 = ybase + int(ysize * ((current.hour - 7) + (current.minute / 60)))
             draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
 
         await self.draw_week_numbers(draw, await self.is_start_of_week(start_of_week))
+        await self.draw_month_and_year(draw, current_week)
         image_stream = io.BytesIO()
         image.save(image_stream, format="png")
         val = image_stream.getvalue()
