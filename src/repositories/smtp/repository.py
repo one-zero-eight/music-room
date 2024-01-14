@@ -33,8 +33,8 @@ class SMTPRepository:
         msg_html = MIMEText(html, "html")
         mail.attach(msg_html)
 
-        mail["Subject"] = "Music Room: Verification code"
-        mail["From"] = settings.SMTP_USERNAME
+        mail["Subject"] = "Verification code"
+        mail["From"] = "Music Room"
         mail["To"] = target_email
 
         return mail.as_string()
