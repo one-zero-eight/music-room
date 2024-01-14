@@ -1,5 +1,6 @@
-### PyCharm ###
+### IDE ###
 .idea
+.vscode
 
 ### Cache ###
 __pycache__
@@ -11,3 +12,6 @@ __pycache__
 settings.yaml
 private.pem
 public.pem
+
+### OS ###
+.DS_Store
