@@ -34,7 +34,7 @@ class SMTPRepository:
         mail.attach(msg_html)
 
         mail["Subject"] = "Verification code"
-        mail["From"] = "Music Room"
+        mail["From"] = f"Music Room <{settings.SMTP_USERNAME}>"
         mail["To"] = target_email
 
         return mail.as_string()
