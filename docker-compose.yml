@@ -12,6 +12,8 @@ services:
     volumes:
      - "./settings.yaml:/code/settings.yaml"
     env_file: .env
+    environment:
+      - TZ=Europe/Moscow
     networks:
       - music-room
 
