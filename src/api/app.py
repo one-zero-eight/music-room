@@ -49,8 +49,19 @@ async def setup_repositories():
     Dependencies.register_provider(SMTPRepository, smtp_repository)
 
 
+def setup_timezone():
+    import sys
+    import os
+    import time
+
+    if sys.platform != "win32":  # unix only
+        os.environ["TZ"] = "Europe/Moscow"
+        time.tzset()
+
+
 @app.on_event("startup")
 async def startup_event():
+    setup_timezone()
     await setup_repositories()
 
 
