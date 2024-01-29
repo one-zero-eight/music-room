@@ -6,7 +6,10 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import ValidationError
 
-from src.api.auth.telegram import TelegramWidgetData, telegram_webapp_check_authorization
+from src.api.auth.telegram import (
+    TelegramWidgetData,
+    telegram_webapp_check_authorization,
+)
 from src.api.dependencies import Dependencies
 from src.exceptions import NoCredentialsException, IncorrectCredentialsException
 from src.repositories.auth.repository import TokenRepository
@@ -44,7 +47,9 @@ async def verify_request(
     if not bearer:
         raise NoCredentialsException()
 
-    user_verification_result = await TokenRepository.verify_access_token(bearer.credentials)
+    user_verification_result = await TokenRepository.verify_access_token(
+        bearer.credentials
+    )
     if user_verification_result.success:
         return user_verification_result
 
@@ -53,7 +58,9 @@ async def verify_request(
         # replace telegram_id with user_id
         participant_repository = Dependencies.get(AbstractParticipantRepository)
         telegram_id = str(bot_verification_result.user_id)
-        bot_verification_result.user_id = await participant_repository.get_participant_id(telegram_id)
+        bot_verification_result.user_id = (
+            await participant_repository.get_participant_id(telegram_id)
+        )
         return bot_verification_result
 
     try:

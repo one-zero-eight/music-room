@@ -12,7 +12,12 @@ from src.api.dependencies import Dependencies, VerifiedDep
 from src.api.participants import router
 from src.exceptions import ForbiddenException
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import ViewBooking, ViewParticipant, ParticipantStatus, FillParticipantProfile
+from src.schemas import (
+    ViewBooking,
+    ViewParticipant,
+    ParticipantStatus,
+    FillParticipantProfile,
+)
 
 
 # docx
@@ -85,7 +90,9 @@ async def change_status(
     if source.status != ParticipantStatus.LORD:
         raise ForbiddenException()
 
-    updated_participant = await participant_repository.change_status(participant_id, new_status)
+    updated_participant = await participant_repository.change_status(
+        participant_id, new_status
+    )
     return updated_participant
 
 

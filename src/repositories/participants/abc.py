@@ -25,15 +25,21 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def fill_profile(self, participant_id: int, data: "FillParticipantProfile") -> "ViewParticipant":
+    async def fill_profile(
+        self, participant_id: int, data: "FillParticipantProfile"
+    ) -> "ViewParticipant":
         ...
 
     @abstractmethod
-    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipant":
+    async def change_status(
+        self, participant_id: int, new_status: ParticipantStatus
+    ) -> "ViewParticipant":
         ...
 
     @abstractmethod
-    async def get_participant_bookings(self, participant_id: int) -> list["ViewBooking"]:
+    async def get_participant_bookings(
+        self, participant_id: int
+    ) -> list["ViewBooking"]:
         ...
 
     @abstractmethod
@@ -41,11 +47,15 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def remaining_weekly_hours(self, participant_id: int, start_of_week: Optional[datetime.date] = None) -> float:
+    async def remaining_weekly_hours(
+        self, participant_id: int, start_of_week: Optional[datetime.date] = None
+    ) -> float:
         ...
 
     @abstractmethod
-    async def remaining_daily_hours(self, participant_id: int, date: datetime.date) -> float:
+    async def remaining_daily_hours(
+        self, participant_id: int, date: datetime.date
+    ) -> float:
         ...
 
     @abstractmethod

@@ -8,7 +8,9 @@ from src.schemas import CreateBooking, ViewBooking, ViewParticipant
 class AbstractBookingRepository(metaclass=ABCMeta):
     # ------------------- CRUD ------------------- #
     @abstractmethod
-    async def create(self, participant_id: int, booking: "CreateBooking") -> "ViewBooking":
+    async def create(
+        self, participant_id: int, booking: "CreateBooking"
+    ) -> "ViewBooking":
         ...
 
     @abstractmethod

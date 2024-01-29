@@ -26,9 +26,15 @@ class SqlBookingRepository(AbstractBookingRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def create(self, participant_id: int, booking: "CreateBooking") -> ViewBooking:
+    async def create(
+        self, participant_id: int, booking: "CreateBooking"
+    ) -> ViewBooking:
         async with self._create_session() as session:
-            query = insert(Booking).values(participant_id=participant_id, **booking.model_dump()).returning(Booking)
+            query = (
+                insert(Booking)
+                .values(participant_id=participant_id, **booking.model_dump())
+                .returning(Booking)
+            )
             obj = await session.scalar(query)
             await session.commit()
             await session.refresh(obj)
@@ -43,10 +49,14 @@ class SqlBookingRepository(AbstractBookingRepository):
             else:
                 return None
 
-    async def get_bookings_for_week(self, start_of_week: datetime.date) -> list[ViewBooking]:
+    async def get_bookings_for_week(
+        self, start_of_week: datetime.date
+    ) -> list[ViewBooking]:
         async with self._create_session() as session:
             end_of_week = start_of_week + timedelta(days=7)
-            query = select(Booking).filter(between(Booking.time_start, start_of_week, end_of_week))
+            query = select(Booking).filter(
+                between(Booking.time_start, start_of_week, end_of_week)
+            )
 
             objs = await session.scalars(query)
             if objs:
@@ -62,14 +72,19 @@ class SqlBookingRepository(AbstractBookingRepository):
             raise NoSuchBooking()
 
     async def check_collision(
-            self, time_start: datetime.datetime, time_end: datetime.datetime
+        self, time_start: datetime.datetime, time_end: datetime.datetime
     ) -> Optional[ViewBooking]:
         async with self._create_session() as session:
             query = select(Booking).where(
                 not_(
                     or_(
-                        and_(Booking.time_start < time_start, Booking.time_end <= time_start),
-                        and_(Booking.time_start >= time_end, Booking.time_end > time_end),
+                        and_(
+                            Booking.time_start < time_start,
+                            Booking.time_end <= time_start,
+                        ),
+                        and_(
+                            Booking.time_start >= time_end, Booking.time_end > time_end
+                        ),
                     )
                 )
             )
@@ -84,7 +99,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             return ViewParticipant.model_validate(obj)
 
     async def draw_week_numbers(self, draw: ImageDraw, current_week: bool):
-        fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
+        fontSimple = ImageFont.truetype(
+            "src/repositories/bookings/open_sans.ttf", size=14
+        )
         lightBlack = (48, 54, 59)
 
         weekdays_numbers, wide = await get_week_numbers(current_week)
@@ -110,16 +127,21 @@ class SqlBookingRepository(AbstractBookingRepository):
             )
 
     async def draw_month_and_year(self, draw: ImageDraw, current_week: bool):
-
-        fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
+        fontSimple = ImageFont.truetype(
+            "src/repositories/bookings/open_sans.ttf", size=14
+        )
         lightBlack = (48, 54, 59)
 
         offset = 7 if not current_week else 0
         current_datetime = datetime.datetime.now() + datetime.timedelta(offset)
         current_year = current_datetime.year
         current_month = current_datetime.strftime("%b")
-        draw.text((12, 12), text=f"{current_month} {current_year}", fill=lightBlack,
-                  font=fontSimple)
+        draw.text(
+            (12, 12),
+            text=f"{current_month} {current_year}",
+            fill=lightBlack,
+            font=fontSimple,
+        )
 
     async def is_start_of_week(self, start_of_week: datetime.date):
         today = datetime.datetime.now()
@@ -140,7 +162,9 @@ class SqlBookingRepository(AbstractBookingRepository):
         lightBlack = (48, 54, 59)
         red = (255, 0, 0)
 
-        fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
+        fontSimple = ImageFont.truetype(
+            "src/repositories/bookings/open_sans.ttf", size=14
+        )
 
         bookings = await self.get_bookings_for_week(start_of_week)
         for booking in bookings:
@@ -148,7 +172,10 @@ class SqlBookingRepository(AbstractBookingRepository):
 
             ylength = count_duration(booking.time_start, booking.time_end)
             x0 = xbase + xsize * day
-            y0 = ybase + int(ysize * ((booking.time_start.hour - 7) + (booking.time_start.minute / 60.0)))
+            y0 = ybase + int(
+                ysize
+                * ((booking.time_start.hour - 7) + (booking.time_start.minute / 60.0))
+            )
             x1 = x0 + xsize
             y1 = y0 + 31.5 * ylength
 
@@ -182,7 +209,9 @@ class SqlBookingRepository(AbstractBookingRepository):
         if 6 < current.hour < 23 and current_week:
             now_x0 = xbase + xsize * weekday
             now_y0 = ybase + int(ysize * ((current.hour - 7) + (current.minute / 60)))
-            draw.rounded_rectangle((now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red)
+            draw.rounded_rectangle(
+                (now_x0, now_y0, now_x0 + xsize, now_y0 + 2), 2, fill=red
+            )
 
         await self.draw_week_numbers(draw, await self.is_start_of_week(start_of_week))
         await self.draw_month_and_year(draw, current_week)
@@ -197,7 +226,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             start_of_day = datetime_datetime.combine(date, datetime.time.min)
             end_of_day = datetime_datetime.combine(date, datetime.time.max)
 
-            query = select(Booking).where(and_(Booking.time_start >= start_of_day, Booking.time_end <= end_of_day))
+            query = select(Booking).where(
+                and_(Booking.time_start >= start_of_day, Booking.time_end <= end_of_day)
+            )
 
             objs = await session.scalars(query)
 

@@ -5,7 +5,9 @@ from pydantic import BaseModel, Field, SecretStr
 
 
 class Settings(BaseModel):
-    APP_ROOT_PATH: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
+    APP_ROOT_PATH: str = Field(
+        "", description='Prefix for the API path (e.g. "/api/v0")'
+    )
 
     DB_URL: str = Field(
         "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
@@ -14,7 +16,9 @@ class Settings(BaseModel):
 
     # Authorization
     BOT_TOKEN: str = Field(
-        ..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", description="Bot token from @BotFather"
+        ...,
+        example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        description="Bot token from @BotFather",
     )
     JWT_PRIVATE_KEY: SecretStr = Field(
         ...,

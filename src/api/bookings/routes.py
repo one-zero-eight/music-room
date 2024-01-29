@@ -29,7 +29,9 @@ def _get_start_of_week() -> datetime.date:
 
 
 @router.post("/")
-async def create_booking(booking: CreateBooking, verified: VerifiedDep) -> ViewBooking | str:
+async def create_booking(
+    booking: CreateBooking, verified: VerifiedDep
+) -> ViewBooking | str:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     participant_repository = Dependencies.get(AbstractParticipantRepository)
     user_id = verified.user_id
@@ -39,16 +41,25 @@ async def create_booking(booking: CreateBooking, verified: VerifiedDep) -> ViewB
     if await participant_repository.is_need_to_fill_profile(user_id):
         raise IncompleteProfile()
 
-    collision = await booking_repository.check_collision(booking.time_start, booking.time_end)
+    collision = await booking_repository.check_collision(
+        booking.time_start, booking.time_end
+    )
     if collision is not None:
         raise CollisionInBookings()
 
     booking_duration = count_duration(booking.time_start, booking.time_end)
 
-    if await participant_repository.remaining_daily_hours(user_id, booking.time_start) - booking_duration < 0:
+    if (
+        await participant_repository.remaining_daily_hours(user_id, booking.time_start)
+        - booking_duration
+        < 0
+    ):
         raise NotEnoughDailyHoursToBook()
 
-    if await participant_repository.remaining_weekly_hours(user_id) - booking_duration < 0:
+    if (
+        await participant_repository.remaining_weekly_hours(user_id) - booking_duration
+        < 0
+    ):
         raise NotEnoughWeeklyHoursToBook()
 
     if not await is_offset_correct(booking.time_start):
@@ -82,9 +93,15 @@ async def get_my_bookings(verified: VerifiedDep) -> list[ViewBooking]:
     return await booking_repository.get_participant_bookings(verified.user_id)
 
 
-@router.get("/form_schedule", responses={200: {"content": {"image/png": {}}}}, response_class=Response)
+@router.get(
+    "/form_schedule",
+    responses={200: {"content": {"image/png": {}}}},
+    response_class=Response,
+)
 async def form_schedule(
-    start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
+    start_of_week: Optional[datetime.date] = Query(
+        default_factory=_get_start_of_week, example=_get_start_of_week()
+    ),
 ) -> Response:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     image_bytes = await booking_repository.form_schedule(start_of_week)
@@ -99,7 +116,9 @@ async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
 
 @router.get("/")
 async def get_bookings_for_week(
-    start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
+    start_of_week: Optional[datetime.date] = Query(
+        default_factory=_get_start_of_week, example=_get_start_of_week()
+    ),
 ) -> list[ViewBooking]:
     booking_repository = Dependencies.get(AbstractBookingRepository)
     bookings = await booking_repository.get_bookings_for_week(start_of_week)

@@ -39,7 +39,12 @@ class IncorrectCredentialsException(HTTPException):
             detail=self.responses[401]["description"],
         )
 
-    responses = {401: {"description": "Could not validate credentials", "model": ExceptionWithDetail}}
+    responses = {
+        401: {
+            "description": "Could not validate credentials",
+            "model": ExceptionWithDetail,
+        }
+    }
 
 
 class ForbiddenException(HTTPException):
@@ -53,7 +58,9 @@ class ForbiddenException(HTTPException):
             detail=self.responses[403]["description"],
         )
 
-    responses = {403: {"description": "Not enough permissions", "model": ExceptionWithDetail}}
+    responses = {
+        403: {"description": "Not enough permissions", "model": ExceptionWithDetail}
+    }
 
 
 class CollisionInBookings(HTTPException):

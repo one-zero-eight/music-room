@@ -15,7 +15,9 @@ class Crypto:
         iterations=480000,
     )
 
-    cipher_suite = Fernet(base64.urlsafe_b64encode(kdf.derive(settings.CRYPTO_PASSWORD)))
+    cipher_suite = Fernet(
+        base64.urlsafe_b64encode(kdf.derive(settings.CRYPTO_PASSWORD))
+    )
 
     @classmethod
     def encrypt(cls, phone_number: str):

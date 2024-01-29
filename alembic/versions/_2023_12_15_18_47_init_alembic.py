@@ -1,7 +1,7 @@
 """init alembic
 
 Revision ID: 5434c5fc5066
-Revises: 
+Revises:
 Create Date: 2023-12-15 18:47:16.975938
 
 """

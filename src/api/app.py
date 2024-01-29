@@ -27,7 +27,11 @@ app = FastAPI(
     servers=[
         {"url": settings.APP_ROOT_PATH, "description": "Current"},
     ],
-    swagger_ui_parameters={"tryItOutEnabled": True, "persistAuthorization": True, "filter": True},
+    swagger_ui_parameters={
+        "tryItOutEnabled": True,
+        "persistAuthorization": True,
+        "filter": True,
+    },
     root_path=settings.APP_ROOT_PATH,
     root_path_in_servers=False,
     swagger_ui_oauth2_redirect_url=None,
@@ -43,7 +47,9 @@ async def setup_repositories():
     auth_repository = SqlAuthRepository(storage)
     smtp_repository = SMTPRepository()
 
-    Dependencies.register_provider(AbstractParticipantRepository, participant_repository)
+    Dependencies.register_provider(
+        AbstractParticipantRepository, participant_repository
+    )
     Dependencies.register_provider(AbstractBookingRepository, booking_repository)
     Dependencies.register_provider(AbstractAuthRepository, auth_repository)
     Dependencies.register_provider(SMTPRepository, smtp_repository)
