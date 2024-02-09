@@ -3,7 +3,6 @@
 
 # Except code
 !/src/
-!/templates/
 !/alembic/
 !/alembic.ini
 !/deploy/docker-entrypoint.sh
