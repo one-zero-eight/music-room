@@ -3,7 +3,7 @@
 1. Install [Poetry](https://python-poetry.org/docs/#installing-with-the-official-installer)
 2. Install dependencies
     ```bash
-   poetry install --no-root --with dev
+   poetry install --no-root
    ```
 3. Setup settings
 
