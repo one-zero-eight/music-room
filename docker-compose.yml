@@ -15,6 +15,7 @@ services:
     environment:
       - TZ=Europe/Moscow
     networks:
+      - default
       - music-room
 
   db:
@@ -29,12 +30,11 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-    networks:
-      - music-room
 
 volumes:
   postgres:
 
 networks:
   music-room:
-    external: true
+    driver: bridge
+    name: music-room
