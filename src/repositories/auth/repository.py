@@ -110,9 +110,7 @@ class TokenRepository:
         if user is None:
             return VerificationResult(success=False)
 
-        return VerificationResult(
-            success=True, user_id=converted_user_id, source=VerificationSource.USER
-        )
+        return VerificationResult(success=True, user_id=converted_user_id, source=VerificationSource.USER)
 
     @classmethod
     def create_access_token(cls, user_id: int) -> str:
@@ -128,9 +126,7 @@ class TokenRepository:
         issued_at = datetime.datetime.utcnow()
         expire = issued_at + expires_delta
         payload.update({"exp": expire, "iat": issued_at})
-        encoded_jwt = jwt.encode(
-            {"alg": cls.ALGORITHM}, payload, settings.JWT_PRIVATE_KEY.get_secret_value()
-        )
+        encoded_jwt = jwt.encode({"alg": cls.ALGORITHM}, payload, settings.JWT_PRIVATE_KEY.get_secret_value())
         return str(encoded_jwt, "utf-8")
 
     @classmethod
@@ -142,8 +138,6 @@ class TokenRepository:
             else:
                 user_id = None
 
-            return VerificationResult(
-                success=True, user_id=user_id, source=VerificationSource.BOT
-            )
+            return VerificationResult(success=True, user_id=user_id, source=VerificationSource.BOT)
         else:
             return VerificationResult(success=False)

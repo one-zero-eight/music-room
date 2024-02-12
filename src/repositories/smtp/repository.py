@@ -10,9 +10,7 @@ from email_validator import validate_email, EmailNotValidError
 
 from src.config import settings
 
-VERIFICATION_CODE_TEMPLATE = (
-    Path(__file__).parent / "templates/verification-code.html"
-).read_text()
+VERIFICATION_CODE_TEMPLATE = (Path(__file__).parent / "templates/verification-code.html").read_text()
 
 
 class SMTPRepository:

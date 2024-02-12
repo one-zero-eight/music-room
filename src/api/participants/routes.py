@@ -90,9 +90,7 @@ async def change_status(
     if source.status != ParticipantStatus.LORD:
         raise ForbiddenException()
 
-    updated_participant = await participant_repository.change_status(
-        participant_id, new_status
-    )
+    updated_participant = await participant_repository.change_status(participant_id, new_status)
     return updated_participant
 
 

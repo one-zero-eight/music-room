@@ -58,9 +58,7 @@ class ForbiddenException(HTTPException):
             detail=self.responses[403]["description"],
         )
 
-    responses = {
-        403: {"description": "Not enough permissions", "model": ExceptionWithDetail}
-    }
+    responses = {403: {"description": "Not enough permissions", "model": ExceptionWithDetail}}
 
 
 class CollisionInBookings(HTTPException):

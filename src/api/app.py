@@ -47,9 +47,7 @@ async def setup_repositories():
     auth_repository = SqlAuthRepository(storage)
     smtp_repository = SMTPRepository()
 
-    Dependencies.register_provider(
-        AbstractParticipantRepository, participant_repository
-    )
+    Dependencies.register_provider(AbstractParticipantRepository, participant_repository)
     Dependencies.register_provider(AbstractBookingRepository, booking_repository)
     Dependencies.register_provider(AbstractAuthRepository, auth_repository)
     Dependencies.register_provider(SMTPRepository, smtp_repository)

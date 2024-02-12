@@ -30,11 +30,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
 
     async def create(self, participant: "CreateParticipant") -> "ViewParticipant":
         async with self._create_session() as session:
-            query = (
-                insert(Participant)
-                .values(**participant.model_dump())
-                .returning(Participant)
-            )
+            query = insert(Participant).values(**participant.model_dump()).returning(Participant)
             obj = await session.scalar(query)
             await session.commit()
             return ViewParticipant.model_validate(obj)
@@ -52,9 +48,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             objs = await session.scalars(query)
             return [ViewParticipant.model_validate(obj) for obj in objs]
 
-    async def fill_profile(
-        self, participant_id: int, data: "FillParticipantProfile"
-    ) -> "ViewParticipant":
+    async def fill_profile(self, participant_id: int, data: "FillParticipantProfile") -> "ViewParticipant":
         async with self._create_session() as session:
             phone_number = Crypto.encrypt(data.phone_number)
             query = (
@@ -72,9 +66,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             await session.commit()
             return ViewParticipant.model_validate(obj)
 
-    async def change_status(
-        self, participant_id: int, new_status: ParticipantStatus
-    ) -> "ViewParticipant":
+    async def change_status(self, participant_id: int, new_status: ParticipantStatus) -> "ViewParticipant":
         async with self._create_session() as session:
             query = (
                 update(Participant)
@@ -86,9 +78,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             await session.commit()
             return ViewParticipant.model_validate(obj)
 
-    async def get_participant_bookings(
-        self, participant_id: int
-    ) -> list["ViewBooking"]:
+    async def get_participant_bookings(self, participant_id: int) -> list["ViewBooking"]:
         async with self._create_session() as session:
             query = select(Booking).where(Booking.participant_id == participant_id)
             objs = await session.scalars(query)
@@ -103,9 +93,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
                 return ParticipantStatus.FREE
             return ParticipantStatus(obj.status)
 
-    async def remaining_weekly_hours(
-        self, participant_id: int, start_of_week: Optional[datetime.date] = None
-    ) -> float:
+    async def remaining_weekly_hours(self, participant_id: int, start_of_week: Optional[datetime.date] = None) -> float:
         async with self._create_session() as session:
             if start_of_week is None:
                 today = datetime.date.today()
@@ -122,9 +110,7 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             status = await self.get_status(participant_id)
             return status.max_hours_to_book_per_week() - spent_hours
 
-    async def remaining_daily_hours(
-        self, participant_id: int, date: datetime.date
-    ) -> float:
+    async def remaining_daily_hours(self, participant_id: int, date: datetime.date) -> float:
         async with self._create_session() as session:
             query = select(Booking).where(
                 and_(

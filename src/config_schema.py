@@ -5,9 +5,7 @@ from pydantic import BaseModel, Field, SecretStr
 
 
 class Settings(BaseModel):
-    APP_ROOT_PATH: str = Field(
-        "", description='Prefix for the API path (e.g. "/api/v0")'
-    )
+    APP_ROOT_PATH: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
 
     DB_URL: str = Field(
         "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",

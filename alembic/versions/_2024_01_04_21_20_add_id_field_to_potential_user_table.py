@@ -24,9 +24,7 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer(), nullable=False, primary_key=True),
     )
     # set email as not unique and not primary key
-    op.alter_column(
-        "potential_user", "email", nullable=False, primary_key=False, unique=False
-    )
+    op.alter_column("potential_user", "email", nullable=False, primary_key=False, unique=False)
     op.drop_constraint("potential_user_pkey", "potential_user", type_="primary")
     op.create_primary_key("potential_user_pkey", "potential_user", ["id"])
 
