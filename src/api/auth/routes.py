@@ -1,5 +1,6 @@
 import random
 
+from fastapi import HTTPException
 from starlette.background import BackgroundTasks
 
 from src.api.auth import router
@@ -35,6 +36,17 @@ async def registration(background_task: BackgroundTasks, email: str):
 async def is_user_exists(email: str = None, telegram_id: str = None) -> bool:
     auth_repository = Dependencies.get(AbstractAuthRepository)
     return await auth_repository.is_user_registered(email, telegram_id)
+
+
+@router.get("/is_need_to_fill_profile")
+async def is_need_to_fill_profile(telegram_id: str):
+    participant_repository = Dependencies.get(AbstractParticipantRepository)
+    auth_repository = Dependencies.get(AbstractAuthRepository)
+    is_registered = await auth_repository.is_user_registered(telegram_id=telegram_id)
+    if not is_registered:
+        raise HTTPException(status_code=404, detail="User not found")
+    participant_id = await participant_repository.get_participant_id(telegram_id)
+    return await participant_repository.is_need_to_fill_profile(participant_id)
 
 
 @router.post("/validate_code")

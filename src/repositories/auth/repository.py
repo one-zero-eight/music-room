@@ -22,7 +22,7 @@ class SqlAuthRepository(AbstractAuthRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def is_user_registered(self, email: str, telegram_id: str | None) -> bool:
+    async def is_user_registered(self, email: str | None = None, telegram_id: str | None = None) -> bool:
         async with self._create_session() as session:
             if email is None and telegram_id is None:
                 return False
