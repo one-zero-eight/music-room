@@ -75,5 +75,5 @@ async def redirect_to_docs(request: Request):
     return RedirectResponse(url=request.url_for("swagger_ui_html"))
 
 
-for router in routers:
-    app.include_router(router)
+for _router in routers:
+    app.include_router(_router)
