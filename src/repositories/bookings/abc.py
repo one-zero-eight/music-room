@@ -22,6 +22,10 @@ class AbstractBookingRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
+    async def get_participant_bookings(self, participant_id: int) -> list[ViewBooking]:
+        ...
+
+    @abstractmethod
     async def get_booking(self, booking_id: int) -> Optional["ViewBooking"]:
         ...
 

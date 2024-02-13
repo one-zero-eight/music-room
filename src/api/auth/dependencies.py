@@ -47,6 +47,10 @@ async def verify_request(
     if not bearer:
         raise NoCredentialsException()
 
+    api_verification_result = TokenRepository.verify_api_token(bearer.credentials)
+    if api_verification_result.success:
+        return api_verification_result
+
     user_verification_result = await TokenRepository.verify_access_token(bearer.credentials)
     if user_verification_result.success:
         return user_verification_result

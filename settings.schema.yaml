@@ -54,6 +54,11 @@ properties:
     format: binary
     title: Crypto Salt
     type: string
+  API_KEY:
+    description: API key for the Music Room API
+    example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    title: Api Key
+    type: string
 required:
 - BOT_TOKEN
 - JWT_PRIVATE_KEY
@@ -63,5 +68,6 @@ required:
 - SMTP_PASSWORD
 - CRYPTO_PASSWORD
 - CRYPTO_SALT
+- API_KEY
 title: Settings
 type: object

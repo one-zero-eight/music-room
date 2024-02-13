@@ -2,7 +2,7 @@ import datetime
 from datetime import timedelta
 from typing import Optional
 
-from sqlalchemy import and_, between, extract, select, update, insert
+from sqlalchemy import and_, between, extract, select, update, insert, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.participants.abc import AbstractParticipantRepository
@@ -129,16 +129,9 @@ class SqlParticipantRepository(AbstractParticipantRepository):
 
     async def is_need_to_fill_profile(self, participant_id: int) -> bool:
         async with self._create_session() as session:
-            query = select(Participant).where(
-                and_(
-                    Participant.id == participant_id,
-                    Participant.need_to_fill_profile is True,
-                )
-            )
+            query = select(Participant.need_to_fill_profile).where(Participant.id == participant_id)
             obj = await session.scalar(query)
-            if obj:
-                return True
-            return False
+            return obj
 
     async def get_phone_number(self, participant_id: int):
         async with self._create_session() as session:
@@ -146,8 +139,14 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             obj = await session.scalar(query)
             return Crypto.decrypt(obj.phone_number)
 
-    async def get_participant_id(self, telegram_id: str) -> int:
+    async def get_participant_id(self, telegram_id: str | None = None, email: str | None = None) -> int | None:
         async with self._create_session() as session:
-            query = select(Participant).where(Participant.telegram_id == telegram_id)
+            clauses = []
+            if email is not None:
+                clauses.append(Participant.email == email)
+            if telegram_id is not None:
+                clauses.append(Participant.telegram_id == telegram_id)
+            query = select(Participant).where(or_(*clauses))
             obj = await session.scalar(query)
-            return obj.id
+            if obj:
+                return obj.id

@@ -57,5 +57,5 @@ class AbstractParticipantRepository(metaclass=ABCMeta):
         ...
 
     @abstractmethod
-    async def get_participant_id(self, telegram_id: str) -> int:
+    async def get_participant_id(self, telegram_id: str | None = None, email: str | None = None) -> int | None:
         ...

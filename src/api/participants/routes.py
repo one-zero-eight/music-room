@@ -18,6 +18,7 @@ from src.schemas import (
     ParticipantStatus,
     FillParticipantProfile,
 )
+from src.schemas.auth import VerificationSource
 
 
 # docx
@@ -140,8 +141,11 @@ async def get_remaining_daily_hours(
 
 
 @router.get("/participant_id")
-async def get_participant_id(telegram_id: str) -> int:
+async def get_participant_id(
+    verification: VerifiedDep, telegram_id: str | None = None, email: str | None = None
+) -> int | None:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
-
-    res = await participant_repository.get_participant_id(telegram_id)
+    if verification.source not in (VerificationSource.BOT, VerificationSource.API):
+        raise ForbiddenException()
+    res = await participant_repository.get_participant_id(telegram_id, email)
     return res

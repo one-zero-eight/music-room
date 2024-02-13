@@ -10,6 +10,7 @@ class VerificationSource(StrEnum):
     USER = "user"
     WEBAPP = "webapp"
     BOT = "bot"
+    API = "api"
 
 
 class VerificationResult(BaseModel):

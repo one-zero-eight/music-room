@@ -28,4 +28,6 @@ JWT_PUBLIC_KEY: >
   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
   xxxxxxxx
   -----END PUBLIC KEY-----
+# Run 'openssl rand -hex 32' to generate password
+API_KEY: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 DB_URL: "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres"

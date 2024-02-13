@@ -141,3 +141,10 @@ class TokenRepository:
             return VerificationResult(success=True, user_id=user_id, source=VerificationSource.BOT)
         else:
             return VerificationResult(success=False)
+
+    @classmethod
+    def verify_api_token(cls, auth_token: str) -> VerificationResult:
+        if auth_token == settings.API_KEY:
+            return VerificationResult(success=True, source=VerificationSource.API)
+        else:
+            return VerificationResult(success=False)

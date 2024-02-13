@@ -39,6 +39,9 @@ class Settings(BaseModel):
         description="Run 'openssl rand -hex 32' to generate key",
     )
     CRYPTO_SALT: bytes = Field(..., example=b"xxxxxxxxxxxxxxxx")
+    API_KEY: str = Field(
+        ..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", description="API key for the Music Room API"
+    )
 
     @classmethod
     def from_yaml(cls, path: Path) -> "Settings":
