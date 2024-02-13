@@ -31,7 +31,7 @@ def _booking_to_vevent(booking):
     vevent.add("dtstart", icalendar.vDatetime(booking.time_start))
     vevent.add("dtend", icalendar.vDatetime(booking.time_end))
     vevent.add("location", "Music Room 020")
-    vevent.add("summary", f"booking @{booking.participant_alias}")
+    vevent.add("summary", f"Booking @{booking.participant_alias}")
     return vevent
 
 
