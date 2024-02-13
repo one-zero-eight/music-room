@@ -21,7 +21,7 @@ def _calendar_baseline():
     return main_calendar
 
 
-def _booking_to_vevent(booking):
+def _booking_to_vevent(booking, is_personal=False):
     string_to_hash = str(booking.id)
     hash_ = crc32(string_to_hash.encode("utf-8"))
     uid = "music-room-%x@innohassle.ru" % abs(hash_)
@@ -30,8 +30,12 @@ def _booking_to_vevent(booking):
     vevent.add("uid", uid)
     vevent.add("dtstart", icalendar.vDatetime(booking.time_start))
     vevent.add("dtend", icalendar.vDatetime(booking.time_end))
-    vevent.add("location", "Music Room 020")
-    vevent.add("summary", f"Booking @{booking.participant_alias}")
+    vevent.add("location", "Music room 020")
+    vevent.add("description", f"Booked by https://t.me/{booking.participant_alias}")
+    if is_personal:
+        vevent.add("summary", "Music room")
+    else:
+        vevent.add("summary", f"Booking @{booking.participant_alias}")
     return vevent
 
 
@@ -81,7 +85,7 @@ async def get_participant_ics(participant_id: int):
     bookings = await booking_repository.get_participant_bookings(participant_id)
     dtstamp = icalendar.vDatetime(datetime.datetime.now())
     for booking in bookings:
-        vevent = _booking_to_vevent(booking)
+        vevent = _booking_to_vevent(booking, is_personal=True)
         vevent.add("dtstamp", dtstamp)
         main_calendar.add_component(vevent)
 
