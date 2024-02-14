@@ -45,10 +45,10 @@ async def create_booking(booking: CreateBooking, verified: VerifiedDep) -> ViewB
 
     booking_duration = count_duration(booking.time_start, booking.time_end)
 
-    if await participant_repository.remaining_daily_hours(user_id, booking.time_start) - booking_duration < 0:
+    if await participant_repository.remaining_daily_hours(user_id, booking.time_start.date()) - booking_duration < 0:
         raise NotEnoughDailyHoursToBook()
 
-    if await participant_repository.remaining_weekly_hours(user_id) - booking_duration < 0:
+    if await participant_repository.remaining_weekly_hours(user_id, booking.time_start.date()) - booking_duration < 0:
         raise NotEnoughWeeklyHoursToBook()
 
     if not await is_offset_correct(booking.time_start):

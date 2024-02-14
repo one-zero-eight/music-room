@@ -121,9 +121,17 @@ async def get_participant_bookings(verified: VerifiedDep) -> list[ViewBooking]:
 
 
 @router.get("/me/remaining_weekly_hours")
-async def get_remaining_weekly_hours(verified: VerifiedDep) -> float:
+async def get_remaining_weekly_hours(
+    verified: VerifiedDep,
+    date: Optional[datetime.date] = Query(
+        default_factory=datetime.date.today,
+        example=datetime.date.today().isoformat(),
+        description="Date for which to get remaining hours (iso format). Default: server-side today",
+    ),
+) -> float:
     participant_repository = Dependencies.get(AbstractParticipantRepository)
-    ans = await participant_repository.remaining_weekly_hours(verified.user_id)
+    start_of_week = date - datetime.timedelta(days=date.weekday())
+    ans = await participant_repository.remaining_weekly_hours(verified.user_id, start_of_week)
     return ans
 
 
