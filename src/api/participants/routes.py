@@ -52,10 +52,11 @@ async def get_list_of_all_users(
             for run in paragraph.runs:
                 run.bold = True
 
+    participants = filter(lambda p: p.name, participants)
     for i, participant in enumerate(participants, 1):
         row_cells = table.add_row().cells
         row_cells[0].text = str(i)
-        row_cells[1].text = participant.name
+        row_cells[1].text = participant.name or ""
         row_cells[2].text = f"@{participant.alias}"
 
     # set width for columns
