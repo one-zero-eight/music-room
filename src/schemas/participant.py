@@ -6,15 +6,12 @@ from pydantic import BaseModel, ConfigDict
 
 class ParticipantStatus(StrEnum):
     FREE = "free"
-    JUNIOR = "junior"
     MIDDLE = "middle"
     SENIOR = "senior"
     LORD = "lord"
 
     def max_hours_to_book_per_day(self) -> Optional[int]:
         if self == ParticipantStatus.FREE:
-            return 2
-        elif self == ParticipantStatus.JUNIOR:
             return 2
         elif self == ParticipantStatus.MIDDLE:
             return 3
@@ -27,8 +24,6 @@ class ParticipantStatus(StrEnum):
     def max_hours_to_book_per_week(self) -> Optional[int]:
         if self == ParticipantStatus.FREE:
             return 4
-        elif self == ParticipantStatus.JUNIOR:
-            return 5
         elif self == ParticipantStatus.MIDDLE:
             return 8
         elif self == ParticipantStatus.SENIOR:
