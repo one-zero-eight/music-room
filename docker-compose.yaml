@@ -14,6 +14,8 @@ services:
         # Wait for the database to be ready before starting the application
         condition: service_healthy
     restart: always
+    ports:
+      - "8000:8000"
     volumes:
       - "./settings.yaml:/code/settings.yaml:ro" # Read-only settings file
     env_file: .env # You can specify some Uvicorn settings in .env file
@@ -31,6 +33,8 @@ services:
     command: postgres -c synchronous_commit=off
     volumes:
       - "postgres:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
     env_file: .env # Set POSTGRES_PASSWORD in .env file
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]

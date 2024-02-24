@@ -12,3 +12,7 @@ services:
     # Pull the image from GitHub Container Registry instead of building locally
     image: "ghcr.io/one-zero-eight/innohassle-musicroom:main"
     build: !reset null
+    ports: !reset [] # Do not expose any ports
+
+  db:
+    ports: !reset [] # Do not expose any ports
