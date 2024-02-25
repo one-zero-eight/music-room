@@ -50,7 +50,3 @@ class AbstractBookingRepository(metaclass=ABCMeta):
     @abstractmethod
     async def get_daily_bookings(self, date: datetime.date) -> list[ViewBooking]:
         ...
-
-    @abstractmethod
-    async def get_participant_bookings(self, participant_id: int) -> list[ViewBooking]:
-        ...
