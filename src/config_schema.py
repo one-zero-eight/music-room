@@ -54,7 +54,7 @@ class Settings(BaseModel):
     def save_schema(cls, path: Path) -> None:
         with open(path, "w", encoding="utf-8") as f:
             schema = {
-                "$schema": "http://json-schema.org/draft-07/schema#",
+                "$schema": "https://json-schema.org/draft-07/schema",
                 **cls.model_json_schema(),
             }
             yaml.dump(schema, f, sort_keys=False)
