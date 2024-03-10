@@ -15,7 +15,7 @@ services:
         condition: service_healthy
     restart: always
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - "./settings.yaml:/code/settings.yaml:ro" # Read-only settings file
     env_file: .env # You can specify some Uvicorn settings in .env file
@@ -34,7 +34,7 @@ services:
     volumes:
       - "postgres:/var/lib/postgresql/data"
     ports:
-      - "5432:5432"
+      - "5433:5432"
     env_file: .env # Set POSTGRES_PASSWORD in .env file
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres" ]

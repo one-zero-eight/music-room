@@ -107,10 +107,10 @@ This is the API for music room service in InNoHassle ecosystem.
    ```
    OR using uvicorn directly
    ```bash
-   poetry run uvicorn src.api.app:app --use-colors --proxy-headers --forwarded-allow-ips=*
+   poetry run uvicorn src.api.app:app --use-colors --proxy-headers --forwarded-allow-ips=* --port=8001
    ```
 
-Now the API is running on http://localhost:8000. Good job!
+Now the API is running on http://localhost:8001. Good job!
 
 ### Deployment
 

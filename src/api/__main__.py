@@ -14,6 +14,7 @@ uvicorn.main.main(
         "--use-colors",
         "--proxy-headers",
         "--forwarded-allow-ips=*",
+        "--port=8001",
         *args,
     ]
 )
