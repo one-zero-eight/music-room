@@ -60,7 +60,7 @@ jobs:
     runs-on: self-hosted
     environment:
       name: staging
-      url: https://api.innohassle.ru/accounts/staging-v0
+      url: https://api.innohassle.ru/music-room/staging-v0
     concurrency:
       group: staging
       cancel-in-progress: false
@@ -84,7 +84,7 @@ jobs:
     runs-on: self-hosted
     environment:
       name: production
-      url: https://api.innohassle.ru/accounts/v0
+      url: https://api.innohassle.ru/music-room/v0
     concurrency:
       group: production
       cancel-in-progress: false
