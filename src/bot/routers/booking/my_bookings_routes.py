@@ -13,7 +13,7 @@ from src.bot.routers.booking.callback_data import MyBookingsCallbackData
 @router.message(any_state, Command("my_bookings"))
 @router.message(any_state, F.text == "My bookings")
 async def show_my_bookings(message: Message):
-    bookings = await client.get_participant_bookings(message.from_user.id)
+    bookings = await client.get_user_bookings(message.from_user.id)
     # only future bookings
     bookings = [entry for entry in bookings if datetime.now() < datetime.fromisoformat(entry["time_end"])]
 

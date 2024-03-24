@@ -18,40 +18,32 @@ class BotSettings(BaseModel):
     redis_url: SecretStr | None = None
 
 
+class Accounts(BaseModel):
+    """InNoHassle-Accounts integration settings"""
+
+    api_url: str = "https://api.innohassle.ru/accounts/v0"
+    "URL of the Accounts API"
+    well_known_url: str = "https://api.innohassle.ru/accounts/v0/.well-known"
+    "URL of the well-known endpoint for the Accounts API"
+    api_jwt_token: SecretStr
+    "JWT token for accessing the Accounts API as a service"
+
+
 class ApiSettings(BaseModel):
     app_root_path: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
     db_url: str = Field(
         "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
         example="postgresql+asyncpg://user:password@localhost:5432/db_name",
     )
-    # Authorization
+
     bot_token: str = Field(
-        ...,
-        example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        description="Bot token from @BotFather",
-    )
-    jwt_private_key: SecretStr = Field(
-        ...,
-        description="Private key for JWT. Use 'openssl genrsa -out private.pem 2048' to generate keys",
+        ..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", description="Bot token from @BotFather"
     )
 
-    jwt_public_key: str = Field(
-        ...,
-        description="Public key for JWT. Use 'openssl rsa -in private.pem -pubout -out public.pem' to generate keys",
-    )
-    # SMTP server config
-    smtp_server: str = Field(..., example="smtp.gmail.com")
-    smtp_port: int = Field(587)
-    smtp_username: str = Field(..., example="some-username@gmail.com")
-    smtp_password: str = Field(..., example="xxxxxxxx")
-    crypto_password: bytes = Field(
-        ...,
-        example=b"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        description="Run 'openssl rand -hex 32' to generate key",
-    )
-    crypto_salt: bytes = Field(..., example=b"xxxxxxxxxxxxxxxx")
     api_key: str = Field(
-        ..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", description="API key for the Music Room API"
+        ...,
+        example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+        description="API key for access to the Music Room API",
     )
 
 
@@ -59,10 +51,11 @@ class Settings(BaseModel):
     model_config = ConfigDict(json_schema_extra={"title": "Settings"}, extra="ignore")
     api_settings: ApiSettings | None = None
     bot_settings: BotSettings | None = None
+    accounts: Accounts | None = None
 
     @classmethod
     def from_yaml(cls, path: Path) -> "Settings":
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             yaml_config = yaml.safe_load(f)
 
         return cls.model_validate(yaml_config)
@@ -70,8 +63,5 @@ class Settings(BaseModel):
     @classmethod
     def save_schema(cls, path: Path) -> None:
         with open(path, "w", encoding="utf-8") as f:
-            schema = {
-                "$schema": "https://json-schema.org/draft-07/schema",
-                **cls.model_json_schema(),
-            }
+            schema = {"$schema": "https://json-schema.org/draft-07/schema", **cls.model_json_schema()}
             yaml.dump(schema, f, sort_keys=False)

@@ -1,24 +1,28 @@
-__all__ = ["VerificationResult", "AuthResult", "VerificationSource"]
+__all__ = ["VerificationResult", "VerificationSource", "SucceedVerificationResult", "VerificationResultWithUserId"]
 
 from enum import StrEnum
-from typing import Optional
+from typing import Literal
 
 from pydantic import BaseModel
 
 
 class VerificationSource(StrEnum):
-    USER = "user"
-    WEBAPP = "webapp"
     BOT = "bot"
     API = "api"
 
 
 class VerificationResult(BaseModel):
     success: bool
-    user_id: Optional[int] = None
-    source: Optional[VerificationSource] = None
+    user_id: int | None = None
+    telegram_id: int | None = None
+    innohassle_id: int | None = None
+    source: VerificationSource | None = None
 
 
-class AuthResult(BaseModel):
-    success: bool
-    token: Optional[str] = None
+class SucceedVerificationResult(VerificationResult):
+    success: Literal[True] = True
+
+
+class VerificationResultWithUserId(VerificationResult):
+    success: Literal[True] = True
+    user_id: int

@@ -1,33 +1,11 @@
 $schema: "./settings.schema.yaml"
 api_settings:
-  smtp_server: ...
-  smtp_username: ...
-  smtp_password: ...
-  # Run 'openssl rand -hex 32' to generate password
-  crypto_password: ...
-  # Run 'openssl rand -hex 16' to generate salt
-  crypto_salt: ...
-  bot_token: "my:bot:token"
-  jwt_private_key: >
-    -----BEGIN RSA PRIVATE KEY-----
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxx
-    -----END RSA PRIVATE KEY-----
-  jwt_public_key: >
-    -----BEGIN PUBLIC KEY-----
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    xxxxxxxx
-    -----END PUBLIC KEY-----
-  # Run 'openssl rand -hex 32' to generate password
-  api_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
   db_url: "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres"
+  bot_token: "some-telegram-bot-token" # get it from @BotFather (same as bot_settings.bot_token)
+  api_key: "some-secret-key" # use `openssl rand -hex 32` to generate a random key
+bot_settings:
+  api_url: "http://127.0.0.1:8001"
+  bot_token: "some-telegram-bot-token" # get it from @BotFather
+  redis_url: "redis://127.0.0.1:6379/0" # or delete this line to disable redis and use in-memory storage
+accounts:
+  api_jwt_token: "some-jwt-token" # generate it in accounts service (https://api.innohassle.ru/accounts/v0)

@@ -19,7 +19,7 @@ bot_commands = [
 ]
 admin_commands = [
     types.BotCommand(command="/admin", description="Enable admin mode"),
-    types.BotCommand(command="/export_participants", description="Export participants in docx format"),
+    types.BotCommand(command="/export_users", description="Export users in docx format"),
 ]
 
 rules_message = (

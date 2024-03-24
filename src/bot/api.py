@@ -1,16 +1,16 @@
-__all__ = ["client", "InNoHassleMusicRoomAPI", "ParticipantStatus"]
+__all__ = ["client", "InNoHassleMusicRoomAPI", "UserStatus"]
 
 import datetime
 import json
 from enum import StrEnum
-from typing import Any, Optional
+from typing import Any
 
 import aiohttp
 
 from src.config import bot_settings
 
 
-class ParticipantStatus(StrEnum):
+class UserStatus(StrEnum):
     FREE = "free"
     MIDDLE = "middle"
     SENIOR = "senior"
@@ -73,8 +73,8 @@ class InNoHassleMusicRoomAPI:
                 need_to_fill_profile = json.loads(response_text)
                 return need_to_fill_profile
 
-    async def get_participant_id(self, telegram_id: int) -> Optional[int]:
-        url = f"{self.api_root_path}/participants/participant_id"
+    async def get_user_id(self, telegram_id: int) -> int | None:
+        url = f"{self.api_root_path}/users/user_id"
         params = {"telegram_id": str(telegram_id)}
         async with self._create_session() as session:
             async with session.get(url, params=params) as response:
@@ -82,8 +82,8 @@ class InNoHassleMusicRoomAPI:
                 response_json = json.loads(response_text)
                 return response_json
 
-    async def get_me(self, telegram_id: int) -> Optional[dict]:
-        url = f"{self.api_root_path}/participants/me"
+    async def get_me(self, telegram_id: int) -> dict | None:
+        url = f"{self.api_root_path}/users/me"
         async with self._create_session() as session:
             self._auth_session(session, telegram_id)
             async with session.get(url) as response:
@@ -93,7 +93,7 @@ class InNoHassleMusicRoomAPI:
                     return response_json
 
     async def fill_profile(self, telegram_id: int, name: str, alias: str, phone_number: str) -> tuple[bool, Any]:
-        url = f"{self.api_root_path}/participants/me/fill_profile"
+        url = f"{self.api_root_path}/users/me/fill_profile"
         body = {
             "name": name,
             "alias": alias,
@@ -113,8 +113,8 @@ class InNoHassleMusicRoomAPI:
         self,
         telegram_id: int,
         date: str,
-    ) -> Optional[float]:
-        url = f"{self.api_root_path}/participants/me/remaining_daily_hours"
+    ) -> float | None:
+        url = f"{self.api_root_path}/users/me/remaining_daily_hours"
         params = {"date": date}
 
         async with self._create_session() as session:
@@ -125,8 +125,8 @@ class InNoHassleMusicRoomAPI:
                 remaining_daily_hours = float(await response.text())
         return remaining_daily_hours
 
-    async def get_remaining_weekly_hours(self, telegram_id: int, date: str) -> Optional[float]:
-        url = f"{self.api_root_path}/participants/me/remaining_weekly_hours"
+    async def get_remaining_weekly_hours(self, telegram_id: int, date: str) -> float | None:
+        url = f"{self.api_root_path}/users/me/remaining_weekly_hours"
         params = {"date": date}
         async with self._create_session() as session:
             self._auth_session(session, telegram_id)
@@ -136,7 +136,7 @@ class InNoHassleMusicRoomAPI:
                 remaining_weekly_hours = float(await response.text())
         return remaining_weekly_hours
 
-    async def get_daily_bookings(self, date: Optional[str]) -> tuple[bool, Any]:
+    async def get_daily_bookings(self, date: str | None) -> tuple[bool, Any]:
         async with self._create_session() as session:
             url = f"{self.api_root_path}/bookings/daily_bookings"
             params = {"date": date if date else datetime.date.today().isoformat()}
@@ -170,7 +170,7 @@ class InNoHassleMusicRoomAPI:
                     response_json = await response.json()
                     return False, response_json.get("detail")
 
-    async def get_participant_bookings(self, telegram_id: int) -> Optional[list[dict]]:
+    async def get_user_bookings(self, telegram_id: int) -> list[dict] | None:
         url = f"{self.api_root_path}/bookings/my_bookings"
 
         async with aiohttp.ClientSession() as session:
@@ -190,7 +190,7 @@ class InNoHassleMusicRoomAPI:
             async with session.delete(url, params=params) as response:
                 return True if response.status == 200 else False
 
-    async def get_image_schedule(self, start_of_week: datetime.date) -> Optional[bytes]:
+    async def get_image_schedule(self, start_of_week: datetime.date) -> bytes | None:
         url = f"{self.api_root_path}/bookings/form_schedule"
         params = {"start_of_week": start_of_week.isoformat()}
 
@@ -199,8 +199,8 @@ class InNoHassleMusicRoomAPI:
                 if response.status == 200:
                     return await response.read()
 
-    async def export_participants(self, telegram_id: int) -> tuple[bytes, str]:
-        url = f"{self.api_root_path}/participants/export"
+    async def export_users(self, telegram_id: int) -> tuple[bytes, str]:
+        url = f"{self.api_root_path}/users/export"
 
         async with self._create_session() as session:
             self._auth_session(session, telegram_id=telegram_id)

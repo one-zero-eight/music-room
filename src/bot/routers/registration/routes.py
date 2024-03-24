@@ -182,7 +182,7 @@ async def confirm_rules(message: Message, state: FSMContext):
     if message.text[:100] == rules_confirmation_message.format(name=(await state.get_data()))[:100]:
         text = (
             "You have successfully registered.\n\n"
-            "❗️ Access to the Sports Complex will appear after submitting the list of participants (usually on "
+            "❗️ Access to the Sports Complex will appear after submitting the list of users (usually on "
             "Monday)."
         )
 

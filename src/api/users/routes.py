@@ -1,6 +1,5 @@
 import datetime
 import io
-from typing import Optional
 
 from docx import Document as create_docx
 from docx.document import Document
@@ -8,32 +7,24 @@ from docx.shared import Emu
 from docx.table import _Cell
 from fastapi import Query, Response
 
-from src.api.dependencies import VerifiedDep
-from src.api.participants import router
+from src.api.dependencies import VerifiedDep, VerifiedDepWithUserID
+from src.api.users import router
 from src.exceptions import ForbiddenException
-from src.repositories.participants.repository import participant_repository
-from src.schemas import (
-    ViewBooking,
-    ViewParticipant,
-    ParticipantStatus,
-    FillParticipantProfile,
-)
+from src.repositories.users.repository import user_repository
+from src.schemas import ViewBooking, ViewUser, UserStatus, FillUserProfile
 from src.schemas.auth import VerificationSource
 
 
 # docx
-@router.get(
-    "/export",
-    response_class=Response,
-)
-async def get_list_of_all_users(
-    verified: VerifiedDep,
-):
-    issuer = await participant_repository.get_participant(verified.user_id)
-    if issuer.status != ParticipantStatus.LORD:
+@router.get("/export", response_class=Response)
+async def get_list_of_all_users(verified: VerifiedDep):
+    if verified.user_id is None:
+        raise ForbiddenException()
+    issuer = await user_repository.get_user(verified.user_id)
+    if issuer.status != UserStatus.LORD:
         raise ForbiddenException()
 
-    participants = await participant_repository.get_all_participants()
+    users = await user_repository.get_all_users()
 
     document: Document = create_docx()
     document.add_heading("Список музыкальной комнаты", 0)
@@ -51,12 +42,12 @@ async def get_list_of_all_users(
             for run in paragraph.runs:
                 run.bold = True
 
-    participants = filter(lambda p: p.name, participants)
-    for i, participant in enumerate(participants, 1):
+    users = filter(lambda p: p.name, users)
+    for i, user in enumerate(users, 1):
         row_cells = table.add_row().cells
         row_cells[0].text = str(i)
-        row_cells[1].text = participant.name or ""
-        row_cells[2].text = f"@{participant.alias}"
+        row_cells[1].text = user.name or ""
+        row_cells[2].text = f"@{user.alias}"
 
     # set width for columns
     for cell in table.columns[0].cells:
@@ -79,73 +70,65 @@ async def get_list_of_all_users(
     )
 
 
-@router.put("/{participant_id}/status")
-async def change_status(
-    participant_id: int,
-    new_status: ParticipantStatus,
-    verified: VerifiedDep,
-) -> ViewParticipant:
-    source = await participant_repository.get_participant(verified.user_id)
-    if source.status != ParticipantStatus.LORD:
+@router.put("/{user_id}/status")
+async def change_status(user_id: int, new_status: UserStatus, verified: VerifiedDepWithUserID) -> ViewUser:
+    source = await user_repository.get_user(verified.user_id)
+    if source.status != UserStatus.LORD:
         raise ForbiddenException()
-
-    updated_participant = await participant_repository.change_status(participant_id, new_status)
-    return updated_participant
+    updated_user = await user_repository.change_status(user_id, new_status)
+    return updated_user
 
 
 @router.get("/me")
-async def get_me(verified: VerifiedDep) -> ViewParticipant:
-    participant = await participant_repository.get_participant(verified.user_id)
-    return participant
+async def get_me(verified: VerifiedDepWithUserID) -> ViewUser:
+    user = await user_repository.get_user(verified.user_id)
+    return user
 
 
 @router.post("/me/fill_profile")
-async def fill_profile(
-    participant: FillParticipantProfile,
-    verified: VerifiedDep,
-) -> ViewParticipant:
-    created = await participant_repository.fill_profile(verified.user_id, participant)
+async def fill_profile(user: FillUserProfile, verified: VerifiedDepWithUserID) -> ViewUser:
+    created = await user_repository.fill_profile(verified.user_id, user)
     return created
 
 
 @router.get("/me/bookings")
-async def get_participant_bookings(verified: VerifiedDep) -> list[ViewBooking]:
-    bookings = await participant_repository.get_participant_bookings(verified.user_id)
+async def get_user_bookings(verified: VerifiedDepWithUserID) -> list[ViewBooking]:
+    bookings = await user_repository.get_user_bookings(verified.user_id)
     return bookings
 
 
 @router.get("/me/remaining_weekly_hours")
 async def get_remaining_weekly_hours(
     verified: VerifiedDep,
-    date: Optional[datetime.date] = Query(
+    date: datetime.date | None = Query(
         default_factory=datetime.date.today,
         example=datetime.date.today().isoformat(),
         description="Date for which to get remaining hours (iso format). Default: server-side today",
     ),
 ) -> float:
     start_of_week = date - datetime.timedelta(days=date.weekday())
-    ans = await participant_repository.remaining_weekly_hours(verified.user_id, start_of_week)
+    ans = await user_repository.remaining_weekly_hours(verified.user_id, start_of_week)
     return ans
 
 
 @router.get("/me/remaining_daily_hours")
 async def get_remaining_daily_hours(
     verified: VerifiedDep,
-    date: Optional[datetime.date] = Query(
+    date: datetime.date | None = Query(
         default_factory=datetime.date.today,
         example=datetime.date.today().isoformat(),
         description="Date for which to get remaining hours (iso format). Default: server-side today",
     ),
 ) -> float:
-    ans = await participant_repository.remaining_daily_hours(verified.user_id, date)
+    ans = await user_repository.remaining_daily_hours(verified.user_id, date)
     return ans
 
 
-@router.get("/participant_id")
-async def get_participant_id(
+@router.get("/user_id")
+async def get_user_id(
     verification: VerifiedDep, telegram_id: str | None = None, email: str | None = None
 ) -> int | None:
     if verification.source not in (VerificationSource.BOT, VerificationSource.API):
         raise ForbiddenException()
-    res = await participant_repository.get_participant_id(telegram_id, email)
+    res = await user_repository.get_user_id(telegram_id, email)
     return res

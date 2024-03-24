@@ -12,10 +12,6 @@ from aiogram_dialog.widgets.kbd.calendar_kbd import (
 )
 
 from datetime import date, datetime, timedelta
-from typing import (
-    Dict,
-    List,
-)
 
 from aiogram.types import InlineKeyboardButton
 
@@ -27,9 +23,9 @@ class CustomCalendarDaysView(CalendarDaysView):
         self,
         config: CalendarUserConfig,
         offset: date,
-        data: Dict,
+        data: dict,
         manager: DialogManager,
-    ) -> List[List[InlineKeyboardButton]]:
+    ) -> list[list[InlineKeyboardButton]]:
         keyboard = []
         # align beginning
         start_date = offset.replace(day=1)  # month beginning
@@ -73,7 +69,7 @@ class CustomCalendar(Calendar):
     Used to render keyboard for date selection.
     """
 
-    def _init_views(self) -> Dict[CalendarScope, CalendarScopeView]:
+    def _init_views(self) -> dict[CalendarScope, CalendarScopeView]:
         """
         Calendar scopes view initializer.
 

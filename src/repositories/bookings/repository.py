@@ -2,8 +2,8 @@ __all__ = ["booking_repository", "SqlBookingRepository"]
 
 import datetime
 import io
-from datetime import timedelta
 from datetime import datetime as datetime_datetime
+from datetime import timedelta
 from typing import Optional, Self
 
 from PIL import Image, ImageDraw, ImageFont
@@ -11,15 +11,14 @@ from sqlalchemy import and_, between, select, insert, delete, or_, not_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import NoSuchBooking
-from src.repositories.bookings.abc import AbstractBookingRepository
-from src.schemas import CreateBooking, ViewBooking, ViewParticipant
+from src.schemas import CreateBooking, ViewBooking, ViewUser
 from src.storage.sql import AbstractSQLAlchemyStorage
-from src.storage.sql.models import Booking, Participant
+from src.storage.sql.models import Booking, User
 from src.tools import count_duration
 from src.tools.utils import get_week_numbers
 
 
-class SqlBookingRepository(AbstractBookingRepository):
+class SqlBookingRepository:
     storage: AbstractSQLAlchemyStorage
 
     def update_storage(self, storage: AbstractSQLAlchemyStorage) -> Self:
@@ -29,9 +28,9 @@ class SqlBookingRepository(AbstractBookingRepository):
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
 
-    async def create(self, participant_id: int, booking: "CreateBooking") -> ViewBooking:
+    async def create(self, user_id: int, booking: "CreateBooking") -> ViewBooking:
         async with self._create_session() as session:
-            query = insert(Booking).values(participant_id=participant_id, **booking.model_dump()).returning(Booking)
+            query = insert(Booking).values(user_id=user_id, **booking.model_dump()).returning(Booking)
             obj = await session.scalar(query)
             await session.commit()
             await session.refresh(obj)
@@ -46,7 +45,7 @@ class SqlBookingRepository(AbstractBookingRepository):
             else:
                 return None
 
-    async def get_bookings(self, from_date: Optional[datetime.date] = None, to_date: Optional[datetime.date] = None):
+    async def get_bookings(self, from_date: datetime.date | None = None, to_date: datetime.date | None = None):
         async with self._create_session() as session:
             query = select(Booking)
             if from_date:
@@ -74,9 +73,7 @@ class SqlBookingRepository(AbstractBookingRepository):
                 return True
             raise NoSuchBooking()
 
-    async def check_collision(
-        self, time_start: datetime.datetime, time_end: datetime.datetime
-    ) -> Optional[ViewBooking]:
+    async def check_collision(self, time_start: datetime.datetime, time_end: datetime.datetime) -> ViewBooking | None:
         async with self._create_session() as session:
             query = select(Booking).where(
                 not_(
@@ -93,11 +90,11 @@ class SqlBookingRepository(AbstractBookingRepository):
             if collision:
                 return ViewBooking.model_validate(collision)
 
-    async def get_participant(self, participant_id) -> ViewParticipant:
+    async def get_user(self, user_id) -> ViewUser:
         async with self._create_session() as session:
-            query = select(Participant).where(Participant.id == participant_id)
+            query = select(User).where(User.id == user_id)
             obj = await session.scalar(query)
-            return ViewParticipant.model_validate(obj)
+            return ViewUser.model_validate(obj)
 
     async def draw_week_numbers(self, draw: ImageDraw, current_week: bool):
         fontSimple = ImageFont.truetype("src/repositories/bookings/open_sans.ttf", size=14)
@@ -172,9 +169,9 @@ class SqlBookingRepository(AbstractBookingRepository):
             y1 = y0 + 31.5 * ylength
 
             draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=lightGray)
-            participant = await self.get_participant(booking.participant_id)
+            user = await self.get_user(booking.user_id)
 
-            alias = participant.alias
+            alias = user.alias
             max_alias_length: int = 10
             if len(alias) > max_alias_length:
                 alias = f"{alias[:max_alias_length]}..."
@@ -222,11 +219,11 @@ class SqlBookingRepository(AbstractBookingRepository):
 
             return [ViewBooking.model_validate(obj) for obj in objs]
 
-    async def get_participant_bookings(self, participant_id: int) -> list[ViewBooking]:
+    async def get_user_bookings(self, user_id: int) -> list[ViewBooking]:
         async with self._create_session() as session:
-            query = select(Booking).where(Booking.participant_id == participant_id)
+            query = select(Booking).where(Booking.user_id == user_id)
             objs = await session.scalars(query)
             return [ViewBooking.model_validate(obj) for obj in objs]
 
 
-booking_repository = SqlBookingRepository()
+booking_repository: SqlBookingRepository = SqlBookingRepository()

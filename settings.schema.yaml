@@ -1,5 +1,25 @@
 $schema: https://json-schema.org/draft-07/schema
 $defs:
+  Accounts:
+    description: InNoHassle-Accounts integration settings
+    properties:
+      api_url:
+        default: https://api.innohassle.ru/accounts/v0
+        title: Api Url
+        type: string
+      well_known_url:
+        default: https://api.innohassle.ru/accounts/v0/.well-known
+        title: Well Known Url
+        type: string
+      api_jwt_token:
+        format: password
+        title: Api Jwt Token
+        type: string
+        writeOnly: true
+    required:
+    - api_jwt_token
+    title: Accounts
+    type: object
   ApiSettings:
     properties:
       app_root_path:
@@ -17,59 +37,13 @@ $defs:
         example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         title: Bot Token
         type: string
-      jwt_private_key:
-        description: Private key for JWT. Use 'openssl genrsa -out private.pem 2048'
-          to generate keys
-        format: password
-        title: Jwt Private Key
-        type: string
-        writeOnly: true
-      jwt_public_key:
-        description: Public key for JWT. Use 'openssl rsa -in private.pem -pubout
-          -out public.pem' to generate keys
-        title: Jwt Public Key
-        type: string
-      smtp_server:
-        example: smtp.gmail.com
-        title: Smtp Server
-        type: string
-      smtp_port:
-        default: 587
-        title: Smtp Port
-        type: integer
-      smtp_username:
-        example: some-username@gmail.com
-        title: Smtp Username
-        type: string
-      smtp_password:
-        example: xxxxxxxx
-        title: Smtp Password
-        type: string
-      crypto_password:
-        description: Run 'openssl rand -hex 32' to generate key
-        example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-        format: binary
-        title: Crypto Password
-        type: string
-      crypto_salt:
-        example: xxxxxxxxxxxxxxxx
-        format: binary
-        title: Crypto Salt
-        type: string
       api_key:
-        description: API key for the Music Room API
+        description: API key for access to the Music Room API
         example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         title: Api Key
         type: string
     required:
     - bot_token
-    - jwt_private_key
-    - jwt_public_key
-    - smtp_server
-    - smtp_username
-    - smtp_password
-    - crypto_password
-    - crypto_salt
     - api_key
     title: ApiSettings
     type: object
@@ -117,6 +91,11 @@ properties:
   bot_settings:
     anyOf:
     - $ref: '#/$defs/BotSettings'
+    - type: 'null'
+    default: null
+  accounts:
+    anyOf:
+    - $ref: '#/$defs/Accounts'
     - type: 'null'
     default: null
 title: Settings

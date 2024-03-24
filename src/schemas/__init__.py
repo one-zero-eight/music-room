@@ -1,17 +1,12 @@
 from src.schemas.booking import CreateBooking, ViewBooking
-from src.schemas.participant import (
-    CreateParticipant,
-    FillParticipantProfile,
-    ViewParticipant,
-    ParticipantStatus,
-)
+from src.schemas.user import CreateUser, FillUserProfile, ViewUser, UserStatus
 
 __all__ = [
     "ViewBooking",
     "CreateBooking",
     "ViewBooking",
-    "ViewParticipant",
-    "CreateParticipant",
-    "FillParticipantProfile",
-    "ParticipantStatus",
+    "ViewUser",
+    "CreateUser",
+    "FillUserProfile",
+    "UserStatus",
 ]

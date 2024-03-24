@@ -20,8 +20,8 @@ class CreateBooking(BaseModel):
 
 class ViewBooking(BaseModel):
     id: int
-    participant_id: int
-    participant_alias: str
+    user_id: int
+    user_alias: str
     time_start: datetime.datetime
     time_end: datetime.datetime
 

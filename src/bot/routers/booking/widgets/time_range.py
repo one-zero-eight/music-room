@@ -1,5 +1,6 @@
 import datetime
-from typing import List, Callable, Optional, TypedDict, assert_never
+from typing import TypedDict, assert_never
+from collections.abc import Callable
 
 from aiogram.types import InlineKeyboardButton, CallbackQuery
 from aiogram.utils.keyboard import InlineKeyboardBuilder
@@ -10,8 +11,8 @@ from aiogram_dialog.widgets.kbd import Keyboard
 
 class Booking(TypedDict):
     id: int
-    participant_id: int
-    participant_alias: str
+    user_id: int
+    user_alias: str
     time_start: str
     time_end: str
 
@@ -84,7 +85,7 @@ class TimeRangeWidget(Keyboard):
 
         return blocked_timepoints
 
-    async def _render_keyboard(self, data: dict, manager: DialogManager) -> List[List[InlineKeyboardButton]]:
+    async def _render_keyboard(self, data: dict, manager: DialogManager) -> list[list[InlineKeyboardButton]]:
         # get chosen (only first and last) timeslots
         endpoint_time_selected = self.get_selected_time_points(manager)
         remaining_daily_hours = data["remaining_daily_hours"]
@@ -144,7 +145,7 @@ class TimeRangeWidget(Keyboard):
                 keyboard_builer.button(text=time_text, callback_data=time_callback_data)
             elif booked_by_someone:
                 booking = already_booked_timepoints[timepoint]
-                booked_by_alias = booking["participant_alias"]
+                booked_by_alias = booking["user_alias"]
                 if booked_by_alias == manager.event.from_user.username:
                     keyboard_builer.button(text="🟢", callback_data=none_callback_data)
                 else:
@@ -206,7 +207,7 @@ class TimeRangeWidget(Keyboard):
     def __init__(
         self,
         timepoints: list[datetime.time] | Callable[..., list[datetime.time]],
-        id: Optional[str] = None,
+        id: str | None = None,
         when: WhenCondition = None,
     ):
         super().__init__(id=id, when=when)

@@ -4,8 +4,12 @@ from zlib import crc32
 import icalendar
 from fastapi import Response
 
+from src.api.dependencies import VerifiedDep
 from src.api.root import router
+from src.exceptions import ForbiddenException
 from src.repositories.bookings.repository import booking_repository
+from src.repositories.users.repository import user_repository
+from src.schemas.auth import VerificationSource
 
 
 def _calendar_baseline():
@@ -30,11 +34,11 @@ def _booking_to_vevent(booking, is_personal=False):
     vevent.add("dtstart", icalendar.vDatetime(booking.time_start))
     vevent.add("dtend", icalendar.vDatetime(booking.time_end))
     vevent.add("location", "Music room 020")
-    vevent.add("description", f"Booked by https://t.me/{booking.participant_alias}")
+    vevent.add("description", f"Booked by https://t.me/{booking.user_alias}")
     if is_personal:
         vevent.add("summary", "Music room")
     else:
-        vevent.add("summary", f"Booking @{booking.participant_alias}")
+        vevent.add("summary", f"Booking @{booking.user_alias}")
     return vevent
 
 
@@ -67,20 +71,23 @@ async def get_music_room_ics():
 
 
 @router.get(
-    "/participants/{participant_id}/bookings.ics",
+    "/users/by-telegram/{telegram_id}/bookings.ics",
     responses={
         200: {
-            "description": "ICS file with schedule of the participant",
+            "description": "ICS file with schedule of the user",
             "content": {"text/calendar": {"schema": {"type": "string", "format": "binary"}}},
         },
     },
     response_class=Response,
-    tags=["Participants", "ICS"],
+    tags=["Users", "ICS"],
 )
-async def get_participant_ics(participant_id: int):
-    main_calendar = _calendar_baseline()
+async def get_user_ics(telegram_id: int, verification: VerifiedDep):
+    if verification.source == VerificationSource.BOT and telegram_id != verification.telegram_id:
+        raise ForbiddenException()
 
-    bookings = await booking_repository.get_participant_bookings(participant_id)
+    main_calendar = _calendar_baseline()
+    user_id = await user_repository.get_user_id(telegram_id=telegram_id)
+    bookings = await booking_repository.get_user_bookings(user_id)
     dtstamp = icalendar.vDatetime(datetime.datetime.now())
     for booking in bookings:
         vevent = _booking_to_vevent(booking, is_personal=True)

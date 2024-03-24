@@ -3,7 +3,7 @@ __all__ = ["logger"]
 import logging.config
 import os
 from logging import LogRecord
-from typing import Mapping
+from collections.abc import Mapping
 
 import yaml
 
@@ -16,7 +16,7 @@ class RelativePathFilter(logging.Filter):
         return True
 
 
-with open("logging-bot.yaml", "r") as f:
+with open("logging-bot.yaml") as f:
     config = yaml.safe_load(f)
     logging.config.dictConfig(config)
 
