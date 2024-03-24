@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 
+import src.api.logging_  # noqa: F401
 from src.api import docs
 from src.api.docs import generate_unique_operation_id
 from src.api.lifespan import lifespan

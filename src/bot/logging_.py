@@ -1,13 +1,12 @@
 __all__ = ["logger"]
 
+import inspect
 import logging.config
 import os
-from logging import LogRecord
 from collections.abc import Mapping
+from logging import LogRecord
 
 import yaml
-
-import inspect
 
 
 class RelativePathFilter(logging.Filter):
