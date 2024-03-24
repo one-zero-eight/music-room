@@ -4,18 +4,18 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
-from src.config import settings
+from src.config import api_settings
 
 
 class Crypto:
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
-        salt=settings.CRYPTO_SALT,
+        salt=api_settings.crypto_salt,
         iterations=480000,
     )
 
-    cipher_suite = Fernet(base64.urlsafe_b64encode(kdf.derive(settings.CRYPTO_PASSWORD)))
+    cipher_suite = Fernet(base64.urlsafe_b64encode(kdf.derive(api_settings.crypto_password)))
 
     @classmethod
     def encrypt(cls, phone_number: str):

@@ -1,33 +1,33 @@
 $schema: "./settings.schema.yaml"
-# ---------- Application settings ----- #
-SMTP_SERVER: ...
-SMTP_USERNAME: ...
-SMTP_PASSWORD: ...
-# Run 'openssl rand -hex 32' to generate password
-CRYPTO_PASSWORD: ...
-# Run 'openssl rand -hex 16' to generate salt
-CRYPTO_SALT: ...
-BOT_TOKEN: "my:bot:token"
-JWT_PRIVATE_KEY: >
-  -----BEGIN RSA PRIVATE KEY-----
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxx
-  -----END RSA PRIVATE KEY-----
-JWT_PUBLIC_KEY: >
-  -----BEGIN PUBLIC KEY-----
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  xxxxxxxx
-  -----END PUBLIC KEY-----
-# Run 'openssl rand -hex 32' to generate password
-API_KEY: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-DB_URL: "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres"
+api_settings:
+  smtp_server: ...
+  smtp_username: ...
+  smtp_password: ...
+  # Run 'openssl rand -hex 32' to generate password
+  crypto_password: ...
+  # Run 'openssl rand -hex 16' to generate salt
+  crypto_salt: ...
+  bot_token: "my:bot:token"
+  jwt_private_key: >
+    -----BEGIN RSA PRIVATE KEY-----
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxx
+    -----END RSA PRIVATE KEY-----
+  jwt_public_key: >
+    -----BEGIN PUBLIC KEY-----
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+    xxxxxxxx
+    -----END PUBLIC KEY-----
+  # Run 'openssl rand -hex 32' to generate password
+  api_key: "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  db_url: "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres"

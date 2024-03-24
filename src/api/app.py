@@ -5,7 +5,7 @@ from src.api import docs
 from src.api.dependencies import Dependencies
 from src.api.docs import generate_unique_operation_id
 from src.api.routers import routers
-from src.config import settings
+from src.config import api_settings
 from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.auth.repository import SqlAuthRepository
 from src.repositories.bookings.abc import AbstractBookingRepository
@@ -25,14 +25,14 @@ app = FastAPI(
     license_info=docs.LICENSE_INFO,
     openapi_tags=docs.TAGS_INFO,
     servers=[
-        {"url": settings.APP_ROOT_PATH, "description": "Current"},
+        {"url": api_settings.app_root_path, "description": "Current"},
     ],
     swagger_ui_parameters={
         "tryItOutEnabled": True,
         "persistAuthorization": True,
         "filter": True,
     },
-    root_path=settings.APP_ROOT_PATH,
+    root_path=api_settings.app_root_path,
     root_path_in_servers=False,
     swagger_ui_oauth2_redirect_url=None,
     generate_unique_id_function=generate_unique_operation_id,
@@ -41,7 +41,7 @@ app = FastAPI(
 
 async def setup_repositories():
     # ------------------- Repositories Dependencies -------------------
-    storage = SQLAlchemyStorage.from_url(settings.DB_URL)
+    storage = SQLAlchemyStorage.from_url(api_settings.db_url)
     participant_repository = SqlParticipantRepository(storage)
     booking_repository = SqlBookingRepository(storage)
     auth_repository = SqlAuthRepository(storage)

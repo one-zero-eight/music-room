@@ -5,7 +5,7 @@ from sqlalchemy import and_, or_, select, update
 from sqlalchemy.dialects.postgresql import insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from src.config import settings
+from src.config import api_settings
 from src.repositories.auth.abc import AbstractAuthRepository
 from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas.auth import VerificationResult, VerificationSource
@@ -93,7 +93,7 @@ class TokenRepository:
         from src.api.dependencies import Dependencies
 
         try:
-            payload = jwt.decode(auth_token, settings.JWT_PUBLIC_KEY)
+            payload = jwt.decode(auth_token, api_settings.jwt_public_key)
         except JoseError:
             return VerificationResult(success=False)
 
@@ -126,13 +126,13 @@ class TokenRepository:
         issued_at = datetime.datetime.utcnow()
         expire = issued_at + expires_delta
         payload.update({"exp": expire, "iat": issued_at})
-        encoded_jwt = jwt.encode({"alg": cls.ALGORITHM}, payload, settings.JWT_PRIVATE_KEY.get_secret_value())
+        encoded_jwt = jwt.encode({"alg": cls.ALGORITHM}, payload, api_settings.jwt_private_key.get_secret_value())
         return str(encoded_jwt, "utf-8")
 
     @classmethod
     def verify_bot_token(cls, auth_token: str) -> VerificationResult:
-        if auth_token.endswith(settings.BOT_TOKEN):
-            user_id = auth_token[: -len(settings.BOT_TOKEN)]
+        if auth_token.endswith(api_settings.bot_token):
+            user_id = auth_token[: -len(api_settings.bot_token)]
             if user_id:
                 user_id = int(user_id.strip(":"))
             else:
@@ -144,7 +144,7 @@ class TokenRepository:
 
     @classmethod
     def verify_api_token(cls, auth_token: str) -> VerificationResult:
-        if auth_token == settings.API_KEY:
+        if auth_token == api_settings.api_key:
             return VerificationResult(success=True, source=VerificationSource.API)
         else:
             return VerificationResult(success=False)

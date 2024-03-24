@@ -1,47 +1,64 @@
+from enum import StrEnum
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field, SecretStr
+from pydantic import BaseModel, Field, SecretStr, ConfigDict
 
 
-class Settings(BaseModel):
-    APP_ROOT_PATH: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
+class Environment(StrEnum):
+    DEVELOPMENT = "development"
+    PRODUCTION = "production"
+    STAGING = "staging"
 
-    DB_URL: str = Field(
+
+class BotSettings(BaseModel):
+    environment: Environment = Environment.DEVELOPMENT
+    bot_token: SecretStr = Field(..., description="Bot token from @BotFather")
+    api_url: str
+    redis_url: SecretStr | None = None
+
+
+class ApiSettings(BaseModel):
+    app_root_path: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
+    db_url: str = Field(
         "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
         example="postgresql+asyncpg://user:password@localhost:5432/db_name",
     )
-
     # Authorization
-    BOT_TOKEN: str = Field(
+    bot_token: str = Field(
         ...,
         example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         description="Bot token from @BotFather",
     )
-    JWT_PRIVATE_KEY: SecretStr = Field(
+    jwt_private_key: SecretStr = Field(
         ...,
         description="Private key for JWT. Use 'openssl genrsa -out private.pem 2048' to generate keys",
     )
 
-    JWT_PUBLIC_KEY: str = Field(
+    jwt_public_key: str = Field(
         ...,
         description="Public key for JWT. Use 'openssl rsa -in private.pem -pubout -out public.pem' to generate keys",
     )
-
     # SMTP server config
-    SMTP_SERVER: str = Field(..., example="smtp.gmail.com")
-    SMTP_PORT: int = Field(587)
-    SMTP_USERNAME: str = Field(..., example="some-username@gmail.com")
-    SMTP_PASSWORD: str = Field(..., example="xxxxxxxx")
-    CRYPTO_PASSWORD: bytes = Field(
+    smtp_server: str = Field(..., example="smtp.gmail.com")
+    smtp_port: int = Field(587)
+    smtp_username: str = Field(..., example="some-username@gmail.com")
+    smtp_password: str = Field(..., example="xxxxxxxx")
+    crypto_password: bytes = Field(
         ...,
         example=b"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
         description="Run 'openssl rand -hex 32' to generate key",
     )
-    CRYPTO_SALT: bytes = Field(..., example=b"xxxxxxxxxxxxxxxx")
-    API_KEY: str = Field(
+    crypto_salt: bytes = Field(..., example=b"xxxxxxxxxxxxxxxx")
+    api_key: str = Field(
         ..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", description="API key for the Music Room API"
     )
+
+
+class Settings(BaseModel):
+    model_config = ConfigDict(json_schema_extra={"title": "Settings"}, extra="ignore")
+    api_settings: ApiSettings | None = None
+    bot_settings: BotSettings | None = None
 
     @classmethod
     def from_yaml(cls, path: Path) -> "Settings":

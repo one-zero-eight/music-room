@@ -4,7 +4,7 @@ import json
 
 from pydantic import BaseModel
 
-from src.config import settings
+from src.config import api_settings
 from src.schemas.auth import VerificationResult, VerificationSource
 
 
@@ -48,7 +48,7 @@ def telegram_webapp_check_authorization(
     """
     received_hash = telegram_data.hash
     encoded_telegram_data = telegram_data.encoded
-    token = settings.BOT_TOKEN
+    token = api_settings.bot_token
     secret_key = hmac.new("WebAppData".encode(), token.encode(), hashlib.sha256).digest()
     evaluated_hash = hmac.new(secret_key, encoded_telegram_data, hashlib.sha256).hexdigest()
 
