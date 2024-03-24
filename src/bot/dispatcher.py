@@ -7,6 +7,7 @@ from aiogram.types import Update, User, Message, CallbackQuery
 from src.bot.logging_ import logger
 
 
+# noinspection PyMethodMayBeStatic
 class CustomDispatcher(Dispatcher):
     async def _send_dunno_message(self, bot: Bot, chat_id: int):
         await bot.send_message(
@@ -32,6 +33,6 @@ class CustomDispatcher(Dispatcher):
             else:
                 msg = f"{user_string}: [{event_type}]"
 
-            logger.info(f"Unknown event from user. {msg}")
+            logger.warning(f"Unknown event from user. {msg}")
             await self._send_dunno_message(bot, event_from_user.id)
         return res

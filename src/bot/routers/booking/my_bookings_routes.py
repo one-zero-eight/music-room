@@ -5,7 +5,7 @@ from aiogram.filters import Command
 from aiogram.fsm.state import any_state
 from aiogram.types import Message
 
-from src.bot.api import client
+from src.bot.api import api_client
 from src.bot.routers.booking import router
 from src.bot.routers.booking.callback_data import MyBookingsCallbackData
 
@@ -13,7 +13,7 @@ from src.bot.routers.booking.callback_data import MyBookingsCallbackData
 @router.message(any_state, Command("my_bookings"))
 @router.message(any_state, F.text == "My bookings")
 async def show_my_bookings(message: Message):
-    bookings = await client.get_user_bookings(message.from_user.id)
+    bookings = await api_client.get_user_bookings(message.from_user.id)
     # only future bookings
     bookings = [entry for entry in bookings if datetime.now() < datetime.fromisoformat(entry["time_end"])]
 
@@ -51,7 +51,7 @@ async def _create_inline_keyboard(bookings: list[dict]):
 @router.callback_query(MyBookingsCallbackData.filter(F.key == "cancel"))
 async def handle_delete_callback(callback_query: types.CallbackQuery, callback_data: MyBookingsCallbackData):
     booking_id = callback_data.id
-    response = await client.delete_booking(booking_id, callback_query.from_user.id)
+    response = await api_client.delete_booking(booking_id, callback_query.from_user.id)
     if response:
         await callback_query.answer(text="You have successfully cancel the booking")
         inline_keyboard = callback_query.message.reply_markup.inline_keyboard

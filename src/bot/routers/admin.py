@@ -4,13 +4,10 @@ from aiogram import Router, types, Bot
 from aiogram.filters import Command, Filter
 from aiogram.types import BufferedInputFile, TelegramObject, User, BotCommandScopeChat
 
-from src.bot.api import client, UserStatus
+from src.bot.api import api_client, UserStatus
 from src.bot.constants import admin_commands, bot_commands
-from src.bot.filters import FilledProfileFilter
 
-router = Router()
-
-router.message.filter(FilledProfileFilter())
+router = Router(name="admin")
 
 
 class StatusFilter(Filter):
@@ -21,7 +18,7 @@ class StatusFilter(Filter):
 
     async def __call__(self, event: TelegramObject, event_from_user: User) -> bool | dict[str, Any]:
         telegram_id = event_from_user.id
-        user = await client.get_me(telegram_id=telegram_id)
+        user = await api_client.get_me(telegram_id=telegram_id)
         if self._status is None:
             return {"status": user["status"]}
 
@@ -49,7 +46,7 @@ async def enable_admin_mode(message: types.Message, bot: Bot, status: str):
 
 @router.message(Command("export_users"), StatusFilter(UserStatus.LORD))
 async def export_users(message: types.Message):
-    response = await client.export_users(message.from_user.id)
+    response = await api_client.export_users(message.from_user.id)
     if response:
         bytes_, filename = response
         document = BufferedInputFile(bytes_, filename)

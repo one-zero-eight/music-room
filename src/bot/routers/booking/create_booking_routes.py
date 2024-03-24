@@ -9,7 +9,7 @@ from aiogram_dialog import Dialog, DialogManager, Window, StartMode
 from aiogram_dialog.widgets.kbd import Back, Button, Group, Cancel, Row
 from aiogram_dialog.widgets.text import Const, Format
 
-from src.bot.api import client
+from src.bot.api import api_client
 from src.bot.routers.booking import router
 from src.bot.routers.booking.states import CreateBookingStates
 from src.bot.routers.booking.widgets.calendar import CustomCalendar
@@ -45,7 +45,7 @@ async def on_time_confirmed(callback: CallbackQuery, _button: Button, dialog_man
         await callback.message.answer("You must choose both start and end time")
         return
     start, end = chosen_timeslots
-    success, error = await client.book(callback.from_user.id, date, start, end)
+    success, error = await api_client.book(callback.from_user.id, date, start, end)
 
     if success:
         date_text = date.strftime("%B %d")
@@ -100,13 +100,13 @@ async def getter_for_time_selection(dialog_manager: DialogManager, event_from_us
     dialog_data: dict = dialog_manager.dialog_data
     date: str = dialog_data["selected_date"]
     data: dict[str, Any] = {"selected_date": date}
-    hours = await client.get_remaining_daily_hours(event_from_user.id, date)
-    weekly_hours = await client.get_remaining_weekly_hours(event_from_user.id, date)
+    hours = await api_client.get_remaining_daily_hours(event_from_user.id, date)
+    weekly_hours = await api_client.get_remaining_weekly_hours(event_from_user.id, date)
     hours = min(hours, weekly_hours)
     data["remaining_daily_hours"] = hours
     data["remaining_daily_hours_hours"] = int(hours)
     data["remaining_daily_hours_minutes"] = int((hours - data["remaining_daily_hours_hours"]) * 60)
-    _, data["daily_bookings"] = await client.get_daily_bookings(date)
+    _, data["daily_bookings"] = await api_client.get_daily_bookings(date)
     return data
 
 

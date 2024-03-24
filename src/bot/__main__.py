@@ -2,7 +2,7 @@ import asyncio
 
 from aiogram import Bot, F
 from aiogram import types
-from aiogram.filters import Command, ExceptionTypeFilter, CommandStart
+from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
 from aiogram.types import ErrorEvent
@@ -11,16 +11,12 @@ from aiogram_dialog.api.exceptions import UnknownIntent
 
 import src.bot.logging_  # noqa: F401
 from src.bot.constants import (
-    instructions_url,
-    how_to_get_url,
-    tg_chat_url,
     bot_name,
     bot_description,
     bot_short_description,
     bot_commands,
 )
 from src.bot.dispatcher import CustomDispatcher
-from src.bot.filters import RegisteredUserFilter, FilledProfileFilter
 from src.bot.middlewares import LogAllEventsMiddleware
 from src.config import bot_settings
 
@@ -42,49 +38,18 @@ async def unknown_intent_handler(event: ErrorEvent, callback_query: types.Callba
     await callback_query.answer("Unknown intent: Please, try to restart the action.")
 
 
-@dp.message(CommandStart(), ~RegisteredUserFilter())
-async def start(message: types.Message):
-    from src.bot.routers.registration.keyboards import registration_kb
+from src.bot.routers.registration import router as router_registration  # noqa: E402
+from src.bot.routers.start_help_menu import router as start_help_menu_router  # noqa: E402
+from src.bot.routers.admin import router as router_admin  # noqa: E402
+from src.bot.routers.booking import router as router_bookings  # noqa: E402
+from src.bot.routers.schedule import router as router_image_schedule  # noqa: E402
 
-    await message.answer("Welcome! To continue, you need to register.", reply_markup=registration_kb)
+dp.include_router(router_registration)  # sink for not registered users
+dp.include_router(start_help_menu_router)  # start, help, menu commands
+dp.include_router(router_admin)  # admin commands
+dp.include_router(router_bookings)  # everything about bookings (create, show, etc.)
+dp.include_router(router_image_schedule)  # schedule commands (show image)
 
-
-@dp.message(CommandStart(), FilledProfileFilter())
-async def start_but_registered(message: types.Message):
-    from src.bot.menu import menu_kb
-
-    await message.answer("Welcome! Choose the action you're interested in.", reply_markup=menu_kb)
-
-
-@dp.message(Command("help"))
-async def help_handler(message: types.Message):
-    keyboard = types.InlineKeyboardMarkup(
-        inline_keyboard=[
-            [
-                types.InlineKeyboardButton(text="Instructions", url=instructions_url),
-                types.InlineKeyboardButton(text="Location", url=how_to_get_url),
-                types.InlineKeyboardButton(text="Telegram chat", url=tg_chat_url),
-            ]
-        ]
-    )
-
-    await message.answer(
-        "If you have any questions, you can ask them in the chat or read the instructions.",
-        reply_markup=keyboard,
-    )
-
-
-@dp.message(Command("menu"), FilledProfileFilter())
-async def menu_handler(message: types.Message):
-    from src.bot.menu import menu_kb
-
-    await message.answer("Choose the action you're interested in.", reply_markup=menu_kb)
-
-
-from src.bot.routers import routers  # noqa: E402
-
-for router in routers:
-    dp.include_router(router)
 setup_dialogs(dp)
 
 
@@ -111,5 +76,5 @@ async def main():
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+# NOTE: No need for if __name__ == "__main__":, because this is the __main__.py module already
+asyncio.run(main())

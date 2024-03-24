@@ -1,8 +1,10 @@
+__all__ = ["router"]
+
 import datetime
 
+from fastapi import APIRouter
 from fastapi import Query, Response
 
-from src.api.bookings import router
 from src.api.dependencies import VerifiedDepWithUserID
 from src.exceptions import (
     CollisionInBookings,
@@ -19,6 +21,8 @@ from src.schemas import CreateBooking, ViewBooking
 from src.tools import count_duration, is_sc_working
 from src.tools.utils import is_offset_correct
 
+router = APIRouter(tags=["Bookings"])
+
 
 def _get_start_of_week() -> datetime.date:
     _current_date = datetime.date.today()
@@ -26,7 +30,7 @@ def _get_start_of_week() -> datetime.date:
     return _start_of_week
 
 
-@router.post("/")
+@router.post("/bookings/")
 async def create_booking(booking: CreateBooking, verified: VerifiedDepWithUserID) -> ViewBooking | str:
     user_id = verified.user_id
     if not await is_sc_working(booking.time_start, booking.time_end):
@@ -51,27 +55,29 @@ async def create_booking(booking: CreateBooking, verified: VerifiedDepWithUserID
     return created
 
 
-@router.delete("/{booking_id}")
+@router.delete("/bookings/{booking_id}")
 async def delete_booking(booking_id: int, verified: VerifiedDepWithUserID) -> bool:
     booking = await booking_repository.get_booking(booking_id)
 
     if booking is None:
         raise NoSuchBooking()
 
-    if booking.user_id != verified.user_id:
+    status = await user_repository.get_status(verified.user_id)
+
+    if status != status.LORD and booking.user_id != verified.user_id:
         raise ForbiddenException()
 
     success = await booking_repository.delete_booking(booking_id)
     return success
 
 
-@router.get("/my_bookings")
+@router.get("/bookings/my_bookings")
 async def get_my_bookings(verified: VerifiedDepWithUserID) -> list[ViewBooking]:
     return await booking_repository.get_user_bookings(verified.user_id)
 
 
 @router.get(
-    "/form_schedule",
+    "/bookings/form_schedule",
     responses={200: {"content": {"image/png": {}}}},
     response_class=Response,
 )
@@ -82,12 +88,12 @@ async def form_schedule(
     return Response(content=image_bytes, media_type="image/png")
 
 
-@router.get("/daily_bookings")
+@router.get("/bookings/daily_bookings")
 async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
     return await booking_repository.get_daily_bookings(date)
 
 
-@router.get("/")
+@router.get("/bookings/")
 async def get_bookings_for_week(
     start_of_week: datetime.date | None = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
 ) -> list[ViewBooking]:

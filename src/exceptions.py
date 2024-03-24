@@ -121,6 +121,18 @@ class UserExists(HTTPException):
         )
 
 
+class UserDidNotConnectTelegram(HTTPException):
+    """
+    HTTP_400_BAD_REQUEST
+    """
+
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User did not connect telegram in InNoHassle-Accounts",
+        )
+
+
 class NoSuchBooking(HTTPException):
     """
     HTTP_404_NOT_FOUND

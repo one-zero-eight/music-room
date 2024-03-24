@@ -1,15 +1,19 @@
+__all__ = ["router"]
+
 import datetime
 from zlib import crc32
 
 import icalendar
+from fastapi import APIRouter
 from fastapi import Response
 
 from src.api.dependencies import VerifiedDep
-from src.api.root import router
 from src.exceptions import ForbiddenException
 from src.repositories.bookings.repository import booking_repository
 from src.repositories.users.repository import user_repository
 from src.schemas.auth import VerificationSource
+
+router = APIRouter(tags=["Root"])
 
 
 def _calendar_baseline():

@@ -1,13 +1,18 @@
-from src.api.auth import router
+__all__ = ["router"]
+
+from fastapi import APIRouter
+
 from src.api.dependencies import VerifiedDep
-from src.exceptions import UserExists, ForbiddenException
+from src.exceptions import UserExists, ForbiddenException, UserDidNotConnectTelegram
 from src.repositories.innohassle_accounts import innohassle_accounts
 from src.repositories.users.repository import user_repository
 from src.schemas import CreateUser, UserStatus, ViewUser
 from src.schemas.auth import VerificationSource
 
+router = APIRouter(tags=["Auth"])
 
-@router.post("/registration")
+
+@router.post("/auth/registration")
 async def registration(telegram_id: int, verification: VerifiedDep) -> ViewUser | None:
     if verification.source == VerificationSource.BOT and telegram_id != verification.telegram_id:
         raise ForbiddenException()
@@ -22,7 +27,7 @@ async def registration(telegram_id: int, verification: VerifiedDep) -> ViewUser 
         or user_from_innohassle.telegram is None
         or user_from_innohassle.innopolis_sso is None
     ):
-        return None
+        raise UserDidNotConnectTelegram()
 
     user = CreateUser(
         email=user_from_innohassle.innopolis_sso.email,
@@ -34,7 +39,7 @@ async def registration(telegram_id: int, verification: VerifiedDep) -> ViewUser 
     return created
 
 
-@router.get("/is_user_exists")
+@router.get("/auth/is_user_exists")
 async def is_user_exists(verification: VerifiedDep, email: str = None, telegram_id: int = None) -> bool:
     if verification.source == VerificationSource.BOT and telegram_id != verification.telegram_id:
         raise ForbiddenException()

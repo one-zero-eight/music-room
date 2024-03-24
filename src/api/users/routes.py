@@ -1,3 +1,5 @@
+__all__ = ["router"]
+
 import datetime
 import io
 
@@ -5,18 +7,20 @@ from docx import Document as create_docx
 from docx.document import Document
 from docx.shared import Emu
 from docx.table import _Cell
+from fastapi import APIRouter
 from fastapi import Query, Response
 
 from src.api.dependencies import VerifiedDep, VerifiedDepWithUserID
-from src.api.users import router
 from src.exceptions import ForbiddenException
 from src.repositories.users.repository import user_repository
 from src.schemas import ViewBooking, ViewUser, UserStatus, FillUserProfile
 from src.schemas.auth import VerificationSource
 
+router = APIRouter(tags=["Users"])
+
 
 # docx
-@router.get("/export", response_class=Response)
+@router.get("/users/export", response_class=Response)
 async def get_list_of_all_users(verified: VerifiedDep):
     if verified.user_id is None:
         raise ForbiddenException()
@@ -70,7 +74,7 @@ async def get_list_of_all_users(verified: VerifiedDep):
     )
 
 
-@router.put("/{user_id}/status")
+@router.put("/users/{user_id}/status")
 async def change_status(user_id: int, new_status: UserStatus, verified: VerifiedDepWithUserID) -> ViewUser:
     source = await user_repository.get_user(verified.user_id)
     if source.status != UserStatus.LORD:
@@ -79,25 +83,25 @@ async def change_status(user_id: int, new_status: UserStatus, verified: Verified
     return updated_user
 
 
-@router.get("/me")
+@router.get("/users/me")
 async def get_me(verified: VerifiedDepWithUserID) -> ViewUser:
     user = await user_repository.get_user(verified.user_id)
     return user
 
 
-@router.post("/me/fill_profile")
+@router.post("/users/me/fill_profile")
 async def fill_profile(user: FillUserProfile, verified: VerifiedDepWithUserID) -> ViewUser:
     created = await user_repository.fill_profile(verified.user_id, user)
     return created
 
 
-@router.get("/me/bookings")
+@router.get("/users/me/bookings")
 async def get_user_bookings(verified: VerifiedDepWithUserID) -> list[ViewBooking]:
     bookings = await user_repository.get_user_bookings(verified.user_id)
     return bookings
 
 
-@router.get("/me/remaining_weekly_hours")
+@router.get("/users/me/remaining_weekly_hours")
 async def get_remaining_weekly_hours(
     verified: VerifiedDep,
     date: datetime.date | None = Query(
@@ -111,7 +115,7 @@ async def get_remaining_weekly_hours(
     return ans
 
 
-@router.get("/me/remaining_daily_hours")
+@router.get("/users/me/remaining_daily_hours")
 async def get_remaining_daily_hours(
     verified: VerifiedDep,
     date: datetime.date | None = Query(
@@ -124,7 +128,7 @@ async def get_remaining_daily_hours(
     return ans
 
 
-@router.get("/user_id")
+@router.get("/users/user_id")
 async def get_user_id(
     verification: VerifiedDep, telegram_id: str | None = None, email: str | None = None
 ) -> int | None:
