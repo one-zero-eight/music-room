@@ -129,9 +129,9 @@ async def get_remaining_daily_hours(
 
 @router.get("/users/user_id")
 async def get_user_id(
-    verification: VerifiedDep, telegram_id: str | None = None, email: str | None = None
+    verification: VerifiedDep, telegram_id: int | None = None, email: str | None = None
 ) -> int | None:
     if verification.source not in (VerificationSource.BOT, VerificationSource.API):
         raise ForbiddenException()
-    res = await user_repository.get_user_id(telegram_id, email)
+    res = await user_repository.get_user_id(telegram_id=telegram_id, email=email)
     return res
