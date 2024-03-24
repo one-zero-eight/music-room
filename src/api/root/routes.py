@@ -4,9 +4,8 @@ from zlib import crc32
 import icalendar
 from fastapi import Response
 
-from src.api.dependencies import Dependencies
 from src.api.root import router
-from src.repositories.bookings.abc import AbstractBookingRepository
+from src.repositories.bookings.repository import booking_repository
 
 
 def _calendar_baseline():
@@ -53,7 +52,6 @@ def _booking_to_vevent(booking, is_personal=False):
 async def get_music_room_ics():
     main_calendar = _calendar_baseline()
 
-    booking_repository = Dependencies.get(AbstractBookingRepository)
     from_date = datetime.date.today() - datetime.timedelta(days=14)
     to_date = datetime.date.today() + datetime.timedelta(days=14)
     bookings = await booking_repository.get_bookings(from_date, to_date)
@@ -81,7 +79,7 @@ async def get_music_room_ics():
 )
 async def get_participant_ics(participant_id: int):
     main_calendar = _calendar_baseline()
-    booking_repository = Dependencies.get(AbstractBookingRepository)
+
     bookings = await booking_repository.get_participant_bookings(participant_id)
     dtstamp = icalendar.vDatetime(datetime.datetime.now())
     for booking in bookings:

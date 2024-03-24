@@ -10,10 +10,8 @@ from src.api.auth.telegram import (
     TelegramWidgetData,
     telegram_webapp_check_authorization,
 )
-from src.api.dependencies import Dependencies
 from src.exceptions import NoCredentialsException, IncorrectCredentialsException
 from src.repositories.auth.repository import TokenRepository
-from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas.auth import VerificationResult
 
 bearer_scheme = HTTPBearer(
@@ -58,8 +56,9 @@ async def verify_request(
     bot_verification_result = TokenRepository.verify_bot_token(bearer.credentials)
     if bot_verification_result.success:
         # replace telegram_id with user_id
-        participant_repository = Dependencies.get(AbstractParticipantRepository)
         telegram_id = str(bot_verification_result.user_id)
+        from src.repositories.participants.repository import participant_repository
+
         bot_verification_result.user_id = await participant_repository.get_participant_id(telegram_id)
         return bot_verification_result
 

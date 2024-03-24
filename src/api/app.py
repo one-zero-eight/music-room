@@ -2,17 +2,9 @@ from fastapi import FastAPI, Request
 from fastapi.responses import RedirectResponse
 
 from src.api import docs
-from src.api.dependencies import Dependencies
 from src.api.docs import generate_unique_operation_id
 from src.api.routers import routers
 from src.config import api_settings
-from src.repositories.auth.abc import AbstractAuthRepository
-from src.repositories.auth.repository import SqlAuthRepository
-from src.repositories.bookings.abc import AbstractBookingRepository
-from src.repositories.bookings.repository import SqlBookingRepository
-from src.repositories.participants.abc import AbstractParticipantRepository
-from src.repositories.participants.repository import SqlParticipantRepository
-from src.repositories.smtp.repository import SMTPRepository
 from src.storage.sql import SQLAlchemyStorage
 
 # App definition
@@ -40,17 +32,14 @@ app = FastAPI(
 
 
 async def setup_repositories():
-    # ------------------- Repositories Dependencies -------------------
-    storage = SQLAlchemyStorage.from_url(api_settings.db_url)
-    participant_repository = SqlParticipantRepository(storage)
-    booking_repository = SqlBookingRepository(storage)
-    auth_repository = SqlAuthRepository(storage)
-    smtp_repository = SMTPRepository()
+    from src.repositories.participants.repository import participant_repository
+    from src.repositories.bookings.repository import booking_repository
+    from src.repositories.auth.repository import auth_repository
 
-    Dependencies.register_provider(AbstractParticipantRepository, participant_repository)
-    Dependencies.register_provider(AbstractBookingRepository, booking_repository)
-    Dependencies.register_provider(AbstractAuthRepository, auth_repository)
-    Dependencies.register_provider(SMTPRepository, smtp_repository)
+    storage = SQLAlchemyStorage.from_url(api_settings.db_url)
+    participant_repository.update_storage(storage)
+    booking_repository.update_storage(storage)
+    auth_repository.update_storage(storage)
 
 
 def setup_timezone():

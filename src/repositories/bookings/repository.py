@@ -1,8 +1,10 @@
+__all__ = ["booking_repository", "SqlBookingRepository"]
+
 import datetime
 import io
 from datetime import timedelta
 from datetime import datetime as datetime_datetime
-from typing import Optional
+from typing import Optional, Self
 
 from PIL import Image, ImageDraw, ImageFont
 from sqlalchemy import and_, between, select, insert, delete, or_, not_
@@ -20,8 +22,9 @@ from src.tools.utils import get_week_numbers
 class SqlBookingRepository(AbstractBookingRepository):
     storage: AbstractSQLAlchemyStorage
 
-    def __init__(self, storage: AbstractSQLAlchemyStorage):
+    def update_storage(self, storage: AbstractSQLAlchemyStorage) -> Self:
         self.storage = storage
+        return self
 
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
@@ -224,3 +227,6 @@ class SqlBookingRepository(AbstractBookingRepository):
             query = select(Booking).where(Booking.participant_id == participant_id)
             objs = await session.scalars(query)
             return [ViewBooking.model_validate(obj) for obj in objs]
+
+
+booking_repository = SqlBookingRepository()

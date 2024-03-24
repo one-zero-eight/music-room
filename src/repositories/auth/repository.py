@@ -1,4 +1,7 @@
+__all__ = ["SqlAuthRepository", "auth_repository", "TokenRepository"]
+
 import datetime
+from typing import Self
 
 from authlib.jose import jwt, JoseError
 from sqlalchemy import and_, or_, select, update
@@ -7,7 +10,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import api_settings
 from src.repositories.auth.abc import AbstractAuthRepository
-from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas.auth import VerificationResult, VerificationSource
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models.participant import Participant, PotentialUser
@@ -16,8 +18,9 @@ from src.storage.sql.models.participant import Participant, PotentialUser
 class SqlAuthRepository(AbstractAuthRepository):
     storage: AbstractSQLAlchemyStorage
 
-    def __init__(self, storage: AbstractSQLAlchemyStorage):
+    def update_storage(self, storage: AbstractSQLAlchemyStorage) -> Self:
         self.storage = storage
+        return self
 
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
@@ -90,14 +93,11 @@ class TokenRepository:
 
     @classmethod
     async def verify_access_token(cls, auth_token: str) -> VerificationResult:
-        from src.api.dependencies import Dependencies
-
         try:
             payload = jwt.decode(auth_token, api_settings.jwt_public_key)
         except JoseError:
             return VerificationResult(success=False)
 
-        user_repository = Dependencies.get(AbstractParticipantRepository)
         user_id: str = payload.get("sub")
 
         if user_id is None or not user_id.isdigit():
@@ -105,7 +105,9 @@ class TokenRepository:
 
         converted_user_id = int(user_id)
 
-        user = await user_repository.get_participant(converted_user_id)
+        from src.repositories.participants.repository import participant_repository
+
+        user = await participant_repository.get_participant(converted_user_id)
 
         if user is None:
             return VerificationResult(success=False)
@@ -148,3 +150,6 @@ class TokenRepository:
             return VerificationResult(success=True, source=VerificationSource.API)
         else:
             return VerificationResult(success=False)
+
+
+auth_repository = SqlAuthRepository()

@@ -1,6 +1,8 @@
+__all__ = ["participant_repository", "SqlParticipantRepository"]
+
 import datetime
 from datetime import timedelta
-from typing import Optional
+from typing import Optional, Self
 
 from sqlalchemy import and_, between, extract, select, update, insert, or_
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -22,8 +24,9 @@ from src.tools import count_duration
 class SqlParticipantRepository(AbstractParticipantRepository):
     storage: AbstractSQLAlchemyStorage
 
-    def __init__(self, storage: AbstractSQLAlchemyStorage):
+    def update_storage(self, storage: AbstractSQLAlchemyStorage) -> Self:
         self.storage = storage
+        return self
 
     def _create_session(self) -> AsyncSession:
         return self.storage.create_session()
@@ -150,3 +153,6 @@ class SqlParticipantRepository(AbstractParticipantRepository):
             obj = await session.scalar(query)
             if obj:
                 return obj.id
+
+
+participant_repository = SqlParticipantRepository()

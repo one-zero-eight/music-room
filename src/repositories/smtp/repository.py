@@ -1,4 +1,4 @@
-__all__ = ["SMTPRepository"]
+__all__ = ["SMTPRepository", "smtp_repository"]
 
 import contextlib
 import smtplib
@@ -47,3 +47,6 @@ class SMTPRepository:
             raise ValueError(e)
         with self._context():
             self._server.sendmail(api_settings.smtp_username, to, message)
+
+
+smtp_repository = SMTPRepository()

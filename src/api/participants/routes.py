@@ -8,10 +8,10 @@ from docx.shared import Emu
 from docx.table import _Cell
 from fastapi import Query, Response
 
-from src.api.dependencies import Dependencies, VerifiedDep
+from src.api.dependencies import VerifiedDep
 from src.api.participants import router
 from src.exceptions import ForbiddenException
-from src.repositories.participants.abc import AbstractParticipantRepository
+from src.repositories.participants.repository import participant_repository
 from src.schemas import (
     ViewBooking,
     ViewParticipant,
@@ -29,7 +29,6 @@ from src.schemas.auth import VerificationSource
 async def get_list_of_all_users(
     verified: VerifiedDep,
 ):
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     issuer = await participant_repository.get_participant(verified.user_id)
     if issuer.status != ParticipantStatus.LORD:
         raise ForbiddenException()
@@ -86,8 +85,6 @@ async def change_status(
     new_status: ParticipantStatus,
     verified: VerifiedDep,
 ) -> ViewParticipant:
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
-
     source = await participant_repository.get_participant(verified.user_id)
     if source.status != ParticipantStatus.LORD:
         raise ForbiddenException()
@@ -98,7 +95,6 @@ async def change_status(
 
 @router.get("/me")
 async def get_me(verified: VerifiedDep) -> ViewParticipant:
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     participant = await participant_repository.get_participant(verified.user_id)
     return participant
 
@@ -108,14 +104,12 @@ async def fill_profile(
     participant: FillParticipantProfile,
     verified: VerifiedDep,
 ) -> ViewParticipant:
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     created = await participant_repository.fill_profile(verified.user_id, participant)
     return created
 
 
 @router.get("/me/bookings")
 async def get_participant_bookings(verified: VerifiedDep) -> list[ViewBooking]:
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     bookings = await participant_repository.get_participant_bookings(verified.user_id)
     return bookings
 
@@ -129,7 +123,6 @@ async def get_remaining_weekly_hours(
         description="Date for which to get remaining hours (iso format). Default: server-side today",
     ),
 ) -> float:
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     start_of_week = date - datetime.timedelta(days=date.weekday())
     ans = await participant_repository.remaining_weekly_hours(verified.user_id, start_of_week)
     return ans
@@ -144,7 +137,6 @@ async def get_remaining_daily_hours(
         description="Date for which to get remaining hours (iso format). Default: server-side today",
     ),
 ) -> float:
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     ans = await participant_repository.remaining_daily_hours(verified.user_id, date)
     return ans
 
@@ -153,7 +145,6 @@ async def get_remaining_daily_hours(
 async def get_participant_id(
     verification: VerifiedDep, telegram_id: str | None = None, email: str | None = None
 ) -> int | None:
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     if verification.source not in (VerificationSource.BOT, VerificationSource.API):
         raise ForbiddenException()
     res = await participant_repository.get_participant_id(telegram_id, email)

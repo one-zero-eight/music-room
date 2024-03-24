@@ -4,7 +4,9 @@ from typing import Optional
 from fastapi import Query, Response
 
 from src.api.bookings import router
-from src.api.dependencies import Dependencies, VerifiedDep
+from src.api.dependencies import VerifiedDep
+from src.repositories.bookings.repository import booking_repository
+from src.repositories.participants.repository import participant_repository
 from src.tools import count_duration, is_sc_working
 from src.exceptions import (
     CollisionInBookings,
@@ -16,8 +18,6 @@ from src.exceptions import (
     ForbiddenException,
     NoSuchBooking,
 )
-from src.repositories.bookings.abc import AbstractBookingRepository
-from src.repositories.participants.abc import AbstractParticipantRepository
 from src.schemas import CreateBooking, ViewBooking
 from src.tools.utils import is_offset_correct
 
@@ -30,8 +30,6 @@ def _get_start_of_week() -> datetime.date:
 
 @router.post("/")
 async def create_booking(booking: CreateBooking, verified: VerifiedDep) -> ViewBooking | str:
-    booking_repository = Dependencies.get(AbstractBookingRepository)
-    participant_repository = Dependencies.get(AbstractParticipantRepository)
     user_id = verified.user_id
     if not await is_sc_working(booking.time_start, booking.time_end):
         raise NotWorkingHours()
@@ -63,7 +61,6 @@ async def delete_booking(
     booking_id: int,
     verified: VerifiedDep,
 ) -> bool:
-    booking_repository = Dependencies.get(AbstractBookingRepository)
     booking = await booking_repository.get_booking(booking_id)
 
     if booking is None:
@@ -78,7 +75,6 @@ async def delete_booking(
 
 @router.get("/my_bookings")
 async def get_my_bookings(verified: VerifiedDep) -> list[ViewBooking]:
-    booking_repository = Dependencies.get(AbstractBookingRepository)
     return await booking_repository.get_participant_bookings(verified.user_id)
 
 
@@ -90,14 +86,12 @@ async def get_my_bookings(verified: VerifiedDep) -> list[ViewBooking]:
 async def form_schedule(
     start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
 ) -> Response:
-    booking_repository = Dependencies.get(AbstractBookingRepository)
     image_bytes = await booking_repository.form_schedule(start_of_week)
     return Response(content=image_bytes, media_type="image/png")
 
 
 @router.get("/daily_bookings")
 async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
-    booking_repository = Dependencies.get(AbstractBookingRepository)
     return await booking_repository.get_daily_bookings(date)
 
 
@@ -105,6 +99,5 @@ async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
 async def get_bookings_for_week(
     start_of_week: Optional[datetime.date] = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
 ) -> list[ViewBooking]:
-    booking_repository = Dependencies.get(AbstractBookingRepository)
     bookings = await booking_repository.get_bookings_for_week(start_of_week)
     return bookings
