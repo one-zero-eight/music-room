@@ -39,7 +39,7 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} pyt
 # and install only runtime deps using poetry
 WORKDIR $PYSETUP_PATH
 COPY ./poetry.lock ./pyproject.toml ./
-RUN poetry install --only main --no-root
+RUN poetry install --with bot --no-root
 
 
 ###########################################################
@@ -59,6 +59,5 @@ COPY --chown=poetry:poetry . /code
 USER poetry
 WORKDIR /code
 
-EXPOSE 8000
 ENTRYPOINT /docker-entrypoint.sh $0 $@
-CMD [ "uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips=*" ]
+CMD [ "python3", "-m" , "src.bot" ]

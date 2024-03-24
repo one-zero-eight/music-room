@@ -5,7 +5,7 @@
 !/src/
 !/alembic/
 !/alembic.ini
-!/deploy/docker-entrypoint.sh
+!/deploy/
 !/pyproject.toml
 !/poetry.lock
 
