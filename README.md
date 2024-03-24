@@ -25,6 +25,7 @@ This is the API for music room service in InNoHassle ecosystem.
 
 - [Python 3.11](https://www.python.org/downloads/release/python-3117/) & [Poetry](https://python-poetry.org/docs/)
 - [FastAPI](https://fastapi.tiangolo.com/) & [Pydantic](https://docs.pydantic.dev/latest/)
+- [Aiogram 3](https://docs.aiogram.dev/en/latest/) & [aiogram-dialog](https://aiogram-dialog.readthedocs.io/)
 - Database and ORM: [PostgreSQL](https://www.postgresql.org/), [SQLAlchemy](https://www.sqlalchemy.org/),
   [Alembic](https://alembic.sqlalchemy.org/en/latest/)
 - Formatting and linting: [Ruff](https://docs.astral.sh/ruff/), [pre-commit](https://pre-commit.com/)
@@ -93,15 +94,18 @@ This is the API for music room service in InNoHassle ecosystem.
    It will help you
    to write [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
+### Run for development [API]
 
-### Run for development
-
-1. Run the database if you have not done it yet
-2. Upgrade the database schema using [alembic](https://alembic.sqlalchemy.org/en/latest/):
+1. Install dependencies for api if needed:
+   ```bash
+   poetry install --no-root --with api
+   ```
+2. Run the database if you have not done it yet
+3. Upgrade the database schema using [alembic](https://alembic.sqlalchemy.org/en/latest/):
    ```bash
    poetry run alembic upgrade head
    ```
-3. Run the ASGI server
+4. Run the ASGI server
    ```bash
    poetry run python -m src.api
    ```
@@ -111,6 +115,22 @@ This is the API for music room service in InNoHassle ecosystem.
    ```
 
 Now the API is running on http://localhost:8001. Good job!
+
+### Run for development [Bot]
+
+1. Install dependencies for bot if needed:
+   ```bash
+   poetry install --no-root --with bot
+   ```
+2. Run the [API service](#run-for-development-api) or configure the bot to work with the real(production) API.
+3. Run the Redis server if needed:
+   ```bash
+   docker compose up -d redis
+   ```
+4. Run the bot:
+   ```bash
+    poetry run python -m src.bot
+    ```
 
 ### Deployment
 
@@ -130,4 +150,5 @@ We use Docker with Docker Compose plugin to run the website on servers.
 
 We are open to contributions of any kind.
 You can help us with code, bugs, design, documentation, media, new ideas, etc.
-If you are interested in contributing, please read our [contribution guide](https://github.com/one-zero-eight/.github/blob/main/CONTRIBUTING.md).
+If you are interested in contributing, please read
+our [contribution guide](https://github.com/one-zero-eight/.github/blob/main/CONTRIBUTING.md).
