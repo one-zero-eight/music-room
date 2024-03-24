@@ -35,7 +35,7 @@ class InNoHassleMusicRoomAPI:
 
     async def start_registration(self, telegram_id: int) -> tuple[bool | None, Any]:
         params = {"telegram_id": telegram_id}
-        async with self._create_client() as client:
+        async with self._create_client(telegram_id=telegram_id) as client:
             response = await client.post("/auth/registration", params=params)
             if response.status_code == 400:
                 return None, "A user did not connect telegram to the account."
