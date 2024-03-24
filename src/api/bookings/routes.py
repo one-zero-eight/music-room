@@ -5,9 +5,6 @@ from fastapi import Query, Response
 
 from src.api.bookings import router
 from src.api.dependencies import VerifiedDep
-from src.repositories.bookings.repository import booking_repository
-from src.repositories.participants.repository import participant_repository
-from src.tools import count_duration, is_sc_working
 from src.exceptions import (
     CollisionInBookings,
     IncompleteProfile,
@@ -18,7 +15,10 @@ from src.exceptions import (
     ForbiddenException,
     NoSuchBooking,
 )
+from src.repositories.bookings.repository import booking_repository
+from src.repositories.participants.repository import participant_repository
 from src.schemas import CreateBooking, ViewBooking
+from src.tools import count_duration, is_sc_working
 from src.tools.utils import is_offset_correct
 
 

@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+
 import uvicorn
 
 # Change dir to project root (three levels up from this file)

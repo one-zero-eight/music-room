@@ -8,12 +8,7 @@ from sqlalchemy import and_, between, extract, select, update, insert, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.repositories.participants.abc import AbstractParticipantRepository
-from src.schemas import (
-    CreateParticipant,
-    FillParticipantProfile,
-    ViewBooking,
-    ViewParticipant,
-)
+from src.schemas import CreateParticipant, FillParticipantProfile, ViewBooking, ViewParticipant
 from src.schemas.participant import ParticipantStatus
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, Participant

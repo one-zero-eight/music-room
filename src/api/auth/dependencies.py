@@ -6,10 +6,7 @@ from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from pydantic import ValidationError
 
-from src.api.auth.telegram import (
-    TelegramWidgetData,
-    telegram_webapp_check_authorization,
-)
+from src.api.auth.telegram import TelegramWidgetData, telegram_webapp_check_authorization
 from src.exceptions import NoCredentialsException, IncorrectCredentialsException
 from src.repositories.auth.repository import TokenRepository
 from src.schemas.auth import VerificationResult
