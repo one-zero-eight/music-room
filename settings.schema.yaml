@@ -16,6 +16,14 @@ $defs:
         title: Api Jwt Token
         type: string
         writeOnly: true
+      telegram_login_url:
+        default: https://innohassle.ru/account/connect-telegram
+        title: Telegram Login Url
+        type: string
+      telegram_bot_username:
+        default: InNoHassleBot
+        title: Telegram Bot Username
+        type: string
     required:
     - api_jwt_token
     title: Accounts

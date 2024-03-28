@@ -27,6 +27,10 @@ class Accounts(BaseModel):
     "URL of the well-known endpoint for the Accounts API"
     api_jwt_token: SecretStr
     "JWT token for accessing the Accounts API as a service"
+    telegram_login_url: str = "https://innohassle.ru/account/connect-telegram"
+    "URL for connecting a Telegram account to an InNoHassle account"
+    telegram_bot_username: str = "InNoHassleBot"
+    "Username of the Accounts bot in Telegram"
 
 
 class ApiSettings(BaseModel):

@@ -1,13 +1,16 @@
+import asyncio
+
 from aiogram import Router, Bot
 from aiogram import types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.state import any_state
-from aiogram.types import Message
+from aiogram.types import Message, LoginUrl
 
 from src.bot.constants import rules_confirmation_message, instructions_url, how_to_get_url, tg_chat_url
 from src.bot.filters import RegisteredUserFilter
 from src.bot.menu import menu_kb
+from src.config import settings
 
 router = Router(name="registration")
 
@@ -21,20 +24,55 @@ class RegistrationStates(StatesGroup):
 async def not_registered(_, bot: Bot, state: FSMContext, event_from_user: types.User):
     from src.bot.api import api_client
 
-    success, detail = await api_client.start_registration(event_from_user.id)
+    bot_name = (await bot.me()).username
+    is_new_user, detail = await api_client.start_registration(event_from_user.id)
 
-    if success is None:
+    if is_new_user is None:
+        connect_kb = types.InlineKeyboardMarkup(
+            inline_keyboard=[
+                [
+                    types.InlineKeyboardButton(
+                        text="Connect",
+                        login_url=LoginUrl(
+                            url=settings.accounts.telegram_login_url + f"?bot={bot_name}",
+                            forward_text="Connect your telegram",
+                            bot_username=settings.accounts.telegram_bot_username,
+                        ),
+                    )
+                ]
+            ]
+        )
+        push_kb = types.ReplyKeyboardMarkup(
+            keyboard=[
+                [
+                    types.KeyboardButton(
+                        text="I have connected telegram to InNoHassle account.",
+                    )
+                ]
+            ],
+            resize_keyboard=True,
+            one_time_keyboard=True,
+        )
+
         await bot.send_message(
             event_from_user.id,
-            "Welcome! To continue, you need to connect your Telegram account to the InnoHassle account.",
+            "To continue, you need to connect your Telegram account to the InNoHassle account.",
+            reply_markup=connect_kb,
         )
-    elif success is False:
+        # wait for the user to connect the account
+        await asyncio.sleep(3)
+        await bot.send_message(
+            event_from_user.id,
+            "If you have already connected your account, just press the button.",
+            reply_markup=push_kb,
+        )
+    elif is_new_user is False:
         from src.bot.menu import menu_kb
 
         await bot.send_message(
             event_from_user.id, "Welcome! Choose the action you're interested in.", reply_markup=menu_kb
         )
-    elif success is True:
+    elif is_new_user is True:
         from src.bot.constants import rules_confirmation_message, rules_message
 
         confirm_kb = types.ReplyKeyboardMarkup(
