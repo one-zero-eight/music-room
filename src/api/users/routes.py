@@ -29,6 +29,7 @@ async def get_list_of_all_users(verified: VerifiedDep):
         raise ForbiddenException()
 
     users = await user_repository.get_all_users()
+    users.sort(key=lambda x: x.name or "")
 
     document: Document = create_docx()
     document.add_heading("Список музыкальной комнаты", 0)
