@@ -7,10 +7,6 @@ $defs:
         default: https://api.innohassle.ru/accounts/v0
         title: Api Url
         type: string
-      well_known_url:
-        default: https://api.innohassle.ru/accounts/v0/.well-known
-        title: Well Known Url
-        type: string
       api_jwt_token:
         format: password
         title: Api Jwt Token

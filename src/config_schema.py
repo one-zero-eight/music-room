@@ -23,8 +23,6 @@ class Accounts(BaseModel):
 
     api_url: str = "https://api.innohassle.ru/accounts/v0"
     "URL of the Accounts API"
-    well_known_url: str = "https://api.innohassle.ru/accounts/v0/.well-known"
-    "URL of the well-known endpoint for the Accounts API"
     api_jwt_token: SecretStr
     "JWT token for accessing the Accounts API as a service"
     telegram_login_url: str = "https://innohassle.ru/account/connect-telegram"
