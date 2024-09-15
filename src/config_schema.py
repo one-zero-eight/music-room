@@ -1,3 +1,4 @@
+import datetime
 from enum import StrEnum
 from pathlib import Path
 
@@ -16,6 +17,8 @@ class BotSettings(BaseModel):
     bot_token: SecretStr = Field(..., description="Bot token from @BotFather")
     api_url: str
     redis_url: SecretStr | None = None
+    users: list[int] = []
+    notification_time: datetime.time | None = Field(None, description="According to UTC")
 
 
 class Accounts(BaseModel):

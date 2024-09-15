@@ -44,7 +44,7 @@ async def enable_admin_mode(message: types.Message, bot: Bot, status: str):
         await bot.set_my_commands(bot_commands, scope=BotCommandScopeChat(chat_id=message.from_user.id))
 
 
-@router.message(Command("export_users"), StatusFilter(UserStatus.LORD))
+@router.message(Command("export_users"))
 async def export_users(message: types.Message):
     response = await api_client.export_users(message.from_user.id)
     if response:

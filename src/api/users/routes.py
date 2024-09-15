@@ -21,12 +21,16 @@ router = APIRouter(tags=["Users"])
 
 # docx
 @router.get("/users/export", response_class=Response)
-async def get_list_of_all_users(verified: VerifiedDep):
-    if verified.user_id is None:
-        raise ForbiddenException()
-    issuer = await user_repository.get_user(verified.user_id)
-    if issuer.status != UserStatus.LORD:
-        raise ForbiddenException()
+async def get_list_of_all_users(verified: VerifiedDep, as_bot: bool = False):
+    if as_bot:
+        if verified.source != VerificationSource.BOT:
+            raise ForbiddenException()
+    else:
+        if verified.user_id is None:
+            raise ForbiddenException()
+        issuer = await user_repository.get_user(verified.user_id)
+        if issuer.status != UserStatus.LORD:
+            raise ForbiddenException()
 
     users = await user_repository.get_all_users()
     users.sort(key=lambda x: x.name or "")
@@ -61,14 +65,15 @@ async def get_list_of_all_users(verified: VerifiedDep):
 
     bytes_stream = io.BytesIO()
     document.save(bytes_stream)
-    val = bytes_stream.getvalue()
+    bytes_ = bytes_stream.getvalue()
+
     bytes_stream.close()
     date = datetime.datetime.now().strftime("%d.%m.%Y")
     headers = {
         "Content-Disposition": f"attachment; filename={date}.docx",
     }
     return Response(
-        content=val,
+        content=bytes_,
         headers=headers,
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )

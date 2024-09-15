@@ -74,6 +74,20 @@ $defs:
         - type: 'null'
         default: null
         title: Redis Url
+      users:
+        default: []
+        items:
+          type: integer
+        title: Users
+        type: array
+      notification_time:
+        anyOf:
+        - format: time
+          type: string
+        - type: 'null'
+        default: null
+        description: According to UTC
+        title: Notification Time
     required:
     - bot_token
     - api_url

@@ -144,5 +144,13 @@ class InNoHassleMusicRoomAPI:
                 filename = response.headers["Content-Disposition"].split("filename=")[1]
                 return bytes_, filename
 
+    async def export_users_as_bot(self) -> tuple[bytes, str]:
+        async with self._create_client() as client:
+            response = await client.get("/users/export", params={"as_bot": True})
+            if response.status_code == 200:
+                bytes_ = response.read()
+                filename = response.headers["Content-Disposition"].split("filename=")[1]
+                return bytes_, filename
+
 
 api_client: InNoHassleMusicRoomAPI = InNoHassleMusicRoomAPI(bot_settings.api_url)

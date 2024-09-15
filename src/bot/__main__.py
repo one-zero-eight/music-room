@@ -1,15 +1,18 @@
 import asyncio
+import datetime
 
+import pytz
 from aiogram import Bot, F
 from aiogram import types
 from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage, DefaultKeyBuilder
-from aiogram.types import ErrorEvent
+from aiogram.types import ErrorEvent, BufferedInputFile
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent
 
 import src.bot.logging_  # noqa: F401
+from src.bot.api import api_client
 from src.bot.constants import (
     bot_name,
     bot_description,
@@ -17,8 +20,9 @@ from src.bot.constants import (
     bot_commands,
 )
 from src.bot.dispatcher import CustomDispatcher
+from src.bot.logging_ import logger
 from src.bot.middlewares import LogAllEventsMiddleware
-from src.config import bot_settings
+from src.config import bot_settings, settings
 
 bot = Bot(token=bot_settings.bot_token.get_secret_value())
 if bot_settings.redis_url:
@@ -53,6 +57,39 @@ dp.include_router(router_image_schedule)  # schedule commands (show image)
 setup_dialogs(dp)
 
 
+async def receptionist_notifications_loop():
+    if not settings.bot_settings.users or not settings.bot_settings.notification_time:
+        return
+    while True:
+        current_time = datetime.datetime.now(datetime.UTC)
+        planned_time = datetime.datetime(
+            current_time.year,
+            current_time.month,
+            current_time.day,
+            settings.bot_settings.notification_time.hour,
+            settings.bot_settings.notification_time.minute,
+            tzinfo=pytz.UTC,
+        )
+        if planned_time < current_time:
+            planned_time += datetime.timedelta(days=1)
+        await asyncio.sleep((planned_time - current_time).seconds)
+        for telegram_id in settings.bot_settings.users:
+            while True:
+                # noinspection PyBroadException
+                try:
+                    response = await api_client.export_users_as_bot()
+                    if response:
+                        bytes_, filename = response
+                        document = BufferedInputFile(bytes_, filename)
+                        await bot.send_document(telegram_id, document, caption="Here is the list of users.")
+                    else:
+                        raise RuntimeError("Response was None")
+                    break
+                except:  # noqa: E722
+                    logger.warning("Something went wrong. Please check.")
+                    pass
+
+
 async def main():
     # Set bot name, description and commands
     existing_bot = {
@@ -72,6 +109,7 @@ async def main():
         await bot.set_my_commands(bot_commands)
     # Drop pending updates
     await bot.delete_webhook(drop_pending_updates=True)
+    await receptionist_notifications_loop()
     # Start long-polling
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
 
