@@ -31,6 +31,7 @@ async def registration(telegram_id: int, verification: VerifiedDep) -> ViewUser 
 
     user = CreateUser(
         email=user_from_innohassle.innopolis_sso.email,
+        alias=user_from_innohassle.telegram.username,
         name=user_from_innohassle.innopolis_sso.name,
         status=UserStatus.FREE,
         telegram_id=telegram_id,
