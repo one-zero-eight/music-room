@@ -61,18 +61,20 @@ async def receptionist_notifications_loop():
     if not settings.bot_settings.users or not settings.bot_settings.notification_time:
         return
     while True:
-        current_time = datetime.datetime.now(datetime.UTC)
-        planned_time = datetime.datetime(
-            current_time.year,
-            current_time.month,
-            current_time.day,
+        current_date = datetime.datetime.now(datetime.UTC)
+        planned_date = datetime.datetime(
+            current_date.year,
+            current_date.month,
+            current_date.day,
             settings.bot_settings.notification_time.hour,
             settings.bot_settings.notification_time.minute,
             tzinfo=pytz.UTC,
         )
-        if planned_time < current_time:
-            planned_time += datetime.timedelta(days=1)
-        await asyncio.sleep((planned_time - current_time).seconds)
+        days_until_monday = (7 - current_date.weekday()) % 7
+        planned_date += datetime.timedelta(days=days_until_monday)
+        if planned_date < current_date:
+            planned_date += datetime.timedelta(days=7)
+        await asyncio.sleep((planned_date - current_date).seconds)
         for telegram_id in settings.bot_settings.users:
             while True:
                 # noinspection PyBroadException
