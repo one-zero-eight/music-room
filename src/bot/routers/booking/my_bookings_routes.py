@@ -5,13 +5,14 @@ from aiogram.filters import Command
 from aiogram.fsm.state import any_state
 from aiogram.types import Message
 
+from src.bot import constants
 from src.bot.api import api_client
 from src.bot.routers.booking import router
 from src.bot.routers.booking.callback_data import MyBookingsCallbackData
 
 
 @router.message(any_state, Command("my_bookings"))
-@router.message(any_state, F.text == "My bookings")
+@router.message(any_state, F.text == constants.my_bookings_message)
 async def show_my_bookings(message: Message):
     bookings = await api_client.get_user_bookings(message.from_user.id)
     # only future bookings

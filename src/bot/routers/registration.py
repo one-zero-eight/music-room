@@ -7,9 +7,9 @@ from aiogram.fsm.state import StatesGroup, State
 from aiogram.fsm.state import any_state
 from aiogram.types import Message, LoginUrl
 
-from src.bot.constants import rules_confirmation_message, instructions_url, how_to_get_url, tg_chat_url
+from src.bot.constants import rules_confirmation_message
 from src.bot.filters import RegisteredUserFilter
-from src.bot.menu import menu_kb
+from src.bot.menu import menu_kb, help_kb
 from src.config import settings
 
 router = Router(name="registration")
@@ -101,19 +101,9 @@ async def confirm_rules(message: Message, state: FSMContext):
 
         await message.answer(text, reply_markup=menu_kb, parse_mode="HTML")
 
-        keyboard = types.InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    types.InlineKeyboardButton(text="Instructions", url=instructions_url),
-                    types.InlineKeyboardButton(text="Location", url=how_to_get_url),
-                    types.InlineKeyboardButton(text="Telegram chat", url=tg_chat_url),
-                ]
-            ]
-        )
-
         await message.answer(
             "If you have any questions, you can ask them in the chat or read the instructions.",
-            reply_markup=keyboard,
+            reply_markup=help_kb,
         )
 
         await state.clear()
