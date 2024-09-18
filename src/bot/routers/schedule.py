@@ -8,6 +8,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.state import any_state
 from aiogram.types import BufferedInputFile
 
+from src.bot import constants
 from src.bot.api import api_client
 from src.bot.logging_ import logger
 
@@ -31,7 +32,7 @@ image_schedule_kb = types.InlineKeyboardMarkup(
 
 
 @router.message(any_state, Command("image_schedule"))
-@router.message(any_state, F.text == "Show the image with bookings")
+@router.message(any_state, F.text == constants.image_schedule_message)
 async def get_image_schedule(message: types.Message):
     start_of_week = get_start_of_week()
     image_bytes = await api_client.get_image_schedule(start_of_week)
