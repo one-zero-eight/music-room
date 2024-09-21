@@ -47,34 +47,6 @@ def _booking_to_vevent(booking, is_personal=False):
 
 
 @router.get(
-    "/music-room.ics",
-    responses={
-        200: {
-            "description": "ICS file with schedule of the music room",
-            "content": {"text/calendar": {"schema": {"type": "string", "format": "binary"}}},
-        },
-    },
-    response_class=Response,
-    tags=["ICS"],
-)
-async def get_music_room_ics():
-    main_calendar = _calendar_baseline()
-
-    from_date = datetime.date.today() - datetime.timedelta(days=14)
-    to_date = datetime.date.today() + datetime.timedelta(days=14)
-    bookings = await booking_repository.get_bookings(from_date, to_date)
-    dtstamp = icalendar.vDatetime(datetime.datetime.now())
-    for booking in bookings:
-        vevent = _booking_to_vevent(booking)
-        vevent.add("dtstamp", dtstamp)
-        main_calendar.add_component(vevent)
-
-    ical_bytes = main_calendar.to_ical()
-
-    return Response(content=ical_bytes, media_type="text/calendar")
-
-
-@router.get(
     "/users/by-telegram/{telegram_id}/bookings.ics",
     responses={
         200: {

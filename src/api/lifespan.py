@@ -24,16 +24,6 @@ async def setup_repositories() -> SQLAlchemyStorage:
     return storage
 
 
-def setup_timezone():
-    import sys
-    import os
-    import time
-
-    if sys.platform != "win32":  # unix only
-        os.environ["TZ"] = "Europe/Moscow"
-        time.tzset()
-
-
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # Application startup

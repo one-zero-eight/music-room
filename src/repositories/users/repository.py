@@ -51,13 +51,6 @@ class SqlUserRepository:
             await session.commit()
             return ViewUser.model_validate(obj)
 
-    async def change_status(self, user_id: int, new_status: UserStatus) -> ViewUser:
-        async with self._create_session() as session:
-            query = update(User).where(User.id == user_id).values(status=new_status).returning(User)
-            obj = await session.scalar(query)
-            await session.commit()
-            return ViewUser.model_validate(obj)
-
     async def get_user_bookings(self, user_id: int) -> list["ViewBooking"]:
         async with self._create_session() as session:
             query = select(Booking).where(Booking.user_id == user_id)

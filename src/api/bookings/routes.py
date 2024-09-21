@@ -91,11 +91,3 @@ async def form_schedule(
 @router.get("/bookings/daily_bookings")
 async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
     return await booking_repository.get_daily_bookings(date)
-
-
-@router.get("/bookings/")
-async def get_bookings_for_week(
-    start_of_week: datetime.date | None = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
-) -> list[ViewBooking]:
-    bookings = await booking_repository.get_bookings_for_week(start_of_week)
-    return bookings

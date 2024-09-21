@@ -42,9 +42,6 @@ class InNoHassleAcounts:
     async def update_key_set(self):
         self.key_set = await self.get_key_set()
 
-    def get_public_key(self) -> JsonWebKey:
-        return self.key_set.find_by_kid(self.PUBLIC_KID)
-
     async def get_key_set(self) -> KeySet:
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{self.api_url}/.well-known/jwks.json")
