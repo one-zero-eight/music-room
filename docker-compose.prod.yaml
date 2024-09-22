@@ -4,8 +4,6 @@
 # Run all services:
 # docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up --pull always --detach
 
-version: "3"
-
 # Override the default settings for production
 services:
   bot:
@@ -18,9 +16,11 @@ services:
     image: "ghcr.io/one-zero-eight/innohassle-musicroom:main"
     build: !reset null
     ports: !reset [ ] # Do not expose any ports
+    env_file: .env.api
 
   db:
     ports: !reset [ ] # Do not expose any ports
+    env_file: .env.db
 
   redis:
     ports: !reset [ ] # Do not expose any ports
