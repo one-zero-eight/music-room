@@ -14,7 +14,7 @@ pyyaml = "^6.0.1"
 ruff = "^0.6.7"
 
 [tool.poetry.group.api.dependencies]
-alembic = "^1.13.0"
+alembic = "^1.13.3"
 asyncpg = "^0.29.0"
 authlib = "^1.3.0"
 cryptography = "^43.0.1"
