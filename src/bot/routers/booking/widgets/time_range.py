@@ -143,7 +143,7 @@ class TimeRangeWidget(Keyboard):
                     assert_never(timepoint)
                 keyboard_builer.button(text=text, callback_data=time_callback_data)
             elif available and not blocked and not timepoint.hour == 23:
-                keyboard_builer.button(text=time_text, callback_data=time_callback_data)
+                keyboard_builer.button(text=" \u200D" * 2 + time_text + " \u200D" * 2, callback_data=time_callback_data)
             elif booked_by_someone or timepoint.hour == 23 and the_room_was_booked_for_half_past_10pm:
                 if timepoint.hour == 22 and timepoint.minute == 30:
                     the_room_was_booked_for_half_past_10pm = True
@@ -157,8 +157,14 @@ class TimeRangeWidget(Keyboard):
                     keyboard_builer.button(text="🟢", callback_data=none_callback_data)
                 else:
                     keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
-            elif timepoint.hour == 23 and not the_room_was_booked_for_half_past_10pm and endpoint_time_selected:
-                keyboard_builer.button(text=time_text, callback_data=time_callback_data)
+            elif (
+                timepoint.hour == 23
+                and not the_room_was_booked_for_half_past_10pm
+                and endpoint_time_selected
+                and available
+                and not blocked
+            ):
+                keyboard_builer.button(text=" \u200D" * 2 + time_text + " \u200D" * 2, callback_data=time_callback_data)
             elif timepoint.hour == 23 and not the_room_was_booked_for_half_past_10pm:
                 break
             else:
