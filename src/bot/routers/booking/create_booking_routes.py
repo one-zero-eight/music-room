@@ -91,7 +91,7 @@ date_selection = Window(
 )
 
 time_selection_widget = TimeRangeWidget(
-    timepoints=generate_timeslots(datetime.time(7, 0), datetime.time(22, 30), 30),
+    timepoints=generate_timeslots(datetime.time(7, 0), datetime.time(23, 00), 30),
     id="time_selection",
 )
 

@@ -122,6 +122,7 @@ class TimeRangeWidget(Keyboard):
             timeslots = list(filter(lambda x: datetime.datetime.now().time() <= x, self.timepoints))
 
         none_callback_data = self._item_callback_data("None")
+        the_room_was_booked_for_half_past_10pm = False
         for timepoint in timeslots:
             time_text = timepoint.strftime("%H:%M")
             time_callback_data = self._item_callback_data(time_text)
@@ -141,21 +142,33 @@ class TimeRangeWidget(Keyboard):
                 else:
                     assert_never(timepoint)
                 keyboard_builer.button(text=text, callback_data=time_callback_data)
-            elif available and not blocked:
+            elif available and not blocked and not timepoint.hour == 23:
                 keyboard_builer.button(text=time_text, callback_data=time_callback_data)
-            elif booked_by_someone:
-                booking = already_booked_timepoints[timepoint]
+            elif booked_by_someone or timepoint.hour == 23 and the_room_was_booked_for_half_past_10pm:
+                if timepoint.hour == 22 and timepoint.minute == 30:
+                    the_room_was_booked_for_half_past_10pm = True
+                booking = (
+                    already_booked_timepoints[datetime.time(hour=22, minute=30, tzinfo=timepoint.tzinfo)]
+                    if the_room_was_booked_for_half_past_10pm
+                    else already_booked_timepoints[timepoint]
+                )
                 booked_by_alias = booking["user_alias"]
                 if booked_by_alias == manager.event.from_user.username:
                     keyboard_builer.button(text="🟢", callback_data=none_callback_data)
                 else:
                     keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
+            elif timepoint.hour == 23 and not the_room_was_booked_for_half_past_10pm and endpoint_time_selected:
+                keyboard_builer.button(text=time_text, callback_data=time_callback_data)
+            elif timepoint.hour == 23 and not the_room_was_booked_for_half_past_10pm:
+                break
             else:
                 keyboard_builer.button(
                     text=" ",
                     callback_data=self._item_callback_data("None"),
                 )
-        keyboard_builer.adjust(4, True)
+        else:
+            for i in range(3):
+                keyboard_builer.button(text=" ", callback_data=none_callback_data)
         return keyboard_builer.export()
 
     async def _process_item_callback(
