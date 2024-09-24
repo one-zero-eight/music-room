@@ -36,3 +36,7 @@ rules_message = (
     "⚠️ Unnecessarily, do not move the equipment.\n"
 )
 rules_confirmation_message = """I agree to and will abide by the stated rules."""
+
+create_booking_message = "Create a booking"
+my_bookings_message = "My bookings"
+image_schedule_message = "Show the image with bookings"

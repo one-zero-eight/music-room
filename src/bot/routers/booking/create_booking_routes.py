@@ -9,6 +9,7 @@ from aiogram_dialog import Dialog, DialogManager, Window, StartMode
 from aiogram_dialog.widgets.kbd import Back, Button, Group, Cancel, Row
 from aiogram_dialog.widgets.text import Const, Format
 
+from src.bot import constants
 from src.bot.api import api_client
 from src.bot.routers.booking import router
 from src.bot.routers.booking.states import CreateBookingStates
@@ -17,7 +18,7 @@ from src.bot.routers.booking.widgets.time_range import TimeRangeWidget
 
 
 @router.message(any_state, Command("create_booking"))
-@router.message(any_state, F.text == "Create a booking")
+@router.message(any_state, F.text == constants.create_booking_message)
 async def start_booking(_message: Message, dialog_manager: DialogManager):
     await dialog_manager.start(
         CreateBookingStates.choose_date,

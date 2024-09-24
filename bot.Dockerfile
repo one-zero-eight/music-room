@@ -2,7 +2,7 @@
 
 ###########################################################
 # Base Python image. Set shared environment variables.
-FROM python:3.11-slim-bullseye as base
+FROM python:3.12-slim-bullseye AS base
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     PIP_NO_CACHE_DIR=off \
@@ -30,7 +30,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 # Install Poetry. Respects $POETRY_VERSION and $POETRY_HOME
-ENV POETRY_VERSION=1.7.1
+ENV POETRY_VERSION=1.8.3
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} python3 - --version ${POETRY_VERSION} && \
     chmod a+x /opt/poetry/bin/poetry
@@ -39,7 +39,7 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} pyt
 # and install only runtime deps using poetry
 WORKDIR $PYSETUP_PATH
 COPY ./poetry.lock ./pyproject.toml ./
-RUN poetry install --with bot --no-root
+RUN poetry install --with bot
 
 
 ###########################################################
@@ -59,5 +59,5 @@ COPY --chown=poetry:poetry . /code
 USER poetry
 WORKDIR /code
 
-ENTRYPOINT /docker-entrypoint.sh $0 $@
+ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD [ "python3", "-m" , "src.bot" ]

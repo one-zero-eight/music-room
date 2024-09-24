@@ -4,8 +4,6 @@
 # Run all services:
 # docker compose up --build --detach
 
-version: "3"
-
 services:
   bot:
     build:
