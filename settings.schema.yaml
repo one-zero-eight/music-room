@@ -54,8 +54,7 @@ $defs:
   BotSettings:
     properties:
       environment:
-        allOf:
-        - $ref: '#/$defs/Environment'
+        $ref: '#/$defs/Environment'
         default: development
       bot_token:
         description: Bot token from @BotFather
