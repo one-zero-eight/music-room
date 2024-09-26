@@ -67,7 +67,7 @@ This is the API for music room service in InNoHassle ecosystem.
       ```
     - Make sure to set up the actual database connection in `settings.yaml`, for example:
       ```yaml
-      db_url: postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+      db_url: postgresql+asyncpg://postgres:postgres@localhost:5433/postgres
       ```
 
    </details>

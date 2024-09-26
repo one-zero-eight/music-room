@@ -37,8 +37,8 @@ class Accounts(BaseModel):
 class ApiSettings(BaseModel):
     app_root_path: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
     db_url: str = Field(
-        "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
-        example="postgresql+asyncpg://user:password@localhost:5432/db_name",
+        "postgresql+asyncpg://postgres:postgres@localhost:5433/postgres",
+        example="postgresql+asyncpg://user:password@localhost:5433/db_name",
     )
 
     bot_token: str = Field(
