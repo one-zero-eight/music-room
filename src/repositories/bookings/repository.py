@@ -158,7 +158,7 @@ class SqlBookingRepository:
             x1 = x0 + xsize
             y1 = y0 + 31.5 * ylength
 
-            draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=lightGray)
+            draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=lightGray, outline=lightBlack, width=2)
             user = await self.get_user(booking.user_id)
 
             alias = user.alias
@@ -170,7 +170,7 @@ class SqlBookingRepository:
 
             # noinspection SqlAlchemyUnsafeQuery
             draw.text(
-                (x0 + 2, (y0 + y1) / 2 - 9),
+                (x0 + 8, (y0 + y1) / 2 - 9),
                 text=f"{caption}{booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}",
                 fill=lightBlack,
                 font=fontSimple,
