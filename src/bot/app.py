@@ -70,7 +70,7 @@ async def receptionist_notifications_loop():
         planned_date += datetime.timedelta(days=days_until_monday)
         if planned_date < current_date:
             planned_date += datetime.timedelta(days=7)
-        wait = (planned_date - current_date).seconds
+        wait = (planned_date - current_date).total_seconds()
         logger.info(f"Waiting {wait} seconds until next notification")
         await asyncio.sleep(wait)
         for telegram_id in settings.bot_settings.users:
