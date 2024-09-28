@@ -7,6 +7,7 @@ from typing import Any
 import httpx
 
 from src.config import bot_settings
+from src.schemas import ViewUser
 
 
 class UserStatus(StrEnum):
@@ -58,11 +59,11 @@ class InNoHassleMusicRoomAPI:
             if response.status_code == 200:
                 return response.json()
 
-    async def get_me(self, telegram_id: int) -> dict | None:
+    async def get_me(self, telegram_id: int) -> ViewUser | None:
         async with self._create_client(telegram_id=telegram_id) as client:
             response = await client.get("/users/me")
             if response.status_code == 200:
-                return response.json()
+                return ViewUser.model_validate(response.json())
 
     async def fill_profile(self, telegram_id: int, name: str, alias: str) -> tuple[bool, Any]:
         body = {"name": name, "alias": alias}

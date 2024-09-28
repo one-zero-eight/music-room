@@ -107,6 +107,8 @@ async def getter_for_time_selection(dialog_manager: DialogManager, event_from_us
     data["remaining_daily_hours"] = hours
     data["remaining_daily_hours_hours"] = int(hours)
     data["remaining_daily_hours_minutes"] = int((hours - data["remaining_daily_hours_hours"]) * 60)
+    user = await api_client.get_me(event_from_user.id)
+    data["status_of_user"] = "???" if user is None else user.status
     _, data["daily_bookings"] = await api_client.get_daily_bookings(date)
     return data
 
@@ -115,6 +117,7 @@ time_selection = Window(
     Format(
         "Please select a time slot for <b>{dialog_data[selected_date]}</b>." + " \u200D" * 53 + "\n"
         "You have <b>{remaining_daily_hours_hours:0.0f}h {remaining_daily_hours_minutes:0.0f}m</b> free.\n"
+        "Your status is <b>{status_of_user}</b>.\n"
         "🟢 - booked by you\n"
         "🔴 - booked by someone else\n"
     ),
