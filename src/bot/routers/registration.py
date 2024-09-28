@@ -8,7 +8,7 @@ from aiogram.fsm.state import any_state
 from aiogram.types import Message, LoginUrl
 
 from src.bot.constants import rules_confirmation_message
-from src.bot.filters import RegisteredUserFilter
+from src.bot.filters import RegisteredUserFilter, EmptyUsernameFilter
 from src.bot.menu import menu_kb, help_kb
 from src.config import settings
 
@@ -17,6 +17,15 @@ router = Router(name="registration")
 
 class RegistrationStates(StatesGroup):
     rules_confirmation_requested = State()
+
+
+@router.message(any_state, ~EmptyUsernameFilter())
+@router.callback_query(any_state, ~EmptyUsernameFilter())
+async def empty_username(_, bot: Bot, state: FSMContext, event_from_user: types.User):
+    await bot.send_message(
+        event_from_user.id,
+        "To continue, you need to fill in your telegram username",
+    )
 
 
 @router.message(any_state, ~RegisteredUserFilter())
