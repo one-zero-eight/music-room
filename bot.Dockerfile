@@ -59,7 +59,7 @@ COPY --chown=poetry:poetry . /code
 USER poetry
 WORKDIR /code
 
-LABEL org.opencontainers.image.source = "https://github.com/one-zero-eight/music-room"
+LABEL org.opencontainers.image.source="https://github.com/one-zero-eight/music-room"
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD [ "python3", "-m" , "src.bot" ]
