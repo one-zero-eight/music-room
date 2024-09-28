@@ -2,7 +2,7 @@ from aiogram import types
 
 from src.config import bot_settings
 
-instructions_url = "https://bit.ly/inno-music-room"
+instructions_url = "https://innohassle.ru/music-room/instructions"
 how_to_get_url = "https://www.youtube.com/watch?v=mGfdun8ah3g"
 tg_chat_url = "https://t.me/joinchat/DjhyZkBN-FmZStxTB40qwQ"
 bot_name = "Music Room Bot" if bot_settings.environment == "production" else "[dev] Music Room Bot"
