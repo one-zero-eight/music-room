@@ -8,6 +8,8 @@
 !/deploy/
 !/pyproject.toml
 !/poetry.lock
+!/logging-api.yaml
+!/logging-bot.yaml
 
 # And ignore cache files in the code
 __pycache__
