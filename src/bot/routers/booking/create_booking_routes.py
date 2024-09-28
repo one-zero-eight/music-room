@@ -130,7 +130,7 @@ async def getter_for_time_selection(dialog_manager: DialogManager, event_from_us
 
 time_selection = Window(
     Format(
-        "Please select a time slot for <b>{dialog_data[selected_date]}</b>." + " \u200D" * 53 + "\n"
+        "Please select a time slot for <b>{dialog_data[selected_date]}</b>." + " \u200d" * 53 + "\n"
         "You have <b>{remaining_daily_hours_hours:0.0f}h {remaining_daily_hours_minutes:0.0f}m</b> free.\n"
         "Your status is <b>{status_of_user}</b> ({hours_per_day}h/day, {hours_per_week}h/week).\n"
         "🟢 - booked by you\n"
