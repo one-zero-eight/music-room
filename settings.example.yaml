@@ -6,7 +6,7 @@ api_settings:
 bot_settings:
   api_url: "http://127.0.0.1:8001"
   bot_token: "some-telegram-bot-token" # get it from @BotFather
-  redis_url: "redis://127.0.0.1:6379/0" # or delete this line to disable redis and use in-memory storage
+  # redis_url: "redis://127.0.0.1:6379/0" # or delete this line to disable redis and use in-memory storage
 accounts:
   # generate service token for development (https://api.innohassle.ru/accounts/v0)
   # /tokens/generate-service-token
