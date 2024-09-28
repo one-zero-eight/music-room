@@ -66,7 +66,7 @@ async def receptionist_notifications_loop():
             settings.bot_settings.notification_time.minute,
             tzinfo=pytz.UTC,
         )
-        days_until_monday = (7 - current_date.weekday()) % 7
+        days_until_monday = (5 - current_date.weekday()) % 7
         planned_date += datetime.timedelta(days=days_until_monday)
         if planned_date < current_date:
             planned_date += datetime.timedelta(days=7)
