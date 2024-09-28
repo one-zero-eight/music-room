@@ -70,7 +70,9 @@ async def receptionist_notifications_loop():
         planned_date += datetime.timedelta(days=days_until_monday)
         if planned_date < current_date:
             planned_date += datetime.timedelta(days=7)
-        await asyncio.sleep((planned_date - current_date).seconds)
+        wait = (planned_date - current_date).seconds
+        logger.info(f"Waiting {wait} seconds until next notification")
+        await asyncio.sleep(wait)
         for telegram_id in settings.bot_settings.users:
             while True:
                 # noinspection PyBroadException
@@ -107,6 +109,6 @@ async def main():
         await bot.set_my_commands(bot_commands)
     # Drop pending updates
     await bot.delete_webhook(drop_pending_updates=True)
-    await receptionist_notifications_loop()
+    asyncio.create_task(receptionist_notifications_loop())
     # Start long-polling
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
