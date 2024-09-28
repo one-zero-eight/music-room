@@ -1,7 +1,5 @@
 # Based on https://github.com/svx/poetry-fastapi-docker/blob/main/Dockerfile
 
-LABEL org.opencontainers.image.source = "https://github.com/one-zero-eight/music-room"
-
 ###########################################################
 # Base Python image. Set shared environment variables.
 FROM python:3.12-slim-bullseye AS base
@@ -60,6 +58,8 @@ RUN groupadd -g 1500 poetry && \
 COPY --chown=poetry:poetry . /code
 USER poetry
 WORKDIR /code
+
+LABEL org.opencontainers.image.source = "https://github.com/one-zero-eight/music-room"
 
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
 CMD [ "python3", "-m" , "src.bot" ]
