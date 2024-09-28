@@ -13,3 +13,11 @@ class RegisteredUserFilter(Filter):
         if api_user_id is None:
             return False
         return {"api_user_id": api_user_id}
+
+
+class EmptyUsernameFilter(Filter):
+    async def __call__(self, event: TelegramObject, event_from_user: User) -> bool:
+        telegram_username = event_from_user.username
+        if not telegram_username:
+            return False
+        return True
