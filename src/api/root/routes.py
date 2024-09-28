@@ -10,7 +10,6 @@ from fastapi import Response
 from src.api.dependencies import VerifiedDep
 from src.exceptions import ForbiddenException
 from src.repositories.bookings.repository import booking_repository
-from src.repositories.users.repository import user_repository
 from src.schemas.auth import VerificationSource
 
 router = APIRouter(tags=["Root"])
@@ -47,7 +46,7 @@ def _booking_to_vevent(booking, is_personal=False):
 
 
 @router.get(
-    "/users/by-telegram/{telegram_id}/bookings.ics",
+    "/users/{user_id}/bookings.ics",
     responses={
         200: {
             "description": "ICS file with schedule of the user",
@@ -57,12 +56,11 @@ def _booking_to_vevent(booking, is_personal=False):
     response_class=Response,
     tags=["Users", "ICS"],
 )
-async def get_user_ics(telegram_id: int, verification: VerifiedDep):
-    if verification.source == VerificationSource.BOT and telegram_id != verification.telegram_id:
+async def get_user_ics(user_id: int, verification: VerifiedDep):
+    if verification.source == VerificationSource.BOT and user_id != verification.telegram_id:
         raise ForbiddenException()
 
     main_calendar = _calendar_baseline()
-    user_id = await user_repository.get_user_id(telegram_id=telegram_id)
     bookings = await booking_repository.get_user_bookings(user_id)
     dtstamp = icalendar.vDatetime(datetime.datetime.now())
     for booking in bookings:
