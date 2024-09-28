@@ -1,5 +1,7 @@
 # Based on https://github.com/svx/poetry-fastapi-docker/blob/main/Dockerfile
 
+LABEL org.opencontainers.image.source = "https://github.com/one-zero-eight/music-room"
+
 ###########################################################
 # Base Python image. Set shared environment variables.
 FROM python:3.12-slim-bullseye AS base
