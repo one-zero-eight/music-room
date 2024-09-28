@@ -65,7 +65,7 @@ jobs:
       name: staging
       url: https://t.me/InnoMusicRoomStagingBot
     concurrency:
-      group: staging
+      group: staging-bot
       cancel-in-progress: false
     steps:
       - name: Deploy via SSH
@@ -90,7 +90,7 @@ jobs:
       name: production
       url: https://t.me/InnoMusicRoomBot
     concurrency:
-      group: production
+      group: production-bot
       cancel-in-progress: false
     steps:
       - name: Deploy via SSH

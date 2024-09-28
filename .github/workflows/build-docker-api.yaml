@@ -65,7 +65,7 @@ jobs:
       name: staging
       url: https://api.innohassle.ru/music-room/staging-v0
     concurrency:
-      group: staging
+      group: staging-api
       cancel-in-progress: false
     steps:
       - name: Deploy via SSH
@@ -90,7 +90,7 @@ jobs:
       name: production
       url: https://api.innohassle.ru/music-room/v0
     concurrency:
-      group: production
+      group: production-api
       cancel-in-progress: false
     steps:
       - name: Deploy via SSH
