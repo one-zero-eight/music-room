@@ -44,7 +44,7 @@ class InNoHassleMusicRoomAPI:
                 return False, "A user with the provided telegram is already registered."
             if response.status_code == 200:
                 return True, "A user has been successfully registered."
-            raise RuntimeError("Unexpected response status")
+            response.raise_for_status()
 
     async def is_user_exists(self, telegram_id: int) -> bool:
         params = {"telegram_id": telegram_id}
