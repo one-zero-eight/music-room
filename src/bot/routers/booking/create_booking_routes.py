@@ -109,6 +109,21 @@ async def getter_for_time_selection(dialog_manager: DialogManager, event_from_us
     data["remaining_daily_hours_minutes"] = int((hours - data["remaining_daily_hours_hours"]) * 60)
     user = await api_client.get_me(event_from_user.id)
     data["status_of_user"] = "???" if user is None else user.status
+    hours_per_day, hours_per_week = None, None
+    if data["status_of_user"] == "free":
+        hours_per_day = 2
+        hours_per_week = 4
+    elif data["status_of_user"] == "middle":
+        hours_per_day = 3
+        hours_per_week = 8
+    elif data["status_of_user"] == "senior":
+        hours_per_day = 4
+        hours_per_week = 10
+    elif data["status_of_user"] == "lord":
+        hours_per_day = 15
+        hours_per_week = 150
+    data["hours_per_day"] = hours_per_day
+    data["hours_per_week"] = hours_per_week
     _, data["daily_bookings"] = await api_client.get_daily_bookings(date)
     return data
 
@@ -117,7 +132,7 @@ time_selection = Window(
     Format(
         "Please select a time slot for <b>{dialog_data[selected_date]}</b>." + " \u200D" * 53 + "\n"
         "You have <b>{remaining_daily_hours_hours:0.0f}h {remaining_daily_hours_minutes:0.0f}m</b> free.\n"
-        "Your status is <b>{status_of_user}</b>.\n"
+        "Your status is <b>{status_of_user}</b> ({hours_per_day}h/day, {hours_per_week}h/week).\n"
         "🟢 - booked by you\n"
         "🔴 - booked by someone else\n"
     ),
