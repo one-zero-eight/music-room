@@ -20,7 +20,7 @@ class StatusFilter(Filter):
         telegram_id = event_from_user.id
         user = await api_client.get_me(telegram_id=telegram_id)
         if self._status is None:
-            return {"status": user["status"]}
+            return {"status": user.status}
 
         if user["status"] == self._status:
             return True
