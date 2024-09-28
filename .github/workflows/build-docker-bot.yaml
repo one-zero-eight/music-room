@@ -1,4 +1,4 @@
-name: Build and publish a Docker image
+name: [Bot] Build and publish a Docker image
 
 on:
   push:
@@ -14,7 +14,7 @@ on:
 env:
   # Use GitHub Container Registry
   REGISTRY: ghcr.io
-  IMAGE_NAME: one-zero-eight/innohassle-musicroom
+  IMAGE_NAME: one-zero-eight/innohassle-musicroombot
 
 jobs:
   build-and-push-image:
@@ -49,6 +49,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: bot.Dockerfile
           push: ${{ github.repository_owner == 'one-zero-eight' && 'true' || 'false' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
@@ -62,7 +63,7 @@ jobs:
     runs-on: self-hosted
     environment:
       name: staging
-      url: https://api.innohassle.ru/music-room/staging-v0
+      url: https://t.me/InnoMusicRoomStagingBot
     concurrency:
       group: staging
       cancel-in-progress: false
@@ -78,7 +79,7 @@ jobs:
           command_timeout: 30m
           script: |
             cd "${{ secrets.DEPLOY_DIRECTORY }}"
-            bash "${{ secrets.DEPLOY_SCRIPT }}" "${{ needs.build-and-push-image.outputs.imageid }}"
+            bash "${{ secrets.DEPLOY_SCRIPT_BOT }}" "${{ needs.build-and-push-image.outputs.imageid }}"
 
   deploy-production:
     if: github.repository_owner == 'one-zero-eight' && (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'production')
@@ -87,7 +88,7 @@ jobs:
     runs-on: self-hosted
     environment:
       name: production
-      url: https://api.innohassle.ru/music-room/v0
+      url: https://t.me/InnoMusicRoomBot
     concurrency:
       group: production
       cancel-in-progress: false
@@ -103,4 +104,4 @@ jobs:
           command_timeout: 30m
           script: |
             cd "${{ secrets.DEPLOY_DIRECTORY }}"
-            bash "${{ secrets.DEPLOY_SCRIPT }}" "${{ needs.build-and-push-image.outputs.imageid }}"
+            bash "${{ secrets.DEPLOY_SCRIPT_BOT }}" "${{ needs.build-and-push-image.outputs.imageid }}"
