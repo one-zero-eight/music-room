@@ -39,7 +39,7 @@ RUN curl -sSL https://install.python-poetry.org | POETRY_HOME=${POETRY_HOME} pyt
 # and install only runtime deps using poetry
 WORKDIR $PYSETUP_PATH
 COPY ./poetry.lock ./pyproject.toml ./
-RUN poetry install --with api
+RUN poetry install
 
 
 ###########################################################
@@ -48,8 +48,7 @@ FROM base AS production
 
 COPY --from=builder $VENV_PATH $VENV_PATH
 
-COPY ./deploy/docker-entrypoint-alembic.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
+COPY --chmod=755 ./deploy/docker-entrypoint.sh ./deploy/docker-entrypoint-alembic.sh /
 
 # Create user with the name poetry
 RUN groupadd -g 1500 poetry && \
@@ -60,5 +59,5 @@ USER poetry
 WORKDIR /code
 
 EXPOSE 8000
-ENTRYPOINT [ "/docker-entrypoint.sh" ]
+ENTRYPOINT [ "/docker-entrypoint-alembic.sh" ]
 CMD [ "uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips=*" ]

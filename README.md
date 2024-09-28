@@ -98,7 +98,7 @@ This is the API for music room service in InNoHassle ecosystem.
 
 1. Install dependencies for api if needed:
    ```bash
-   poetry install --with api
+   poetry install
    ```
 2. Run the database if you have not done it yet
 3. Upgrade the database schema using [alembic](https://alembic.sqlalchemy.org/en/latest/):
@@ -120,7 +120,7 @@ Now the API is running on http://localhost:8001. Good job!
 
 1. Install dependencies for bot if needed:
    ```bash
-   poetry install --with bot
+   poetry install
    ```
 2. Run the [API service](#run-for-development-api) or configure the bot to work with the real(production) API.
 3. Run the Redis server if needed:
