@@ -169,6 +169,9 @@ class SqlBookingRepository:
                 fill=lightBlack,
                 font=fontSimple,
             )
+            cell_canvas_painter.rectangle(
+                (cell_canvas.width * 0.75, 2, cell_canvas.width - 3, cell_canvas.height - 3), lightGray
+            )
 
             time_canvas = Image.new("RGBA", (xsize, ysize), (0, 0, 0, 0))
             time_canvas_painter = ImageDraw.Draw(time_canvas)
