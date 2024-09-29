@@ -14,7 +14,6 @@ from src.exceptions import NoSuchBooking
 from src.schemas import CreateBooking, ViewBooking, ViewUser
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, User
-from src.tools import count_duration
 from src.tools.utils import get_week_numbers
 
 
@@ -135,7 +134,7 @@ class SqlBookingRepository:
     async def form_schedule(self, start_of_week: datetime.date) -> bytes:
         xbase = 48  # origin for x
         ybase = 73  # origin for y
-        xsize = 175.5  # length of the rect by x-axis
+        xsize = round(175.5)  # length of the rect by x-axis
         ysize = 32  # length of the rect by x-axis
 
         # Create a new image using PIL
@@ -150,31 +149,60 @@ class SqlBookingRepository:
 
         bookings = await self.get_bookings_for_week(start_of_week)
         for booking in bookings:
+            cell_canvas = Image.new("RGB", (xsize, ysize), "white")
+            cell_canvas_painter = ImageDraw.Draw(cell_canvas)
             day = booking.time_start.weekday()
 
-            ylength = count_duration(booking.time_start, booking.time_end)
             x0 = xbase + xsize * day
             y0 = ybase + int(ysize * ((booking.time_start.hour - 7) + (booking.time_start.minute / 60.0)))
-            x1 = x0 + xsize
-            y1 = y0 + 31.5 * ylength
 
-            draw.rounded_rectangle((x0, y0, x1, y1), 2, fill=lightGray, outline=lightBlack, width=2)
+            cell_canvas_painter.rounded_rectangle(
+                (0, 0, cell_canvas.width - 1, cell_canvas.height - 1), 2, fill=lightGray, outline=lightBlack, width=2
+            )
             user = await self.get_user(booking.user_id)
-
-            alias = user.alias
-            max_alias_length: int = 10
-            if len(alias) > max_alias_length:
-                alias = f"{alias[:max_alias_length]}..."
-
-            caption = f"{alias} "
+            caption = user.alias
 
             # noinspection SqlAlchemyUnsafeQuery
-            draw.text(
-                (x0 + 8, (y0 + y1) / 2 - 9),
-                text=f"{caption}{booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}",
+            cell_canvas_painter.text(
+                (8, cell_canvas.height / 2 - 9),
+                text=caption,
                 fill=lightBlack,
                 font=fontSimple,
             )
+
+            time_canvas = Image.new("RGBA", (xsize, ysize), (0, 0, 0, 0))
+            time_canvas_painter = ImageDraw.Draw(time_canvas)
+
+            time_canvas_painter.text(
+                (9, 0),
+                text=f"{booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}",
+                fill=lightBlack,
+                font=fontSimple,
+            )
+            time_canvas_painter.rectangle((0, 0, 9, ysize - 10), lightGray)
+
+            time_canvas_rect = time_canvas.getbbox()
+            cell_canvas_painter.rectangle(
+                (
+                    cell_canvas.width - time_canvas_rect[2] + time_canvas_rect[0] - 9,
+                    2,
+                    cell_canvas.width
+                    - time_canvas_rect[2]
+                    + time_canvas_rect[0]
+                    - 9
+                    + time_canvas_rect[2]
+                    - time_canvas_rect[0],
+                    ysize - 3,
+                ),
+                lightGray,
+            )
+            cell_canvas.paste(
+                time_canvas,
+                (cell_canvas.width - time_canvas_rect[2] + time_canvas_rect[0] - 9, cell_canvas.height // 2 - 9),
+                time_canvas,
+            )
+
+            image.paste(cell_canvas, (int(x0), y0))
 
         today = datetime.date.today()
         weekday = today.weekday()
