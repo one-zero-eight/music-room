@@ -209,6 +209,16 @@ class SqlBookingRepository:
 
             return [ViewBooking.model_validate(obj) for obj in objs]
 
+    async def get_bookings(self, from_date: datetime.date | None = None, to_date: datetime.date | None = None):
+        async with self._create_session() as session:
+            query = select(Booking)
+            if from_date:
+                query = query.where(Booking.time_start >= datetime.datetime.combine(from_date, datetime.time.min))
+            if to_date:
+                query = query.where(Booking.time_end <= datetime.datetime.combine(to_date, datetime.time.max))
+            objs = await session.scalars(query)
+            return [ViewBooking.model_validate(obj) for obj in objs]
+
     async def get_user_bookings(self, user_id: int) -> list[ViewBooking]:
         async with self._create_session() as session:
             query = select(Booking).where(Booking.user_id == user_id)
