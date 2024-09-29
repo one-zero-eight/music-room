@@ -57,6 +57,7 @@ async def receptionist_notifications_loop():
     if not settings.bot_settings.users or not settings.bot_settings.notification_time:
         return
     while True:
+        # Calculate the time until the next notification
         current_date = datetime.datetime.now(datetime.UTC)
         planned_date = datetime.datetime(
             current_date.year,
@@ -71,24 +72,35 @@ async def receptionist_notifications_loop():
         if planned_date < current_date:
             planned_date += datetime.timedelta(days=7)
         wait = (planned_date - current_date).total_seconds()
+
+        # Sleep until the next notification
         logger.info(f"Waiting {wait} seconds until next notification")
         await asyncio.sleep(wait)
+        logger.info("Sending the list of users")
+
+        # Fetch the list of users from API
+        try:
+            response = await api_client.export_users_as_bot()
+            if response:
+                bytes_, filename = response
+                document = BufferedInputFile(bytes_, filename)
+            else:
+                raise RuntimeError("Couldn't fetch the list of users from API")
+        except Exception as e:  # noqa: E722
+            logger.warning("Couldn't fetch the list of users from API: %s", e)
+            continue
+
+        # Send the document to each receptionist
         for telegram_id in settings.bot_settings.users:
             tries = 0
             while tries < 3:
-                # noinspection PyBroadException
+                tries += 1
                 try:
-                    tries += 1
-                    response = await api_client.export_users_as_bot()
-                    if response:
-                        bytes_, filename = response
-                        document = BufferedInputFile(bytes_, filename)
-                        await bot.send_document(telegram_id, document, caption="Here is the list of users.")
-                    else:
-                        raise RuntimeError("Response was None")
+                    await bot.send_document(telegram_id, document, caption="Here is the list of users.")
+                    logger.info(f"Successfully sent the list of users to {telegram_id}")
                     break
                 except Exception as e:  # noqa: E722
-                    logger.warning("Something went wrong. Please check: %s", e)
+                    logger.warning("Couldn't send the list of users to %s. Please check: %s", telegram_id, e)
                     await asyncio.sleep(5)
 
 
