@@ -74,9 +74,11 @@ async def receptionist_notifications_loop():
         logger.info(f"Waiting {wait} seconds until next notification")
         await asyncio.sleep(wait)
         for telegram_id in settings.bot_settings.users:
-            while True:
+            tries = 0
+            while tries < 3:
                 # noinspection PyBroadException
                 try:
+                    tries += 1
                     response = await api_client.export_users_as_bot()
                     if response:
                         bytes_, filename = response
@@ -85,9 +87,9 @@ async def receptionist_notifications_loop():
                     else:
                         raise RuntimeError("Response was None")
                     break
-                except:  # noqa: E722
-                    logger.warning("Something went wrong. Please check.")
-                    pass
+                except Exception as e:  # noqa: E722
+                    logger.warning("Something went wrong. Please check: %s", e)
+                    await asyncio.sleep(5)
 
 
 async def main():
