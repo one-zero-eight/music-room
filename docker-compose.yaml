@@ -59,10 +59,13 @@ services:
       retries: 5
 
   redis:
-    build: ./redis # See ./redis/Dockerfile for more details
+    # See more: https://hub.docker.com/_/redis
+    image: "redis:7.2.4-alpine"
     restart: always
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
     volumes:
       - "redis:/data"
+      - "./redis/redis.conf:/usr/local/etc/redis/redis.conf"
     ports:
       - "6379:6379"
 
