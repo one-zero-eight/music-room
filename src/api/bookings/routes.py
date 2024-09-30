@@ -91,3 +91,16 @@ async def form_schedule(
 @router.get("/bookings/daily_bookings")
 async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
     return await booking_repository.get_daily_bookings(date)
+
+
+@router.get("/bookings/weekly_bookings")
+async def weekly_bookings(date: datetime.date) -> list[ViewBooking]:
+    return await booking_repository.get_bookings_for_week(date)
+
+
+@router.get("/bookings/{booking_id}")
+async def get_booking_by_id(booking_id: int) -> ViewBooking:
+    booking = await booking_repository.get_booking(booking_id)
+    if booking is None:
+        raise NoSuchBooking()
+    return booking
