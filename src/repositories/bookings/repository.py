@@ -14,6 +14,7 @@ from src.exceptions import NoSuchBooking
 from src.schemas import CreateBooking, ViewBooking, ViewUser
 from src.storage.sql import AbstractSQLAlchemyStorage
 from src.storage.sql.models import Booking, User
+from src.tools import count_duration
 from src.tools.utils import get_week_numbers
 
 
@@ -149,7 +150,9 @@ class SqlBookingRepository:
 
         bookings = await self.get_bookings_for_week(start_of_week)
         for booking in bookings:
-            cell_canvas = Image.new("RGB", (xsize, ysize), "white")
+            ylength = count_duration(booking.time_start, booking.time_end)
+
+            cell_canvas = Image.new("RGB", (xsize, int(ysize * ylength)), "white")
             cell_canvas_painter = ImageDraw.Draw(cell_canvas)
             day = booking.time_start.weekday()
 
@@ -169,9 +172,6 @@ class SqlBookingRepository:
                 fill=lightBlack,
                 font=fontSimple,
             )
-            cell_canvas_painter.rectangle(
-                (cell_canvas.width * 0.75, 2, cell_canvas.width - 3, cell_canvas.height - 3), lightGray
-            )
 
             time_canvas = Image.new("RGBA", (xsize, ysize), (0, 0, 0, 0))
             time_canvas_painter = ImageDraw.Draw(time_canvas)
@@ -182,26 +182,20 @@ class SqlBookingRepository:
                 fill=lightBlack,
                 font=fontSimple,
             )
-            time_canvas_painter.rectangle((0, 0, 9, ysize - 10), lightGray)
 
             time_canvas_rect = time_canvas.getbbox()
             cell_canvas_painter.rectangle(
                 (
-                    cell_canvas.width - time_canvas_rect[2] + time_canvas_rect[0] - 9,
+                    cell_canvas.width - time_canvas_rect[2] + time_canvas_rect[0] - 14,
                     2,
-                    cell_canvas.width
-                    - time_canvas_rect[2]
-                    + time_canvas_rect[0]
-                    - 9
-                    + time_canvas_rect[2]
-                    - time_canvas_rect[0],
-                    ysize - 3,
+                    cell_canvas.width - 3,
+                    cell_canvas.height - 3,
                 ),
                 lightGray,
             )
             cell_canvas.paste(
                 time_canvas,
-                (cell_canvas.width - time_canvas_rect[2] + time_canvas_rect[0] - 9, cell_canvas.height // 2 - 9),
+                (cell_canvas.width - time_canvas_rect[2] + time_canvas_rect[0] - 17, cell_canvas.height // 2 - 9),
                 time_canvas,
             )
 
