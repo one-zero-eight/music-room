@@ -38,6 +38,12 @@ class SqlUserRepository:
             if obj:
                 return ViewUser.model_validate(obj)
 
+    async def get_multiple_users(self, user_ids: list[int]) -> list[ViewUser | None]:
+        async with self._create_session() as session:
+            query = select(User).where(User.id.in_(user_ids))
+            objs = await session.scalars(query)
+            return [ViewUser.model_validate(obj) for obj in objs]
+
     async def get_all_users(self) -> list[ViewUser]:
         async with self._create_session() as session:
             query = select(User)

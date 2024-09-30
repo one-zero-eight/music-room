@@ -17,6 +17,8 @@ from src.bot.dispatcher import CustomDispatcher
 from src.bot.logging_ import logger
 from src.bot.middlewares import LogAllEventsMiddleware
 from src.config import bot_settings, settings
+from src.bot.use_cases import notification_use_case
+
 
 bot = Bot(token=bot_settings.bot_token.get_secret_value())
 if bot_settings.redis_url:
@@ -124,5 +126,6 @@ async def main():
     # Drop pending updates
     await bot.delete_webhook(drop_pending_updates=True)
     asyncio.create_task(receptionist_notifications_loop())
+    asyncio.create_task(notification_use_case.notify_users_about_upcoming_bookings(bot))
     # Start long-polling
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())
