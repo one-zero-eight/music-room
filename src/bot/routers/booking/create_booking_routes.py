@@ -15,9 +15,6 @@ from src.bot.routers.booking import router
 from src.bot.routers.booking.states import CreateBookingStates
 from src.bot.routers.booking.widgets.calendar import CustomCalendar
 from src.bot.routers.booking.widgets.time_range import TimeRangeWidget
-from src.bot.use_cases import notification_use_case
-from src.schemas.booking import ViewBooking
-from src.bot.app import bot
 
 
 @router.message(any_state, Command("create_booking"))
@@ -49,7 +46,7 @@ async def on_time_confirmed(callback: CallbackQuery, _button: Button, dialog_man
         await callback.message.answer("You must choose both start and end time")
         return
     start, end = chosen_timeslots
-    success, data = await api_client.book(callback.from_user.id, date, start, end)
+    success, error = await api_client.book(callback.from_user.id, date, start, end)
 
     if success:
         date_text = date.strftime("%B %d")
@@ -57,9 +54,8 @@ async def on_time_confirmed(callback: CallbackQuery, _button: Button, dialog_man
         text = f"You have successfully booked on <b>{date_text}, {timeslot_text}</b>."
         await callback.message.answer(text, parse_mode="HTML")
         await dialog_manager.done()
-        await notification_use_case.notify_user_about_booking(bot, ViewBooking(**data), callback.from_user.id)
     else:
-        await callback.message.answer(f"Error occurred: {data}")
+        await callback.message.answer(f"Error occurred: {error}")
         widget = dialog_manager.find("time_selection")
         widget.reset(dialog_manager)
         await dialog_manager.switch_to(CreateBookingStates.choose_date)

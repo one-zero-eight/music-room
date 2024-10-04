@@ -20,6 +20,9 @@ from src.repositories.users.repository import user_repository
 from src.schemas import CreateBooking, ViewBooking
 from src.tools import count_duration, is_sc_working
 from src.tools.utils import is_offset_correct
+from src.api.use_cases.notifications import notification_use_case
+import asyncio
+
 
 router = APIRouter(tags=["Bookings"])
 
@@ -52,6 +55,8 @@ async def create_booking(booking: CreateBooking, verified: VerifiedDepWithUserID
         raise IncorrectOffset()
 
     created = await booking_repository.create(user_id, booking)
+    telegram_id = (await user_repository.get_user(user_id)).telegram_id
+    asyncio.create_task(notification_use_case.notify_user_about_booking(created, telegram_id))
     return created
 
 
@@ -91,16 +96,3 @@ async def form_schedule(
 @router.get("/bookings/daily_bookings")
 async def daily_bookings(date: datetime.date) -> list[ViewBooking]:
     return await booking_repository.get_daily_bookings(date)
-
-
-@router.get("/bookings/weekly_bookings")
-async def weekly_bookings(date: datetime.date) -> list[ViewBooking]:
-    return await booking_repository.get_bookings_for_week(date)
-
-
-@router.get("/bookings/{booking_id}")
-async def get_booking_by_id(booking_id: int) -> ViewBooking:
-    booking = await booking_repository.get_booking(booking_id)
-    if booking is None:
-        raise NoSuchBooking()
-    return booking
