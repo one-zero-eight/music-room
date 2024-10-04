@@ -62,6 +62,12 @@ $defs:
         title: Bot Token
         type: string
         writeOnly: true
+      webhook_host:
+        title: Webhook Host
+        type: string
+      webhook_secret:
+        title: Webhook Secret
+        type: string
       api_url:
         title: Api Url
         type: string
@@ -89,6 +95,8 @@ $defs:
         title: Notification Time
     required:
     - bot_token
+    - webhook_host
+    - webhook_secret
     - api_url
     title: BotSettings
     type: object

@@ -59,13 +59,6 @@ class InNoHassleMusicRoomAPI:
             if response.status_code == 200:
                 return response.json()
 
-    async def get_users(self, user_ids: list[int]) -> dict:
-        params = {"user_ids": user_ids}
-        async with self._create_client() as client:
-            response = await client.get("/users/", params=params)
-            if response.status_code == 200:
-                return response.json()
-
     async def get_me(self, telegram_id: int) -> ViewUser | None:
         async with self._create_client(telegram_id=telegram_id) as client:
             response = await client.get("/users/me")
@@ -102,21 +95,6 @@ class InNoHassleMusicRoomAPI:
         params = {"date": date if date else datetime.date.today().isoformat()}
         async with self._create_client() as client:
             response = await client.get("/bookings/daily_bookings", params=params)
-            if response.status_code == 200:
-                return True, response.json()
-            return False, None
-
-    async def get_weekly_bookings(self, date: str | None) -> tuple[bool, Any]:
-        params = {"date": date if date else datetime.date.today().isoformat()}
-        async with self._create_client() as client:
-            response = await client.get("/bookings/weekly_bookings", params=params)
-            if response.status_code == 200:
-                return True, response.json()
-            return False, None
-
-    async def get_booking_by_id(self, booking_id: int) -> tuple[bool, dict | None]:
-        async with self._create_client() as client:
-            response = await client.get(f"/bookings/{booking_id}")
             if response.status_code == 200:
                 return True, response.json()
             return False, None

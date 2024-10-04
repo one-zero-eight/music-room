@@ -16,8 +16,6 @@ from src.repositories.users.repository import user_repository
 from src.schemas import ViewUser, UserStatus, FillUserProfile
 from src.schemas.auth import VerificationSource
 
-from typing import Annotated
-
 
 router = APIRouter(tags=["Users"])
 
@@ -129,10 +127,3 @@ async def get_user_id(
         raise ForbiddenException()
     res = await user_repository.get_user_id(telegram_id=telegram_id, email=email)
     return res
-
-
-@router.get("/users/")
-async def get_users(verification: VerifiedDep, user_ids: Annotated[list[int], Query()]) -> list[ViewUser]:
-    if verification.source not in (VerificationSource.BOT, VerificationSource.API):
-        raise ForbiddenException()
-    return await user_repository.get_multiple_users(user_ids)
