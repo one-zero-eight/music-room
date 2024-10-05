@@ -4,8 +4,8 @@ api_settings:
   bot_token: "some-telegram-bot-token" # get it from @BotFather (same as bot_settings.bot_token)
   api_key: "some-secret-key" # use `openssl rand -hex 32` to generate a random key
 bot_settings:
-  webhook_host: "https://example.com/" # public url, where telegram will send requests
-  webhook_secret: "secret" # secret part of a public url
+  webhook_host: "http://127.0.0.1:8002/"
+  webhook_secret: "secret" # secret part of a webhook
   api_url: "http://127.0.0.1:8001"
   bot_token: "some-telegram-bot-token" # get it from @BotFather
   # redis_url: "redis://127.0.0.1:6379/0" # or delete this line to disable redis and use in-memory storage

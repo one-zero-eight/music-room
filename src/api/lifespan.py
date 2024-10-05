@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from src.config import api_settings
 from src.storage.sql import SQLAlchemyStorage
 import asyncio
+from src.api.use_cases.notifications import notification_use_case
 
 
 async def setup_repositories() -> SQLAlchemyStorage:
@@ -27,10 +28,17 @@ async def setup_repositories() -> SQLAlchemyStorage:
     return storage
 
 
+async def booking_notifications_loop() -> None:
+    while True:
+        await asyncio.sleep(60)
+        await notification_use_case.notify_users_about_upcoming_bookings()
+
+
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
     # Application startup
     storage = await setup_repositories()
+    asyncio.create_task(booking_notifications_loop())
     yield
     # Application shutdown
     await storage.close_connection()
