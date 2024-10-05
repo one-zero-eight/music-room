@@ -9,7 +9,8 @@ class TgBotClient:
         self.api_root_path = api_url
 
     def _create_client(self) -> httpx.AsyncClient:
-        client = httpx.AsyncClient(base_url=self.api_root_path)
+        auth_header = {"Authorization": f"Bearer {bot_settings.bot_token.get_secret_value()}"}
+        client = httpx.AsyncClient(headers=auth_header, base_url=self.api_root_path)
         return client
 
     async def notify_user_about_booking(self, telegram_id: int) -> None:
@@ -17,4 +18,4 @@ class TgBotClient:
             await client.post(self.api_root_path + "/booking/notify", json={"telegram_id": telegram_id})
 
 
-tg_bot_client = TgBotClient(bot_settings.webhook_host + bot_settings.webhook_secret)
+tg_bot_client = TgBotClient(bot_settings.webhook_url)

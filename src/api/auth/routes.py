@@ -2,7 +2,7 @@ __all__ = ["router"]
 
 from fastapi import APIRouter
 
-from src.api.dependencies import VerifiedDep
+from src.dependendies.auth import VerifiedDep
 from src.exceptions import UserExists, ForbiddenException, UserDidNotConnectTelegram
 from src.repositories.innohassle_accounts import innohassle_accounts
 from src.repositories.users.repository import user_repository
