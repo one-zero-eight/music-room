@@ -10,7 +10,7 @@ from docx.table import _Cell
 from fastapi import APIRouter
 from fastapi import Query, Response
 
-from src.api.dependencies import VerifiedDep, VerifiedDepWithUserID
+from src.dependendies.auth import VerifiedDep, VerifiedDepWithUserID
 from src.exceptions import ForbiddenException
 from src.repositories.users.repository import user_repository
 from src.schemas import ViewUser, UserStatus, FillUserProfile

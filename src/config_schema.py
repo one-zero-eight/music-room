@@ -15,8 +15,7 @@ class Environment(StrEnum):
 class BotSettings(BaseModel):
     environment: Environment = Environment.DEVELOPMENT
     bot_token: SecretStr = Field(..., description="Bot token from @BotFather")
-    webhook_host: str
-    webhook_secret: str
+    webhook_url: str
     api_url: str
     redis_url: SecretStr | None = None
     users: list[int] = []

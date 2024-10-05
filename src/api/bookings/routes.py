@@ -5,7 +5,7 @@ import datetime
 from fastapi import APIRouter
 from fastapi import Query, Response
 
-from src.api.dependencies import VerifiedDepWithUserID
+from src.dependendies.auth import VerifiedDepWithUserID
 from src.exceptions import (
     CollisionInBookings,
     NotEnoughDailyHoursToBook,
