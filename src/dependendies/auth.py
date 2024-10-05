@@ -1,4 +1,4 @@
-__all__ = ["VerifiedDep", "VerifiedDepWithUserID"]
+__all__ = ["VerifiedDep", "VerifiedDepWithUserID", "verify_request"]
 
 from typing import TypeAlias, Annotated, cast
 
