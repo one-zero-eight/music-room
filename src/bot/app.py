@@ -121,3 +121,11 @@ async def configure_bot() -> None:
         await bot.set_my_short_description(bot_short_description)
     if existing_bot["commands"] != bot_commands:
         await bot.set_my_commands(bot_commands)
+
+
+async def main():
+    await configure_bot()
+    await bot.delete_webhook(drop_pending_updates=True)
+    asyncio.create_task(receptionist_notifications_loop())
+    # Start long-polling
+    await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())

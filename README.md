@@ -131,6 +131,10 @@ Now the API is running on http://localhost:8001. Good job!
    ```bash
     poetry run python -m src.bot
     ```
+5. Run bot webserver for webhooks:
+   ```bash
+    poetry run uvicorn src.bot.webserver:app --use-colors --proxy-headers --forwarded-allow-ips=* --port=8002
+    ```
 
 ### Deployment
 
