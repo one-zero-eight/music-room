@@ -17,13 +17,13 @@ class NotificationUseCase:
         return user_id_to_telegram_id
 
     async def notify_users_about_upcoming_bookings(self) -> None:
-        weekly_bookings = await booking_repository.get_daily_bookings(datetime.datetime.now().date())
-        user_id_to_telegram_id = await self.get_user_id_and_telegram_id(weekly_bookings)
+        daily_bookings = await booking_repository.get_daily_bookings(datetime.datetime.now().date())
+        user_id_to_telegram_id = await self.get_user_id_and_telegram_id(daily_bookings)
         now_datetime = datetime.datetime.now()
-        for booking in weekly_bookings:
+        for booking in daily_bookings:
             notification_time = booking.time_start - datetime.timedelta(hours=1)
             if datetime.timedelta(seconds=0) <= notification_time - now_datetime < datetime.timedelta(seconds=60):
-                await tg_bot_client.notify_user_about_booking(user_id_to_telegram_id[booking.user_id])
+                await tg_bot_client.notify_user_about_booking(user_id_to_telegram_id[booking.user_id], booking)
 
 
 notification_use_case = NotificationUseCase()
