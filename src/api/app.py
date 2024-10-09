@@ -1,5 +1,5 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI
+from fastapi_swagger import patch_fastapi
 
 import src.api.logging_  # noqa: F401
 from src.api import docs
@@ -20,11 +20,6 @@ app = FastAPI(
     servers=[
         {"url": api_settings.app_root_path, "description": "Current"},
     ],
-    swagger_ui_parameters={
-        "tryItOutEnabled": True,
-        "persistAuthorization": True,
-        "filter": True,
-    },
     root_path=api_settings.app_root_path,
     root_path_in_servers=False,
     generate_unique_id_function=generate_unique_operation_id,
@@ -33,29 +28,7 @@ app = FastAPI(
     redoc_url=None,
 )
 
-
-# Redirect root to docs
-@app.get("/", tags=["Root"], include_in_schema=False)
-async def redirect_to_docs(request: Request):
-    return RedirectResponse(url=request.url_for("swagger_ui_html"))
-
-
-@app.get("/docs", tags=["System"], include_in_schema=False)
-async def swagger_ui_html(request: Request):
-    from fastapi.openapi.docs import get_swagger_ui_html
-
-    root_path = request.scope.get("root_path", "").rstrip("/")
-    openapi_url = root_path + app.openapi_url
-
-    return get_swagger_ui_html(
-        openapi_url=openapi_url,
-        title=app.title + " - Swagger UI",
-        swagger_js_url="https://api.innohassle.ru/swagger/swagger-ui-bundle.js",
-        swagger_css_url="https://api.innohassle.ru/swagger/swagger-ui.css",
-        swagger_favicon_url="https://api.innohassle.ru/swagger/favicon.png",
-        swagger_ui_parameters={"tryItOutEnabled": True, "persistAuthorization": True, "filter": True},
-    )
-
+patch_fastapi(app)
 
 for _router in routers:
     app.include_router(_router)
