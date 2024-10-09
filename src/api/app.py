@@ -5,7 +5,6 @@ import src.api.logging_  # noqa: F401
 from src.api import docs
 from src.api.docs import generate_unique_operation_id
 from src.api.lifespan import lifespan
-from src.api.routers import routers
 from src.config import api_settings
 
 # App definition
@@ -31,5 +30,12 @@ app = FastAPI(
 
 patch_fastapi(app)
 
-for _router in routers:
-    app.include_router(_router)
+from src.api.auth.routes import router as router_auth  # noqa: E402
+from src.api.bookings.routes import router as router_booking  # noqa: E402
+from src.api.users.routes import router as router_users  # noqa: E402
+from src.api.root.routes import router as router_root  # noqa: E402
+
+app.include_router(router_auth)
+app.include_router(router_root)
+app.include_router(router_booking)
+app.include_router(router_users)
