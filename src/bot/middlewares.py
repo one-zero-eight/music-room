@@ -2,12 +2,13 @@ import asyncio
 import inspect
 import logging
 import os
+from collections.abc import Awaitable, Callable
 from typing import Any
-from collections.abc import Callable, Awaitable
 
 from aiogram import BaseMiddleware
 from aiogram.dispatcher.event.handler import HandlerObject
-from aiogram.types import TelegramObject, Message, CallbackQuery
+from aiogram.types import CallbackQuery, Message, TelegramObject
+
 from src.bot.logging_ import logger
 
 

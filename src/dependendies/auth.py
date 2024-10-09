@@ -1,15 +1,13 @@
 __all__ = ["VerifiedDep", "VerifiedDepWithUserID", "verify_request"]
 
-from typing import TypeAlias, Annotated, cast
+from typing import Annotated, TypeAlias, cast
 
 from fastapi import Depends
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.exceptions import ForbiddenException
-from src.schemas.auth import SucceedVerificationResult, VerificationResultWithUserId
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from src.exceptions import NoCredentialsException, IncorrectCredentialsException
+from src.exceptions import ForbiddenException, IncorrectCredentialsException, NoCredentialsException
 from src.repositories.auth.repository import TokenRepository
-
+from src.schemas.auth import SucceedVerificationResult, VerificationResultWithUserId
 
 bearer_scheme = HTTPBearer(
     scheme_name="Bearer",

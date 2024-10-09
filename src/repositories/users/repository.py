@@ -4,7 +4,7 @@ import datetime
 from datetime import timedelta
 from typing import Self
 
-from sqlalchemy import and_, between, extract, select, update, insert, or_
+from sqlalchemy import and_, between, extract, insert, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import CreateUser, FillUserProfile, ViewBooking, ViewUser

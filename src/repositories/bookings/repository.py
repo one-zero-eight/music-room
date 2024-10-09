@@ -7,7 +7,7 @@ from datetime import timedelta
 from typing import Optional, Self
 
 from PIL import Image, ImageDraw, ImageFont
-from sqlalchemy import and_, between, select, insert, delete, or_, not_
+from sqlalchemy import and_, between, delete, insert, not_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import NoSuchBooking

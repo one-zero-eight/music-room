@@ -4,8 +4,7 @@ import datetime
 from zlib import crc32
 
 import icalendar
-from fastapi import APIRouter
-from fastapi import Response
+from fastapi import APIRouter, Response
 
 from src.dependendies.auth import VerifiedDep
 from src.exceptions import ForbiddenException
