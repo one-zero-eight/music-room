@@ -71,8 +71,7 @@ class InNoHassleMusicRoomAPI:
             response = await client.post("/users/me/fill_profile", json=body)
             if response.status_code == 200:
                 return True, None
-            else:
-                return False, "There was an error during filling profile."
+            return False, "There was an error during filling profile."
 
     async def get_remaining_daily_hours(self, telegram_id: int, date: str) -> float | None:
         params = {"date": date}
@@ -98,8 +97,7 @@ class InNoHassleMusicRoomAPI:
             response = await client.get("/bookings/daily_bookings", params=params)
             if response.status_code == 200:
                 return True, response.json()
-            else:
-                return False, None
+            return False, None
 
     async def book(
         self,
@@ -115,9 +113,8 @@ class InNoHassleMusicRoomAPI:
         async with self._create_client(telegram_id=telegram_id) as client:
             response = await client.post("/bookings/", json=params)
             if response.status_code == 200:
-                return True, None
-            else:
-                return False, response.json().get("detail")
+                return True, response.json()
+            return False, response.json().get("detail")
 
     async def get_user_bookings(self, telegram_id: int) -> list[dict] | None:
         async with self._create_client(telegram_id=telegram_id) as client:

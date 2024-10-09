@@ -18,6 +18,7 @@ from src.bot.logging_ import logger
 from src.bot.middlewares import LogAllEventsMiddleware
 from src.config import bot_settings, settings
 
+
 bot = Bot(token=bot_settings.bot_token.get_secret_value())
 if bot_settings.redis_url:
     storage = RedisStorage.from_url(
@@ -104,7 +105,7 @@ async def receptionist_notifications_loop():
                     await asyncio.sleep(5)
 
 
-async def main():
+async def configure_bot() -> None:
     # Set bot name, description and commands
     existing_bot = {
         "name": (await bot.get_my_name()).name,
@@ -112,7 +113,6 @@ async def main():
         "shortDescription": (await bot.get_my_short_description()).short_description,
         "commands": await bot.get_my_commands(),
     }
-
     if existing_bot["name"] != bot_name:
         await bot.set_my_name(bot_name)
     if existing_bot["description"] != bot_description:
@@ -121,7 +121,10 @@ async def main():
         await bot.set_my_short_description(bot_short_description)
     if existing_bot["commands"] != bot_commands:
         await bot.set_my_commands(bot_commands)
-    # Drop pending updates
+
+
+async def main():
+    await configure_bot()
     await bot.delete_webhook(drop_pending_updates=True)
     asyncio.create_task(receptionist_notifications_loop())
     # Start long-polling

@@ -1,6 +1,6 @@
-import asyncio
 import os
 from pathlib import Path
+import asyncio
 
 # Change dir to project root (three levels up from this file)
 os.chdir(Path(__file__).parents[2])

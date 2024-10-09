@@ -42,8 +42,6 @@ class SqlBookingRepository:
             obj = await session.scalar(query)
             if obj:
                 return ViewBooking.model_validate(obj)
-            else:
-                return None
 
     async def get_bookings_for_week(self, start_of_week: datetime.date) -> list[ViewBooking]:
         async with self._create_session() as session:

@@ -5,7 +5,7 @@ import datetime
 from fastapi import APIRouter
 from fastapi import Query, Response
 
-from src.api.dependencies import VerifiedDepWithUserID
+from src.dependendies.auth import VerifiedDepWithUserID
 from src.exceptions import (
     CollisionInBookings,
     NotEnoughDailyHoursToBook,
@@ -20,6 +20,7 @@ from src.repositories.users.repository import user_repository
 from src.schemas import CreateBooking, ViewBooking
 from src.tools import count_duration, is_sc_working
 from src.tools.utils import is_offset_correct
+
 
 router = APIRouter(tags=["Bookings"])
 
