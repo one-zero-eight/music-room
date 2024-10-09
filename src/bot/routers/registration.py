@@ -1,15 +1,13 @@
 import asyncio
 
-from aiogram import Router, Bot
-from aiogram import types
+from aiogram import Bot, Router, types
 from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import StatesGroup, State
-from aiogram.fsm.state import any_state
-from aiogram.types import Message, LoginUrl
+from aiogram.fsm.state import State, StatesGroup, any_state
+from aiogram.types import LoginUrl, Message
 
 from src.bot.constants import rules_confirmation_message
-from src.bot.filters import RegisteredUserFilter, EmptyUsernameFilter
-from src.bot.menu import menu_kb, help_kb
+from src.bot.filters import EmptyUsernameFilter, RegisteredUserFilter
+from src.bot.menu import help_kb, menu_kb
 from src.config import settings
 
 router = Router(name="registration")

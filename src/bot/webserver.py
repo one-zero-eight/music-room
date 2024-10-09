@@ -1,11 +1,13 @@
-from src.bot.app import bot
-from src.config import bot_settings
+import datetime
+
 from fastapi import FastAPI, Response, status
 from pydantic import BaseModel
+
+from src.bot.app import bot
+from src.config import bot_settings
 from src.dependendies.auth import VerifiedDep
-from src.schemas.auth import VerificationSource
 from src.exceptions import ForbiddenException
-import datetime
+from src.schemas.auth import VerificationSource
 
 
 class BookingInfo(BaseModel):

@@ -1,6 +1,6 @@
 import datetime
 
-from pydantic import BaseModel, ConfigDict, NaiveDatetime, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, NaiveDatetime, model_validator
 
 __all__ = ["CreateBooking", "ViewBooking", "ViewBooking"]
 

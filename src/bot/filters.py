@@ -1,7 +1,7 @@
 from typing import Any
 
 from aiogram.filters import Filter
-from aiogram.types import User, TelegramObject
+from aiogram.types import TelegramObject, User
 
 from src.bot.api import api_client
 

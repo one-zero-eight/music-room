@@ -1,5 +1,5 @@
 from src.schemas.booking import CreateBooking, ViewBooking
-from src.schemas.user import CreateUser, FillUserProfile, ViewUser, UserStatus
+from src.schemas.user import CreateUser, FillUserProfile, UserStatus, ViewUser
 
 __all__ = [
     "ViewBooking",

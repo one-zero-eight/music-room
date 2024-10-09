@@ -5,8 +5,8 @@ from aiogram import F
 from aiogram.filters import Command
 from aiogram.fsm.state import any_state
 from aiogram.types import CallbackQuery, Message, User
-from aiogram_dialog import Dialog, DialogManager, Window, StartMode
-from aiogram_dialog.widgets.kbd import Back, Button, Group, Cancel, Row
+from aiogram_dialog import Dialog, DialogManager, StartMode, Window
+from aiogram_dialog.widgets.kbd import Back, Button, Cancel, Group, Row
 from aiogram_dialog.widgets.text import Const, Format
 
 from src.bot import constants

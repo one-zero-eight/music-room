@@ -18,7 +18,6 @@ from src.bot.logging_ import logger
 from src.bot.middlewares import LogAllEventsMiddleware
 from src.config import bot_settings, settings
 
-
 bot = Bot(token=bot_settings.bot_token.get_secret_value())
 if bot_settings.redis_url:
     storage = RedisStorage.from_url(
@@ -39,11 +38,11 @@ async def unknown_intent_handler(event: ErrorEvent, callback_query: types.Callba
     await callback_query.answer("Unknown intent: Please, try to restart the action.")
 
 
-from src.bot.routers.registration import router as router_registration  # noqa: E402
-from src.bot.routers.start_help_menu import router as start_help_menu_router  # noqa: E402
 from src.bot.routers.admin import router as router_admin  # noqa: E402
 from src.bot.routers.booking import router as router_bookings  # noqa: E402
+from src.bot.routers.registration import router as router_registration  # noqa: E402
 from src.bot.routers.schedule import router as router_image_schedule  # noqa: E402
+from src.bot.routers.start_help_menu import router as start_help_menu_router  # noqa: E402
 
 dp.include_router(router_registration)  # sink for not registered users
 dp.include_router(start_help_menu_router)  # start, help, menu commands

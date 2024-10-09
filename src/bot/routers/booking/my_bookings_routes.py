@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from aiogram import types, F
+from aiogram import F, types
 from aiogram.filters import Command
 from aiogram.fsm.state import any_state
 from aiogram.types import Message

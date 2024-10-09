@@ -7,15 +7,13 @@ from docx import Document as create_docx
 from docx.document import Document
 from docx.shared import Emu
 from docx.table import _Cell
-from fastapi import APIRouter
-from fastapi import Query, Response
+from fastapi import APIRouter, Query, Response
 
 from src.dependendies.auth import VerifiedDep, VerifiedDepWithUserID
 from src.exceptions import ForbiddenException
 from src.repositories.users.repository import user_repository
-from src.schemas import ViewUser, UserStatus, FillUserProfile
+from src.schemas import FillUserProfile, UserStatus, ViewUser
 from src.schemas.auth import VerificationSource
-
 
 router = APIRouter(tags=["Users"])
 

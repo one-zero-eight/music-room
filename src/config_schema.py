@@ -3,7 +3,7 @@ from enum import StrEnum
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field, SecretStr, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 
 class Environment(StrEnum):

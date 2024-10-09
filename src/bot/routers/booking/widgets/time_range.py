@@ -1,8 +1,8 @@
 import datetime
-from typing import TypedDict, assert_never
 from collections.abc import Callable
+from typing import TypedDict, assert_never
 
-from aiogram.types import InlineKeyboardButton, CallbackQuery
+from aiogram.types import CallbackQuery, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram_dialog import DialogManager, DialogProtocol
 from aiogram_dialog.widgets.common import WhenCondition
