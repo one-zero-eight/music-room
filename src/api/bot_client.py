@@ -1,5 +1,6 @@
 import httpx
 
+from src.api.logging_ import logger
 from src.config import bot_settings
 from src.schemas.booking import ViewBooking
 
@@ -17,14 +18,30 @@ class TgBotClient:
 
     async def notify_user_about_booking(self, telegram_id: int, booking: ViewBooking) -> None:
         async with self._create_client() as client:
-            await client.post(
-                self.api_root_path + "/booking/notify",
-                json={
-                    "telegram_id": telegram_id,
-                    "time_start": booking.time_start.isoformat(),
-                    "time_end": booking.time_end.isoformat(),
-                },
-            )
+            status_code = 0
+            base_log_message = f"Notification webhook booking(id={booking.id}), user(id={telegram_id})"
+            while True:
+                logger.info(f"{base_log_message} sent")
+                try:
+                    status_code = (
+                        await client.post(
+                            self.api_root_path + "/booking/notify",
+                            json={
+                                "telegram_id": telegram_id,
+                                "time_start": booking.time_start.isoformat(),
+                                "time_end": booking.time_end.isoformat(),
+                                "booking_id": booking.id,
+                            },
+                            timeout=5,
+                        )
+                    ).status_code
+                    if status_code == 200:
+                        logger.info(f"{base_log_message} completed succesfully")
+                        break
+                    else:
+                        logger.error(f"{base_log_message} failed with status code {status_code}")
+                except httpx.TimeoutException:
+                    logger.error(f"{base_log_message} is timed out")
 
 
 tg_bot_client = TgBotClient(bot_settings.webhook_url)
