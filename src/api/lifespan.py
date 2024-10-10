@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
+from src.api.logging_ import logger
 from src.api.use_cases.notifications import notification_use_case
 from src.config import api_settings
 from src.storage.sql import SQLAlchemyStorage
@@ -28,7 +29,10 @@ async def setup_repositories() -> SQLAlchemyStorage:
 
 async def booking_notifications_loop() -> None:
     while True:
-        await notification_use_case.notify_users_about_upcoming_bookings()
+        try:
+            await notification_use_case.notify_users_about_upcoming_bookings()
+        except Exception as e:
+            logger.error(f"Error in notification loop: {str(e)}")
         await asyncio.sleep(60)
 
 
