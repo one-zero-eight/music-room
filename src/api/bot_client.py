@@ -1,3 +1,5 @@
+import asyncio
+
 import httpx
 
 from src.api.logging_ import logger
@@ -23,25 +25,26 @@ class TgBotClient:
             while True:
                 logger.info(f"{base_log_message} sent")
                 try:
-                    status_code = (
-                        await client.post(
-                            self.api_root_path + "/booking/notify",
-                            json={
-                                "telegram_id": telegram_id,
-                                "time_start": booking.time_start.isoformat(),
-                                "time_end": booking.time_end.isoformat(),
-                                "booking_id": booking.id,
-                            },
-                            timeout=5,
-                        )
-                    ).status_code
-                    if status_code == 200:
-                        logger.info(f"{base_log_message} completed succesfully")
-                        break
-                    else:
-                        logger.error(f"{base_log_message} failed with status code {status_code}")
+                    response = await client.post(
+                        self.api_root_path + "/booking/notify",
+                        json={
+                            "telegram_id": telegram_id,
+                            "time_start": booking.time_start.isoformat(),
+                            "time_end": booking.time_end.isoformat(),
+                            "booking_id": booking.id,
+                        },
+                        timeout=5,
+                    )
+                    status_code = response.status_code
+                    response.raise_for_status()
                 except httpx.TimeoutException:
                     logger.error(f"{base_log_message} is timed out")
+                except httpx.HTTPStatusError:
+                    logger.error(f"{base_log_message} failed with status code {status_code}")
+                else:
+                    logger.info(f"{base_log_message} completed succesfully")
+                    break
+                await asyncio.sleep(5)
 
 
 tg_bot_client = TgBotClient(bot_settings.webhook_url)

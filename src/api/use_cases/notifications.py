@@ -18,7 +18,9 @@ class NotificationUseCase:
         return user_id_to_telegram_id
 
     async def notify_users_about_upcoming_bookings(self) -> None:
-        daily_bookings = await booking_repository.get_daily_bookings(datetime.datetime.now().date())
+        daily_bookings = await booking_repository.get_daily_bookings(
+            (datetime.datetime.now() + datetime.timedelta(hours=1)).date()
+        )
         user_id_to_telegram_id = await self.get_user_id_and_telegram_id(daily_bookings)
         now_datetime = datetime.datetime.now()
         for booking in daily_bookings:
