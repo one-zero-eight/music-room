@@ -6,11 +6,23 @@ from fastapi.routing import APIRoute
 VERSION = "0.1.0"
 
 # Info for OpenAPI specification
-TITLE = "InNoHassle-MusicRoom"
+TITLE = "InNoHassle Music room API"
 SUMMARY = "Music room booking service for InNoHassle ecosystem."
 
 DESCRIPTION = """
 ### About this project
+
+This is the API for Music room project in InNoHassle ecosystem developed by one-zero-eight community.
+
+Using this API you can book music room at Innopolis Sport center.
+
+Backend is developed using FastAPI framework on Python.
+
+Note: API is unstable. Endpoints and models may change in the future.
+
+Useful links:
+- [Music room API and Bot source code](https://github.com/one-zero-eight/music-room)
+- [InNoHassle Website](https://innohassle.ru/)
 """
 
 CONTACT_INFO = {
