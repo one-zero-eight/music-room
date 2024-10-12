@@ -13,7 +13,9 @@ from src.bot.webserver import app  # noqa: E402
 
 # NOTE: No need for if __name__ == "__main__":, because this is the __main__.py module already
 async def start_webserver() -> None:
-    config = uvicorn.Config(app, port=8002, use_colors=True, proxy_headers=True, forwarded_allow_ips="*")
+    config = uvicorn.Config(
+        app, host="0.0.0.0", port=8002, use_colors=True, proxy_headers=True, forwarded_allow_ips="*"
+    )
     server = uvicorn.Server(config)
     await server.serve()
 
