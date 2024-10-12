@@ -25,9 +25,9 @@ app = FastAPI(root_path=bot_settings.webhook_url)
 async def notify_user_about_booking(booking: BookingInfo, verification: VerifiedDep) -> Response:
     if verification.source != VerificationSource.BOT:
         raise ForbiddenException()
-    datetime_now = datetime.datetime.now()
-    if booking.time_start - datetime_now > datetime.timedelta(seconds=0):
-        seconds_till_booking = (booking.time_start - datetime_now).seconds
+    time_till_booking = booking.time_start - datetime.datetime.now()
+    if time_till_booking > datetime.timedelta(seconds=0):
+        seconds_till_booking = time_till_booking.seconds
         await bot.send_message(
             booking.telegram_id,
             f"Don't forget about your booking! It will start in {seconds_till_booking // 60} minutes. "
