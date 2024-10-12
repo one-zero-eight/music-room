@@ -4,10 +4,9 @@ import datetime
 from zlib import crc32
 
 import icalendar
-from fastapi import APIRouter
-from fastapi import Response
+from fastapi import APIRouter, Response
 
-from src.api.dependencies import VerifiedDep
+from src.dependendies.auth import VerifiedDep
 from src.exceptions import ForbiddenException
 from src.repositories.bookings.repository import booking_repository
 from src.schemas.auth import VerificationSource

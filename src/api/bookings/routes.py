@@ -2,18 +2,17 @@ __all__ = ["router"]
 
 import datetime
 
-from fastapi import APIRouter
-from fastapi import Query, Response
+from fastapi import APIRouter, Query, Response
 
-from src.api.dependencies import VerifiedDepWithUserID
+from src.dependendies.auth import VerifiedDepWithUserID
 from src.exceptions import (
     CollisionInBookings,
+    ForbiddenException,
+    IncorrectOffset,
+    NoSuchBooking,
     NotEnoughDailyHoursToBook,
     NotEnoughWeeklyHoursToBook,
     NotWorkingHours,
-    IncorrectOffset,
-    ForbiddenException,
-    NoSuchBooking,
 )
 from src.repositories.bookings.repository import booking_repository
 from src.repositories.users.repository import user_repository

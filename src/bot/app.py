@@ -38,11 +38,11 @@ async def unknown_intent_handler(event: ErrorEvent, callback_query: types.Callba
     await callback_query.answer("Unknown intent: Please, try to restart the action.")
 
 
-from src.bot.routers.registration import router as router_registration  # noqa: E402
-from src.bot.routers.start_help_menu import router as start_help_menu_router  # noqa: E402
 from src.bot.routers.admin import router as router_admin  # noqa: E402
 from src.bot.routers.booking import router as router_bookings  # noqa: E402
+from src.bot.routers.registration import router as router_registration  # noqa: E402
 from src.bot.routers.schedule import router as router_image_schedule  # noqa: E402
+from src.bot.routers.start_help_menu import router as start_help_menu_router  # noqa: E402
 
 dp.include_router(router_registration)  # sink for not registered users
 dp.include_router(start_help_menu_router)  # start, help, menu commands
@@ -104,7 +104,7 @@ async def receptionist_notifications_loop():
                     await asyncio.sleep(5)
 
 
-async def main():
+async def configure_bot() -> None:
     # Set bot name, description and commands
     existing_bot = {
         "name": (await bot.get_my_name()).name,
@@ -112,7 +112,6 @@ async def main():
         "shortDescription": (await bot.get_my_short_description()).short_description,
         "commands": await bot.get_my_commands(),
     }
-
     if existing_bot["name"] != bot_name:
         await bot.set_my_name(bot_name)
     if existing_bot["description"] != bot_description:
@@ -121,7 +120,10 @@ async def main():
         await bot.set_my_short_description(bot_short_description)
     if existing_bot["commands"] != bot_commands:
         await bot.set_my_commands(bot_commands)
-    # Drop pending updates
+
+
+async def main():
+    await configure_bot()
     await bot.delete_webhook(drop_pending_updates=True)
     asyncio.create_task(receptionist_notifications_loop())
     # Start long-polling

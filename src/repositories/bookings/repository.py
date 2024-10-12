@@ -7,7 +7,7 @@ from datetime import timedelta
 from typing import Optional, Self
 
 from PIL import Image, ImageDraw, ImageFont
-from sqlalchemy import and_, between, select, insert, delete, or_, not_
+from sqlalchemy import and_, between, delete, insert, not_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.exceptions import NoSuchBooking
@@ -42,8 +42,6 @@ class SqlBookingRepository:
             obj = await session.scalar(query)
             if obj:
                 return ViewBooking.model_validate(obj)
-            else:
-                return None
 
     async def get_bookings_for_week(self, start_of_week: datetime.date) -> list[ViewBooking]:
         async with self._create_session() as session:

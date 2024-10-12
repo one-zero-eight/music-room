@@ -4,7 +4,7 @@ import datetime
 from datetime import timedelta
 from typing import Self
 
-from sqlalchemy import and_, between, extract, select, update, insert, or_
+from sqlalchemy import and_, between, extract, insert, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import CreateUser, FillUserProfile, ViewBooking, ViewUser
@@ -37,6 +37,12 @@ class SqlUserRepository:
             obj = await session.scalar(query)
             if obj:
                 return ViewUser.model_validate(obj)
+
+    async def get_multiple_users(self, user_ids: list[int]) -> list[ViewUser]:
+        async with self._create_session() as session:
+            query = select(User).where(User.id.in_(user_ids))
+            objs = await session.scalars(query)
+            return [ViewUser.model_validate(obj) for obj in objs]
 
     async def get_all_users(self) -> list[ViewUser]:
         async with self._create_session() as session:

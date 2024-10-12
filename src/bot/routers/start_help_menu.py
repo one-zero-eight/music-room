@@ -1,5 +1,4 @@
-from aiogram import Router
-from aiogram import types
+from aiogram import Router, types
 from aiogram.filters import Command, CommandStart
 
 from src.bot.menu import help_kb

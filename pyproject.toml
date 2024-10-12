@@ -37,6 +37,7 @@ lint.ignore = [
     "F403",
     "F405",
 ]
+lint.extend-select = ["I"]
 
 [build-system]
 requires = ["poetry-core"]

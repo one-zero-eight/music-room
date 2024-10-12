@@ -1,10 +1,10 @@
 from typing import Any
 
-from aiogram import Router, types, Bot
+from aiogram import Bot, Router, types
 from aiogram.filters import Command, Filter
-from aiogram.types import BufferedInputFile, TelegramObject, User, BotCommandScopeChat
+from aiogram.types import BotCommandScopeChat, BufferedInputFile, TelegramObject, User
 
-from src.bot.api import api_client, UserStatus
+from src.bot.api import UserStatus, api_client
 from src.bot.constants import admin_commands, bot_commands
 
 router = Router(name="admin")

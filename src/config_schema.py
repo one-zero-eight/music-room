@@ -3,7 +3,7 @@ from enum import StrEnum
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel, Field, SecretStr, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, SecretStr
 
 
 class Environment(StrEnum):
@@ -15,6 +15,7 @@ class Environment(StrEnum):
 class BotSettings(BaseModel):
     environment: Environment = Environment.DEVELOPMENT
     bot_token: SecretStr = Field(..., description="Bot token from @BotFather")
+    webhook_url: str
     api_url: str
     redis_url: SecretStr | None = None
     users: list[int] = []

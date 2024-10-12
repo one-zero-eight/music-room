@@ -32,8 +32,8 @@ patch_fastapi(app)
 
 from src.api.auth.routes import router as router_auth  # noqa: E402
 from src.api.bookings.routes import router as router_booking  # noqa: E402
-from src.api.users.routes import router as router_users  # noqa: E402
 from src.api.root.routes import router as router_root  # noqa: E402
+from src.api.users.routes import router as router_users  # noqa: E402
 
 app.include_router(router_auth)
 app.include_router(router_root)

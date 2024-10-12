@@ -1,13 +1,13 @@
-__all__ = ["verify_request"]
+__all__ = ["VerifiedDep", "VerifiedDepWithUserID", "verify_request"]
 
-from typing import cast
+from typing import Annotated, TypeAlias, cast
 
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
-from src.exceptions import NoCredentialsException, IncorrectCredentialsException
+from src.exceptions import ForbiddenException, IncorrectCredentialsException, NoCredentialsException
 from src.repositories.auth.repository import TokenRepository
-from src.schemas.auth import SucceedVerificationResult
+from src.schemas.auth import SucceedVerificationResult, VerificationResultWithUserId
 
 bearer_scheme = HTTPBearer(
     scheme_name="Bearer",
@@ -56,3 +56,15 @@ async def verify_request(
         return cast(SucceedVerificationResult, bot_verification_result)
 
     raise IncorrectCredentialsException()
+
+
+def verify_request_with_user_id(
+    verification: Annotated[SucceedVerificationResult, Depends(verify_request)],
+) -> VerificationResultWithUserId:
+    if verification.user_id is None or not verification.success:
+        raise ForbiddenException()
+    return cast(VerificationResultWithUserId, verification)
+
+
+VerifiedDep: TypeAlias = Annotated[SucceedVerificationResult, Depends(verify_request)]
+VerifiedDepWithUserID: TypeAlias = Annotated[VerificationResultWithUserId, Depends(verify_request_with_user_id)]
