@@ -25,12 +25,16 @@ app = FastAPI(root_path=bot_settings.webhook_url)
 async def notify_user_about_booking(booking: BookingInfo, verification: VerifiedDep) -> Response:
     if verification.source != VerificationSource.BOT:
         raise ForbiddenException()
-    seconds_till_booking = (booking.time_start - datetime.datetime.now()).seconds
-    await bot.send_message(
-        booking.telegram_id,
-        f"Don't forget about your booking! It will start in {seconds_till_booking // 60} minutes. "
-        "If you can't attend, please cancel the booking.\n"
-        f"Your booking time: {booking.time_start.strftime("%H:%M")} - {booking.time_end.strftime("%H:%M")}.",
-    )
-    logger.info(f"Notification booking(id={booking.booking_id}), user(id={booking.telegram_id}) sent")
+    datetime_now = datetime.datetime.now()
+    if booking.time_start - datetime_now > datetime.timedelta(seconds=0):
+        seconds_till_booking = (booking.time_start - datetime_now).seconds
+        await bot.send_message(
+            booking.telegram_id,
+            f"Don't forget about your booking! It will start in {seconds_till_booking // 60} minutes. "
+            "If you can't attend, please cancel the booking.\n"
+            f"Your booking time: {booking.time_start.strftime("%H:%M")} - {booking.time_end.strftime("%H:%M")}.",
+        )
+        logger.info(f"Notification booking(id={booking.booking_id}), user(id={booking.telegram_id}) sent")
+    else:
+        logger.info(f"Notification booking(id={booking.booking_id}), user(id={booking.telegram_id}) is outdated")
     return Response(status_code=status.HTTP_200_OK)
