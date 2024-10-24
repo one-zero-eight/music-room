@@ -122,8 +122,8 @@ class TimeRangeWidget(Keyboard):
             timeslots = list(filter(lambda x: datetime.datetime.now().time() <= x, self.timepoints))
 
         none_callback_data = self._item_callback_data("None")
-        room_was_booked_for_half_past_10pm = False
-        booker_of_room_for_half_past_10pm = None
+        room_was_booked_for_10pm = False
+        booker_of_room_for_10pm = None
         for timepoint in timeslots:
             time_text = timepoint.strftime("%H:%M")
             time_callback_data = self._item_callback_data(time_text)
@@ -143,36 +143,34 @@ class TimeRangeWidget(Keyboard):
                 else:
                     assert_never(timepoint)
                 keyboard_builer.button(text=text, callback_data=time_callback_data)
-            elif available and not blocked and (timepoint.hour != 23 or endpoint_time_selected):
+            elif (
+                available and not blocked and ((timepoint.hour, timepoint.minute) != (22, 30) or endpoint_time_selected)
+            ):
                 keyboard_builer.button(text=time_text, callback_data=time_callback_data)
             elif booked_by_someone:
                 booking = already_booked_timepoints[timepoint]
 
-                if timepoint.hour == 22 and timepoint.minute == 30:
-                    room_was_booked_for_half_past_10pm = True
-                    booker_of_room_for_half_past_10pm = booking["user_alias"]
+                if timepoint.hour == 22 and timepoint.minute == 00:
+                    room_was_booked_for_10pm = True
+                    booker_of_room_for_10pm = booking["user_alias"]
 
                 booked_by_alias = booking["user_alias"]
                 if booked_by_alias == manager.event.from_user.username:
                     keyboard_builer.button(text="🟢", callback_data=none_callback_data)
                 else:
                     keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
-            elif timepoint.hour == 23 and room_was_booked_for_half_past_10pm:
-                if booker_of_room_for_half_past_10pm == manager.event.from_user.username:
+            elif timepoint.hour == 22 and timepoint.minute == 30 and room_was_booked_for_10pm:
+                if booker_of_room_for_10pm == manager.event.from_user.username:
                     keyboard_builer.button(text="🟢", callback_data=none_callback_data)
                 else:
                     keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
-            elif timepoint.hour == 23:
-                break
+            elif timepoint.hour == 22 and timepoint.minute == 30 and available:
+                keyboard_builer.button(text=time_text, callback_data=none_callback_data)
             else:
                 keyboard_builer.button(
                     text=" ",
                     callback_data=self._item_callback_data("None"),
                 )
-        else:
-            if timeslots:
-                for i in range(3):
-                    keyboard_builer.button(text=" ", callback_data=none_callback_data)
         return keyboard_builer.export()
 
     async def _process_item_callback(
@@ -201,6 +199,11 @@ class TimeRangeWidget(Keyboard):
         # add or remove timeslot
 
         endpoint_timepoints = self.get_widget_data(manager, [])
+
+        if clicked_timepoint == "22:30" and not endpoint_timepoints:
+            await callback.answer("Музкомнату можно бронировать только до 22:30", show_alert=True)
+            return False
+
         if clicked_timepoint in endpoint_timepoints:
             endpoint_timepoints.remove(clicked_timepoint)
         else:
