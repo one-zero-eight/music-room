@@ -143,9 +143,7 @@ class TimeRangeWidget(Keyboard):
                 else:
                     assert_never(timepoint)
                 keyboard_builer.button(text=text, callback_data=time_callback_data)
-            elif (
-                available and not blocked and ((timepoint.hour, timepoint.minute) != (22, 30) or endpoint_time_selected)
-            ):
+            elif available and not blocked and (timepoint.hour, timepoint.minute) != (22, 30):
                 keyboard_builer.button(text=time_text, callback_data=time_callback_data)
             elif booked_by_someone:
                 booking = already_booked_timepoints[timepoint]
@@ -159,13 +157,14 @@ class TimeRangeWidget(Keyboard):
                     keyboard_builer.button(text="🟢", callback_data=none_callback_data)
                 else:
                     keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
-            elif timepoint.hour == 22 and timepoint.minute == 30 and room_was_booked_for_10pm:
-                if booker_of_room_for_10pm == manager.event.from_user.username:
-                    keyboard_builer.button(text="🟢", callback_data=none_callback_data)
-                else:
-                    keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
-            elif timepoint.hour == 22 and timepoint.minute == 30 and available:
-                keyboard_builer.button(text=time_text, callback_data=none_callback_data)
+            elif timepoint.hour == 22 and timepoint.minute == 30:
+                if room_was_booked_for_10pm:
+                    if booker_of_room_for_10pm == manager.event.from_user.username:
+                        keyboard_builer.button(text="🟢", callback_data=none_callback_data)
+                    else:
+                        keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
+                elif available and not blocked:
+                    keyboard_builer.button(text=time_text, callback_data=time_callback_data)
             else:
                 keyboard_builer.button(
                     text=" ",
@@ -189,6 +188,7 @@ class TimeRangeWidget(Keyboard):
         :return: True if processed
         """
         widget_data = self.get_widget_data(manager, [])
+
         if data == "None":
             if widget_data:
                 self.set_widget_data(manager, [])
@@ -200,8 +200,8 @@ class TimeRangeWidget(Keyboard):
 
         endpoint_timepoints = self.get_widget_data(manager, [])
 
-        if clicked_timepoint == "22:30" and not endpoint_timepoints:
-            await callback.answer("Музкомнату можно бронировать только до 22:30", show_alert=True)
+        if data == "22:30" and not endpoint_timepoints:
+            await callback.answer("Music Room can be booked till 22:30 only!", True)
             return False
 
         if clicked_timepoint in endpoint_timepoints:
