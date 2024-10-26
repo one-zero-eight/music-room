@@ -7,6 +7,7 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from src.exceptions import ForbiddenException, IncorrectCredentialsException, NoCredentialsException
 from src.repositories.auth.repository import TokenRepository
+from src.repositories.users.repository import user_repository
 from src.schemas.auth import SucceedVerificationResult, VerificationResultWithUserId
 
 bearer_scheme = HTTPBearer(
@@ -48,12 +49,17 @@ async def verify_request(
     if bot_verification_result.success:
         if bot_verification_result.telegram_id is not None:
             # add user_id to the result
-            from src.repositories.users.repository import user_repository
-
             bot_verification_result.user_id = await user_repository.get_user_id(
                 telegram_id=bot_verification_result.telegram_id
             )
         return cast(SucceedVerificationResult, bot_verification_result)
+
+    user_verification_result = await TokenRepository.verify_user_token(bearer.credentials)
+    if user_verification_result.success:
+        user_verification_result.user_id = await user_repository.get_user_id(
+            telegram_id=user_verification_result.telegram_id
+        )
+        return cast(SucceedVerificationResult, user_verification_result)
 
     raise IncorrectCredentialsException()
 
