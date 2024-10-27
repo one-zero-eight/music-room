@@ -3,6 +3,7 @@ from typing import Any
 from aiogram import Bot, Dispatcher
 from aiogram.dispatcher.event.bases import UNHANDLED
 from aiogram.types import CallbackQuery, Message, Update, User
+from aiogram.utils.i18n import gettext as _
 
 from src.bot.logging_ import logger
 
@@ -12,7 +13,7 @@ class CustomDispatcher(Dispatcher):
     async def _send_dunno_message(self, bot: Bot, chat_id: int):
         await bot.send_message(
             chat_id,
-            "⚡️ I don't understand you. Please, use /start command.",
+            _("⚡️ I don't understand you. Please, use /start command."),
         )
 
     async def _listen_update(self, update: Update, **kwargs) -> Any:

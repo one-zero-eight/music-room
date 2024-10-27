@@ -7,6 +7,8 @@ from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
 from aiogram.types import BufferedInputFile, ErrorEvent
+from aiogram.utils.i18n import I18n
+from aiogram.utils.i18n.middleware import SimpleI18nMiddleware
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent
 
@@ -14,6 +16,7 @@ import src.bot.logging_  # noqa: F401
 from src.bot.api import api_client
 from src.bot.constants import bot_commands, bot_description, bot_name, bot_short_description
 from src.bot.dispatcher import CustomDispatcher
+from src.bot.i18n import make_i18n_middleware
 from src.bot.logging_ import logger
 from src.bot.middlewares import LogAllEventsMiddleware
 from src.config import bot_settings, settings
@@ -27,7 +30,18 @@ if bot_settings.redis_url:
 else:
     storage = MemoryStorage()
     logger.info("Using Memory storage")
+
 dp = CustomDispatcher(storage=storage)
+i18n = I18n(path="locales", default_locale="en", domain="messages")
+dialog_i18n_middleware = make_i18n_middleware()
+i18n_middleware = SimpleI18nMiddleware(i18n)
+
+dp.message.outer_middleware(i18n_middleware)
+dp.callback_query.outer_middleware(i18n_middleware)
+
+dp.message.middleware(dialog_i18n_middleware)
+dp.callback_query.middleware(dialog_i18n_middleware)
+
 log_all_events_middleware = LogAllEventsMiddleware()
 dp.message.middleware(log_all_events_middleware)
 dp.callback_query.middleware(log_all_events_middleware)

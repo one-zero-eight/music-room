@@ -29,6 +29,8 @@ redis = "^5.1.0"
 ruff = "^0.6.8"
 sqlalchemy = "^2.0.23"
 uvicorn = "^0.31.0"
+babel = "^2.16.0"
+fluent-runtime = "^0.4.0"
 
 [tool.ruff]
 line-length = 120

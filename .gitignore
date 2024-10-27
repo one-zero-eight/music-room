@@ -15,3 +15,6 @@ public.pem
 
 ### OS ###
 .DS_Store
+
+### Compiled translations ###
+*.mo

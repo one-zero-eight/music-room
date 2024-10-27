@@ -1,4 +1,5 @@
 from aiogram import types
+from aiogram.utils.i18n import lazy_gettext as __
 
 from src.config import bot_settings
 
@@ -21,7 +22,7 @@ admin_commands = [
     types.BotCommand(command="/export_users", description="Export users in docx format"),
 ]
 
-rules_message = (
+rules_message = __(
     "After you have crossed the threshold of the room, you must follow the rules described below. In case of "
     "non-compliance, you would be permanently banned from the music room and all corresponding resources.\n\n"
     "🚫 Do not remove property from the room.\n"
@@ -35,8 +36,10 @@ rules_message = (
     "to teach or help you with it.\n"
     "⚠️ Unnecessarily, do not move the equipment.\n"
 )
-rules_confirmation_message = """I agree to and will abide by the stated rules."""
+rules_confirmation_message = __("""I agree to and will abide by the stated rules.""")
 
-create_booking_message = "Create a booking"
-my_bookings_message = "My bookings"
-image_schedule_message = "Show the image with bookings"
+create_booking_message = __("Create a booking")
+my_bookings_message = __("My bookings")
+image_schedule_message = __("Show the image with bookings")
+
+DIALOG_I18N_FORMAT_KEY = "dialog_i18n_format"

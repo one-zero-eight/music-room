@@ -3,6 +3,7 @@ from typing import Any
 from aiogram import Bot, Router, types
 from aiogram.filters import Command, Filter
 from aiogram.types import BotCommandScopeChat, BufferedInputFile, TelegramObject, User
+from aiogram.utils.i18n import gettext as _
 
 from src.bot.api import UserStatus, api_client
 from src.bot.constants import admin_commands, bot_commands
@@ -29,7 +30,7 @@ class StatusFilter(Filter):
 
 @router.message(Command("admin"), StatusFilter(UserStatus.LORD))
 async def enable_admin_mode(message: types.Message, bot: Bot):
-    text = "You are the Lord of the Music Room! You can use the following commands:"
+    text = _("You are the Lord of the Music Room! You can use the following commands:")
 
     for command in admin_commands:
         text += f"\n{command.command} - {command.description}"
@@ -47,6 +48,6 @@ async def export_users(message: types.Message):
     if response:
         bytes_, filename = response
         document = BufferedInputFile(bytes_, filename)
-        await message.answer_document(document, caption="Here is the list of users.")
+        await message.answer_document(document, caption=_("Here is the list of users."))
     else:
-        await message.answer("Failed to export users.")
+        await message.answer(_("Failed to export users."))

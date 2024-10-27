@@ -4,6 +4,7 @@ from aiogram import F, types
 from aiogram.filters import Command
 from aiogram.fsm.state import any_state
 from aiogram.types import Message
+from aiogram.utils.i18n import gettext as _
 
 from src.bot import constants
 from src.bot.api import api_client
@@ -19,11 +20,11 @@ async def show_my_bookings(message: Message):
     bookings = [entry for entry in bookings if datetime.now() < datetime.fromisoformat(entry["time_end"])]
 
     if not bookings:
-        await message.answer("You don't have active bookings.")
+        await message.answer(_("You don't have active bookings."))
     else:
         bookings = [_get_pretty_datetime(entry) for entry in bookings]
         await message.answer(
-            "Your active bookings:",
+            _("Your active bookings:"),
             reply_markup=await _create_inline_keyboard(bookings),
         )
 
@@ -54,14 +55,14 @@ async def handle_delete_callback(callback_query: types.CallbackQuery, callback_d
     booking_id = callback_data.id
     response = await api_client.delete_booking(booking_id, callback_query.from_user.id)
     if response:
-        await callback_query.answer(text="You have successfully cancel the booking")
+        await callback_query.answer(text=_("You have successfully cancel the booking"))
         inline_keyboard = callback_query.message.reply_markup.inline_keyboard
         edited = False
         for i, row in enumerate(inline_keyboard):
             for j, button in enumerate(row):
                 if button.callback_data == callback_data.pack():
                     inline_keyboard[i][j] = types.InlineKeyboardButton(
-                        text="Cancelled",
+                        text=_("Cancelled"),
                         callback_data=MyBookingsCallbackData(id=booking_id, key="none").pack(),
                     )
                     edited = True
@@ -72,7 +73,7 @@ async def handle_delete_callback(callback_query: types.CallbackQuery, callback_d
             )
 
     else:
-        await callback_query.answer(text="No such booking found")
+        await callback_query.answer(text=_("No such booking found"))
 
 
 @router.callback_query(MyBookingsCallbackData.filter(F.key == "none"))

@@ -1,0 +1,181 @@
+# Translations template for PROJECT.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-10-27 19:59+0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: src/bot/constants.py:25
+msgid ""
+"After you have crossed the threshold of the room, you must follow the "
+"rules described below. In case of non-compliance, you would be "
+"permanently banned from the music room and all corresponding resources.\n"
+"\n"
+"🚫 Do not remove property from the room.\n"
+"🚫 Do not bring any food and/or drinks into the room. In case you really "
+"need to eat or drink, you can do it outside the room.\n"
+"🚫 Don't leave trash in the room. There is no trash bin in the room, the "
+"nearest one is located right at the entrance of the sports complex.\n"
+"🚫 Do not fix instruments if they are broken (including broken strings on "
+"guitars). It's better to report this in the chat so that the technician "
+"can repair them in the future.\n"
+"⚠️ If you don't know how to tune the instrument, don't do it yourself. "
+"Find someone who knows and ask him/her to teach or help you with it.\n"
+"⚠️ Unnecessarily, do not move the equipment.\n"
+msgstr ""
+
+#: src/bot/constants.py:39
+msgid "I agree to and will abide by the stated rules."
+msgstr ""
+
+#: src/bot/constants.py:41
+msgid "Create a booking"
+msgstr ""
+
+#: src/bot/constants.py:42
+msgid "My bookings"
+msgstr ""
+
+#: src/bot/constants.py:43
+msgid "Show the image with bookings"
+msgstr ""
+
+#: src/bot/dispatcher.py:16
+msgid "⚡️ I don't understand you. Please, use /start command."
+msgstr ""
+
+#: src/bot/menu.py:27
+msgid "Instructions"
+msgstr ""
+
+#: src/bot/menu.py:28
+msgid "Location"
+msgstr ""
+
+#: src/bot/menu.py:31
+msgid "Telegram chat"
+msgstr ""
+
+#: src/bot/routers/admin.py:33
+msgid "You are the Lord of the Music Room! You can use the following commands:"
+msgstr ""
+
+#: src/bot/routers/admin.py:51
+msgid "Here is the list of users."
+msgstr ""
+
+#: src/bot/routers/admin.py:53
+msgid "Failed to export users."
+msgstr ""
+
+#: src/bot/routers/registration.py:26
+msgid "To continue, you need to fill in your telegram username"
+msgstr ""
+
+#: src/bot/routers/registration.py:43
+msgid "Connect"
+msgstr ""
+
+#: src/bot/routers/registration.py:46
+msgid "Connect your telegram"
+msgstr ""
+
+#: src/bot/routers/registration.py:57
+msgid "I have connected telegram to InNoHassle account."
+msgstr ""
+
+#: src/bot/routers/registration.py:67
+msgid ""
+"To continue, you need to connect your Telegram account to the InNoHassle "
+"account."
+msgstr ""
+
+#: src/bot/routers/registration.py:74
+msgid "If you have already connected your account, just press the button."
+msgstr ""
+
+#: src/bot/routers/registration.py:81 src/bot/routers/start_help_menu.py:14
+msgid "Welcome! Choose the action you're interested in."
+msgstr ""
+
+#: src/bot/routers/registration.py:104
+msgid ""
+"You have successfully registered.\n"
+"\n"
+"❗️ Access to the Sports Complex will appear after submitting the list of "
+"users (usually on Monday)."
+msgstr ""
+
+#: src/bot/routers/registration.py:113 src/bot/routers/start_help_menu.py:20
+msgid ""
+"If you have any questions, you can ask them in the chat or read the "
+"instructions."
+msgstr ""
+
+#: src/bot/routers/registration.py:119
+msgid "You haven't confirmed the rules. Please, try again."
+msgstr ""
+
+#: src/bot/routers/schedule.py:28
+msgid "Next week"
+msgstr ""
+
+#: src/bot/routers/schedule.py:43 src/bot/routers/schedule.py:74
+msgid "Sending image for the current week..."
+msgstr ""
+
+#: src/bot/routers/schedule.py:47
+msgid "Do you want to see bookings for the next week?"
+msgstr ""
+
+#: src/bot/routers/schedule.py:76
+msgid "Sending image for the next week..."
+msgstr ""
+
+#: src/bot/routers/start_help_menu.py:29
+msgid "Choose the action you're interested in."
+msgstr ""
+
+#: src/bot/routers/booking/create_booking_routes.py:48
+msgid "You must choose both start and end time"
+msgstr ""
+
+#: src/bot/routers/booking/create_booking_routes.py:56
+msgid "You have successfully booked on <b>{date}, {timeslot}</b>."
+msgstr ""
+
+#: src/bot/routers/booking/create_booking_routes.py:60
+msgid "Error occurred: {error}"
+msgstr ""
+
+#: src/bot/routers/booking/my_bookings_routes.py:23
+msgid "You don't have active bookings."
+msgstr ""
+
+#: src/bot/routers/booking/my_bookings_routes.py:27
+msgid "Your active bookings:"
+msgstr ""
+
+#: src/bot/routers/booking/my_bookings_routes.py:58
+msgid "You have successfully cancel the booking"
+msgstr ""
+
+#: src/bot/routers/booking/my_bookings_routes.py:65
+msgid "Cancelled"
+msgstr ""
+
+#: src/bot/routers/booking/my_bookings_routes.py:76
+msgid "No such booking found"
+msgstr ""

@@ -7,6 +7,7 @@ from aiogram.filters import Command
 from aiogram.filters.callback_data import CallbackData
 from aiogram.fsm.state import any_state
 from aiogram.types import BufferedInputFile
+from aiogram.utils.i18n import gettext as _
 
 from src.bot import constants
 from src.bot.api import api_client
@@ -19,16 +20,18 @@ class ImageScheduleCallbackData(CallbackData, prefix="schedule"):
     key: str
 
 
-image_schedule_kb = types.InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            types.InlineKeyboardButton(
-                text="Next week",
-                callback_data=ImageScheduleCallbackData(key="next_week").pack(),
-            ),
+def get_image_schedule_kb() -> types.InlineKeyboardMarkup:
+    image_schedule_kb = types.InlineKeyboardMarkup(
+        inline_keyboard=[
+            [
+                types.InlineKeyboardButton(
+                    text=_("Next week"),
+                    callback_data=ImageScheduleCallbackData(key="next_week").pack(),
+                ),
+            ]
         ]
-    ]
-)
+    )
+    return image_schedule_kb
 
 
 @router.message(any_state, Command("image_schedule"))
@@ -37,12 +40,12 @@ async def get_image_schedule(message: types.Message):
     start_of_week = get_start_of_week()
     image_bytes = await api_client.get_image_schedule(start_of_week)
     photo = BufferedInputFile(image_bytes, "schedule.png")
-    await message.answer("Sending image for the current week...")
+    await message.answer(_("Sending image for the current week..."))
     await message.answer_photo(photo=photo)
     await asyncio.sleep(0.1)
     await message.answer(
-        text="Do you want to see bookings for the next week?",
-        reply_markup=image_schedule_kb,
+        text=_("Do you want to see bookings for the next week?"),
+        reply_markup=get_image_schedule_kb(),
     )
 
 
@@ -68,9 +71,9 @@ async def get_image_schedule_for_current_week(callback: types.CallbackQuery):
     image_bytes = await api_client.get_image_schedule(start_of_week)
     photo = BufferedInputFile(image_bytes, "schedule.png")
     if choice == "schedule:current_week":
-        await callback.message.answer("Sending image for the current week...")
+        await callback.message.answer(_("Sending image for the current week..."))
     else:
-        await callback.message.answer("Sending image for the next week...")
+        await callback.message.answer(_("Sending image for the next week..."))
     await callback.bot.send_photo(chat_id=chat_id, photo=photo)
     try:
         await callback.message.delete()

@@ -3,12 +3,14 @@ import inspect
 import logging
 import os
 from collections.abc import Awaitable, Callable
-from typing import Any
+from typing import Any, Dict, Union
 
 from aiogram import BaseMiddleware
 from aiogram.dispatcher.event.handler import HandlerObject
 from aiogram.types import CallbackQuery, Message, TelegramObject
+from fluent.runtime import FluentLocalization
 
+from src.bot.constants import DIALOG_I18N_FORMAT_KEY
 from src.bot.logging_ import logger
 
 
@@ -78,3 +80,34 @@ class LogAllEventsMiddleware(BaseMiddleware):
         )
         record.relativePath = os.path.relpath(record.pathname)
         return record
+
+
+# That middleware used specifically for aiogram_dialog,
+# since it does not support usual aiogram i18n
+class DialogI18nMiddleware(BaseMiddleware):
+    def __init__(
+        self,
+        l10ns: Dict[str, FluentLocalization],
+        default_lang: str,
+    ):
+        super().__init__()
+        self.l10ns = l10ns
+        self.default_lang = default_lang
+
+    async def __call__(
+        self,
+        handler: Callable[
+            [Union[Message, CallbackQuery], Dict[str, Any]],
+            Awaitable[Any],
+        ],
+        event: Union[Message, CallbackQuery],
+        data: Dict[str, Any],
+    ) -> Any:
+        lang = self.default_lang
+        if event.from_user:
+            lang = event.from_user.language_code
+
+        l10n = self.l10ns[lang]
+        data[DIALOG_I18N_FORMAT_KEY] = l10n.format_value
+
+        return await handler(event, data)
