@@ -57,12 +57,12 @@ class TokenRepository:
                 return VerificationResult(success=False)
             user_data = await innohassle_accounts.get_user_by_innohassle_id(innohassle_id)
             if user_data is None:
-                raise VerificationResult(success=False)
+                return VerificationResult(success=False)
             if user_data.telegram is None:
-                raise VerificationResult(success=False)
+                return VerificationResult(success=False)
             return VerificationResult(success=True, telegram_id=user_data.telegram.id)
         except JoseError:
-            raise VerificationResult(success=False)
+            return VerificationResult(success=False)
 
     @classmethod
     def verify_api_token(cls, auth_token: str) -> VerificationResult:
