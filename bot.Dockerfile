@@ -57,6 +57,7 @@ RUN groupadd -g 1500 poetry && \
 COPY --chown=poetry:poetry . /code
 USER poetry
 WORKDIR /code
+RUN pybabel compile -d locales -D messages
 
 LABEL org.opencontainers.image.source="https://github.com/one-zero-eight/music-room"
 

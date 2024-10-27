@@ -10,6 +10,7 @@
 !/poetry.lock
 !/logging-api.yaml
 !/logging-bot.yaml
+!/locales
 
 # And ignore cache files in the code
 __pycache__
