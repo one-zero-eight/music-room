@@ -37,6 +37,9 @@ class Accounts(BaseModel):
 
 class ApiSettings(BaseModel):
     app_root_path: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
+    cors_allow_origin_regex: str = ".*"
+    "Allowed origins for CORS: from which domains requests to the API are allowed. Specify as a regex: `https://.*.innohassle.ru`"
+
     db_url: str = Field(
         "postgresql+asyncpg://postgres:postgres@localhost:5433/postgres",
         example="postgresql+asyncpg://user:password@localhost:5433/db_name",

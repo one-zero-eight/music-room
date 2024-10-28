@@ -31,6 +31,10 @@ $defs:
         description: Prefix for the API path (e.g. "/api/v0")
         title: App Root Path
         type: string
+      cors_allow_origin_regex:
+        default: .*
+        title: Cors Allow Origin Regex
+        type: string
       db_url:
         default: postgresql+asyncpg://postgres:postgres@localhost:5433/postgres
         example: postgresql+asyncpg://user:password@localhost:5433/db_name

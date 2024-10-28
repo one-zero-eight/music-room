@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi_swagger import patch_fastapi
+from starlette.middleware.cors import CORSMiddleware
 
 import src.api.logging_  # noqa: F401
 from src.api import docs
@@ -36,6 +37,15 @@ app = FastAPI(
 )
 
 patch_fastapi(app)
+
+# CORS settings
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=api_settings.cors_allow_origin_regex,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 from src.api.auth.routes import router as router_auth  # noqa: E402
 from src.api.bookings.routes import router as router_booking  # noqa: E402
