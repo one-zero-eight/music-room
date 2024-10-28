@@ -29,7 +29,7 @@ def _calendar_baseline():
 def _booking_to_vevent(booking, is_personal=False):
     string_to_hash = str(booking.id)
     hash_ = crc32(string_to_hash.encode("utf-8"))
-    uid = "music-room-%x@innohassle.ru" % abs(hash_)
+    uid = f"music-room-{abs(hash_):x}@innohassle.ru"
 
     vevent = icalendar.Event()
     vevent.add("uid", uid)
