@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, Protocol
+from typing import Any, Dict, List, Protocol
 
 from aiogram_dialog.api.protocols import DialogManager
 from aiogram_dialog.widgets.common import WhenCondition
@@ -8,9 +8,6 @@ from fluent.runtime import FluentLocalization, FluentResourceLoader
 
 from src.bot.constants import DIALOG_I18N_FORMAT_KEY
 from src.bot.middlewares import DialogI18nMiddleware
-
-DEFAULT_LOCALE = "en"
-LOCALES = ["en", "ru"]
 
 
 class Values(Protocol):
@@ -35,7 +32,7 @@ def default_format_text(text: str, data: Values) -> str:
     return text.format_map(data)
 
 
-def make_i18n_middleware():
+def make_i18n_middleware(locales: List[str], default_locale: str = "en"):
     loader = FluentResourceLoader(
         os.path.join(
             os.getcwd(),
@@ -46,10 +43,10 @@ def make_i18n_middleware():
     )
     l10ns = {
         locale: FluentLocalization(
-            [locale, DEFAULT_LOCALE],
+            [locale, default_locale],
             ["dialog.ftl"],
             loader,
         )
-        for locale in LOCALES
+        for locale in locales
     }
-    return DialogI18nMiddleware(l10ns, DEFAULT_LOCALE)
+    return DialogI18nMiddleware(l10ns, default_locale)

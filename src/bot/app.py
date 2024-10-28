@@ -32,16 +32,6 @@ else:
     logger.info("Using Memory storage")
 
 dp = CustomDispatcher(storage=storage)
-i18n = I18n(path="locales", default_locale="en", domain="messages")
-dialog_i18n_middleware = make_i18n_middleware()
-i18n_middleware = SimpleI18nMiddleware(i18n)
-
-dp.message.outer_middleware(i18n_middleware)
-dp.callback_query.outer_middleware(i18n_middleware)
-
-dp.message.middleware(dialog_i18n_middleware)
-dp.callback_query.middleware(dialog_i18n_middleware)
-
 log_all_events_middleware = LogAllEventsMiddleware()
 dp.message.middleware(log_all_events_middleware)
 dp.callback_query.middleware(log_all_events_middleware)
@@ -65,6 +55,12 @@ dp.include_router(router_bookings)  # everything about bookings (create, show, e
 dp.include_router(router_image_schedule)  # schedule commands (show image)
 
 setup_dialogs(dp)
+
+i18n = I18n(path="locales", default_locale="en", domain="messages")
+dialog_i18n_middleware = make_i18n_middleware(locales=["ru", "en"], default_locale="en")
+i18n_middleware = SimpleI18nMiddleware(i18n)
+i18n_middleware.setup(dp)
+dialog_i18n_middleware.setup(dp)
 
 
 async def receptionist_notifications_loop():

@@ -24,7 +24,7 @@ from src.bot.routers.booking.widgets.time_range import TimeRangeWidget
 async def start_booking(_message: Message, dialog_manager: DialogManager):
     await dialog_manager.start(
         CreateBookingStates.choose_date,
-        mode=StartMode.RESET_STACK,
+        mode=StartMode.NEW_STACK,
     )
 
 

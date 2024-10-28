@@ -2,10 +2,10 @@ import asyncio
 import inspect
 import logging
 import os
-from collections.abc import Awaitable, Callable
-from typing import Any, Dict, Union
+from collections.abc import Awaitable, Callable, Set
+from typing import Any, Dict, Optional, Union
 
-from aiogram import BaseMiddleware
+from aiogram import BaseMiddleware, Router
 from aiogram.dispatcher.event.handler import HandlerObject
 from aiogram.types import CallbackQuery, Message, TelegramObject
 from fluent.runtime import FluentLocalization
@@ -111,3 +111,20 @@ class DialogI18nMiddleware(BaseMiddleware):
         data[DIALOG_I18N_FORMAT_KEY] = l10n.format_value
 
         return await handler(event, data)
+
+    def setup(
+        self: BaseMiddleware,
+        router: Router,
+        exclude: Optional[Set[str]] = None,
+    ) -> BaseMiddleware:
+        """
+        Register middleware for all events in the Router
+        """
+        if exclude is None:
+            exclude = set()
+        exclude_events = {"update", *exclude}
+        for event_name, observer in router.observers.items():
+            if event_name in exclude_events:
+                continue
+            observer.outer_middleware(self)
+        return self
