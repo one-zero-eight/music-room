@@ -20,7 +20,9 @@ from src.bot.routers.booking.widgets.time_range import TimeRangeWidget
 
 
 @router.message(any_state, Command("create_booking"))
-@router.message(any_state, F.text == constants.create_booking_message)
+@router.message(
+    any_state, (F.text == constants.create_booking_message) | (F.text == constants.create_booking_message_en)
+)
 async def start_booking(_message: Message, dialog_manager: DialogManager):
     await dialog_manager.start(
         CreateBookingStates.choose_date,

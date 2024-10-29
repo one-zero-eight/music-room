@@ -39,7 +39,10 @@ rules_message = __(
 rules_confirmation_message = __("""I agree to and will abide by the stated rules.""")
 
 create_booking_message = __("Create a booking")
+create_booking_message_en = "Create a booking"
 my_bookings_message = __("My bookings")
+my_bookings_message_en = "My bookings"
 image_schedule_message = __("Show the image with bookings")
+image_schedule_message_en = "Show the image with bookings"
 
 DIALOG_I18N_FORMAT_KEY = "dialog_i18n_format"

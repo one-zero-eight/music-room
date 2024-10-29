@@ -35,7 +35,9 @@ def get_image_schedule_kb() -> types.InlineKeyboardMarkup:
 
 
 @router.message(any_state, Command("image_schedule"))
-@router.message(any_state, F.text == constants.image_schedule_message)
+@router.message(
+    any_state, (F.text == constants.image_schedule_message) | (F.text == constants.image_schedule_message_en)
+)
 async def get_image_schedule(message: types.Message):
     start_of_week = get_start_of_week()
     image_bytes = await api_client.get_image_schedule(start_of_week)

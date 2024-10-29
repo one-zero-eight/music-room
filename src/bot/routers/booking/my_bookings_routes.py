@@ -13,7 +13,7 @@ from src.bot.routers.booking.callback_data import MyBookingsCallbackData
 
 
 @router.message(any_state, Command("my_bookings"))
-@router.message(any_state, F.text == constants.my_bookings_message)
+@router.message(any_state, (F.text == constants.my_bookings_message) | (F.text == constants.my_bookings_message_en))
 async def show_my_bookings(message: Message):
     bookings = await api_client.get_user_bookings(message.from_user.id)
     # only future bookings
