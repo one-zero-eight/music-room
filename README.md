@@ -81,6 +81,10 @@ This is the API for music room service in InNoHassle ecosystem.
       db_url: postgresql+asyncpg://postgres:your_password@localhost:5432/innohassle-events
       ```
    </details>
+7. Compile translation (`.po`) files:
+   ```bash
+   poetry run pybabel compile -d locales -D messages
+   ```
 
 **Set up PyCharm integrations**
 
@@ -131,6 +135,29 @@ Now the API is running on http://localhost:8001. Good job!
    ```bash
     poetry run python -m src.bot
     ```
+
+### Localization
+
+**Aiogram:**
+
+1. Extract messages:
+   ```bash
+   poetry run pybabel extract -k __ --input-dirs=. -o locales/messages.pot
+   ```
+2. Initialize languages:
+   ```bash
+   poetry run pybabel init -i locales/messages.pot -d locales -D messages -l en
+   poetry run pybabel init -i locales/messages.pot -d locales -D messages -l ru
+   ```
+3. Translate messages in created `.po` files
+4. Compile translations:
+   ```bash
+   poetry run pybabel compile -d locales -D messages
+   ```
+
+**Aiogram dialog:**
+
+Add translations identifiers (strings inside `I18Format`) and their translations to `.ftl` files
 
 ### Deployment
 
