@@ -40,7 +40,7 @@ def get_image_schedule_kb() -> types.InlineKeyboardMarkup:
 )
 async def get_image_schedule(message: types.Message):
     start_of_week = get_start_of_week()
-    image_bytes = await api_client.get_image_schedule(start_of_week)
+    image_bytes = await api_client.get_image_schedule(start_of_week, message.from_user.id)
     photo = BufferedInputFile(image_bytes, "schedule.png")
     await message.answer(_("Sending image for the current week..."))
     await message.answer_photo(photo=photo)
@@ -70,7 +70,7 @@ async def get_image_schedule_for_current_week(callback: types.CallbackQuery):
     choice = callback.data
     chat_id = callback.from_user.id
     start_of_week = get_start_of_week(choice == "schedule:current_week")
-    image_bytes = await api_client.get_image_schedule(start_of_week)
+    image_bytes = await api_client.get_image_schedule(start_of_week, callback.from_user.id)
     photo = BufferedInputFile(image_bytes, "schedule.png")
     if choice == "schedule:current_week":
         await callback.message.answer(_("Sending image for the current week..."))

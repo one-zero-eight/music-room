@@ -165,6 +165,11 @@ class TimeRangeWidget(Keyboard):
                         keyboard_builer.button(text="🔴", url=f"https://t.me/{booked_by_alias}")
                 elif available and not blocked:
                     keyboard_builer.button(text=time_text, callback_data=time_callback_data)
+                else:
+                    keyboard_builer.button(
+                        text=" ",
+                        callback_data=self._item_callback_data("None"),
+                    )
             else:
                 keyboard_builer.button(
                     text=" ",
