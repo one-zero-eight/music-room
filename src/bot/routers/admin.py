@@ -5,8 +5,9 @@ from aiogram.filters import Command, Filter
 from aiogram.types import BotCommandScopeChat, BufferedInputFile, TelegramObject, User
 from aiogram.utils.i18n import gettext as _
 
-from src.bot.api import UserStatus, api_client
+from src.bot.api import api_client
 from src.bot.constants import admin_commands, bot_commands
+from src.schemas import UserStatus
 
 router = Router(name="admin")
 

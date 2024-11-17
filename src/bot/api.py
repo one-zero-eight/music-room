@@ -1,20 +1,12 @@
 __all__ = ["api_client", "InNoHassleMusicRoomAPI", "UserStatus"]
 
 import datetime
-from enum import StrEnum
 from typing import Any
 
 import httpx
 
 from src.config import bot_settings
-from src.schemas import ViewUser
-
-
-class UserStatus(StrEnum):
-    FREE = "free"
-    MIDDLE = "middle"
-    SENIOR = "senior"
-    LORD = "lord"
+from src.schemas import UserStatus, ViewUser
 
 
 # noinspection PyMethodMayBeStatic
