@@ -12,11 +12,13 @@ from aiogram_dialog.widgets.text import Const
 
 from src.bot import constants
 from src.bot.api import api_client
+from src.bot.constants import ban_message
 from src.bot.i18n import I18NFormat
 from src.bot.routers.booking import router
 from src.bot.routers.booking.states import CreateBookingStates
 from src.bot.routers.booking.widgets.calendar import CustomCalendar
 from src.bot.routers.booking.widgets.time_range import TimeRangeWidget
+from src.schemas import UserStatus
 
 
 @router.message(any_state, Command("create_booking"))
@@ -24,6 +26,10 @@ from src.bot.routers.booking.widgets.time_range import TimeRangeWidget
     any_state, (F.text == constants.create_booking_message) | (F.text == constants.create_booking_message_en)
 )
 async def start_booking(_message: Message, dialog_manager: DialogManager):
+    user = await api_client.get_me(_message.from_user.id)
+    if user.status == UserStatus.BANNED:
+        await _message.answer(str(ban_message))
+        return
     await dialog_manager.start(
         CreateBookingStates.choose_date,
         mode=StartMode.NEW_STACK,

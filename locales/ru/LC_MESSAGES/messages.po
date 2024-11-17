@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-10-26 20:57+0300\n"
-"PO-Revision-Date: 2024-10-26 20:59+0300\n"
+"POT-Creation-Date: 2024-11-17 21:47+0300\n"
+"PO-Revision-Date: 2024-11-17 21:48+0300\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: ru\n"
 "Language-Team: ru <LL@li.org>\n"
@@ -56,21 +56,25 @@ msgstr ""
 msgid "I agree to and will abide by the stated rules."
 msgstr "Я согласен, и буду соблюдать правила"
 
-#: src/bot/constants.py:41
+#: src/bot/constants.py:42
+msgid ""
+"You are banned and can't book the music room. In case you believe it's a "
+"mistake, please contact: @"
+msgstr ""
+"Вы заблокированы и не можете бронировать комнату. Если вы уверены, что это "
+"ошибка, пожалуйста, обратитесь к: @"
+
+#: src/bot/constants.py:45
 msgid "Create a booking"
 msgstr "Забронировать"
 
-#: src/bot/constants.py:42
+#: src/bot/constants.py:47
 msgid "My bookings"
 msgstr "Мои бронирования"
 
-#: src/bot/constants.py:43
+#: src/bot/constants.py:49
 msgid "Show the image with bookings"
 msgstr "Показать изображение с бронированиями"
-
-#: src/bot/dispatcher.py:16
-msgid "⚡️ I don't understand you. Please, use /start command."
-msgstr "⚡️ Я не понимаю вас. Пожалуйста используйте команду /start"
 
 #: src/bot/menu.py:27
 msgid "Instructions"
@@ -84,15 +88,15 @@ msgstr "Местоположение"
 msgid "Telegram chat"
 msgstr "Telegram чат"
 
-#: src/bot/routers/admin.py:33
+#: src/bot/routers/admin.py:34
 msgid "You are the Lord of the Music Room! You can use the following commands:"
 msgstr "Вы Лорд музыкальной комнаты! Вы можете использовать следующие команды:"
 
-#: src/bot/routers/admin.py:51
+#: src/bot/routers/admin.py:52
 msgid "Here is the list of users."
 msgstr "Вот список пользователей."
 
-#: src/bot/routers/admin.py:53
+#: src/bot/routers/admin.py:54
 msgid "Failed to export users."
 msgstr "Не удалось экспортировать список пользователей"
 
@@ -152,15 +156,15 @@ msgstr "Вы не подтвердили согласие с правилами.
 msgid "Next week"
 msgstr "Следующая неделя"
 
-#: src/bot/routers/schedule.py:43 src/bot/routers/schedule.py:74
+#: src/bot/routers/schedule.py:45 src/bot/routers/schedule.py:76
 msgid "Sending image for the current week..."
 msgstr "Отправляю изображение для этой недели..."
 
-#: src/bot/routers/schedule.py:47
+#: src/bot/routers/schedule.py:49
 msgid "Do you want to see bookings for the next week?"
 msgstr "Вы хотите увидеть бронирования на следующей неделе?"
 
-#: src/bot/routers/schedule.py:76
+#: src/bot/routers/schedule.py:78
 msgid "Sending image for the next week..."
 msgstr "Отправляю изображение для следующей недели..."
 
@@ -168,15 +172,15 @@ msgstr "Отправляю изображение для следующей не
 msgid "Choose the action you're interested in."
 msgstr "Выберите действие"
 
-#: src/bot/routers/booking/create_booking_routes.py:47
+#: src/bot/routers/booking/create_booking_routes.py:56
 msgid "You must choose both start and end time"
 msgstr "Вы должны выбрать время начала и окончания бронирования"
 
-#: src/bot/routers/booking/create_booking_routes.py:55
+#: src/bot/routers/booking/create_booking_routes.py:64
 msgid "You have successfully booked on <b>{date}, {timeslot}</b>."
 msgstr "Вы успешно забронировали комнату на <b>{date}, {timeslot}</b>."
 
-#: src/bot/routers/booking/create_booking_routes.py:59
+#: src/bot/routers/booking/create_booking_routes.py:70
 msgid "Error occurred: {error}"
 msgstr "Возникла ошибка: {error}"
 

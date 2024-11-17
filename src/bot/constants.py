@@ -38,6 +38,11 @@ rules_message = __(
 )
 rules_confirmation_message = __("""I agree to and will abide by the stated rules.""")
 
+# TODO: Specify contact information or change message
+ban_message = __(
+    "You are banned and can't book the music room. In case you believe it's a mistake, " "please contact: @"
+)
+
 create_booking_message = __("Create a booking")
 create_booking_message_en = "Create a booking"
 my_bookings_message = __("My bookings")

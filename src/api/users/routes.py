@@ -32,6 +32,7 @@ async def get_list_of_all_users(verified: VerifiedDep, as_bot: bool = False):
             raise ForbiddenException()
 
     users = await user_repository.get_all_users()
+    users = list(filter(lambda u: u.status != UserStatus.BANNED, users))
     users.sort(key=lambda x: x.name or "")
 
     document: Document = create_docx()

@@ -4,12 +4,15 @@ from pydantic import BaseModel, ConfigDict
 
 
 class UserStatus(StrEnum):
+    BANNED = "banned"
     FREE = "free"
     MIDDLE = "middle"
     SENIOR = "senior"
     LORD = "lord"
 
     def max_hours_to_book_per_day(self) -> int | None:
+        if self == UserStatus.BANNED:
+            return 0
         if self == UserStatus.FREE:
             return 2
         elif self == UserStatus.MIDDLE:
@@ -21,6 +24,8 @@ class UserStatus(StrEnum):
         return None
 
     def max_hours_to_book_per_week(self) -> int | None:
+        if self == UserStatus.BANNED:
+            return 0
         if self == UserStatus.FREE:
             return 4
         elif self == UserStatus.MIDDLE:

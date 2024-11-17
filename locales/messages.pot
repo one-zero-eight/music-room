@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-10-27 19:59+0300\n"
+"POT-Creation-Date: 2024-11-17 21:47+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,20 +40,22 @@ msgstr ""
 msgid "I agree to and will abide by the stated rules."
 msgstr ""
 
-#: src/bot/constants.py:41
+#: src/bot/constants.py:42
+msgid ""
+"You are banned and can't book the music room. In case you believe it's a "
+"mistake, please contact: @"
+msgstr ""
+
+#: src/bot/constants.py:45
 msgid "Create a booking"
 msgstr ""
 
-#: src/bot/constants.py:42
+#: src/bot/constants.py:47
 msgid "My bookings"
 msgstr ""
 
-#: src/bot/constants.py:43
+#: src/bot/constants.py:49
 msgid "Show the image with bookings"
-msgstr ""
-
-#: src/bot/dispatcher.py:16
-msgid "⚡️ I don't understand you. Please, use /start command."
 msgstr ""
 
 #: src/bot/menu.py:27
@@ -68,15 +70,15 @@ msgstr ""
 msgid "Telegram chat"
 msgstr ""
 
-#: src/bot/routers/admin.py:33
+#: src/bot/routers/admin.py:34
 msgid "You are the Lord of the Music Room! You can use the following commands:"
 msgstr ""
 
-#: src/bot/routers/admin.py:51
+#: src/bot/routers/admin.py:52
 msgid "Here is the list of users."
 msgstr ""
 
-#: src/bot/routers/admin.py:53
+#: src/bot/routers/admin.py:54
 msgid "Failed to export users."
 msgstr ""
 
@@ -132,15 +134,15 @@ msgstr ""
 msgid "Next week"
 msgstr ""
 
-#: src/bot/routers/schedule.py:43 src/bot/routers/schedule.py:74
+#: src/bot/routers/schedule.py:45 src/bot/routers/schedule.py:76
 msgid "Sending image for the current week..."
 msgstr ""
 
-#: src/bot/routers/schedule.py:47
+#: src/bot/routers/schedule.py:49
 msgid "Do you want to see bookings for the next week?"
 msgstr ""
 
-#: src/bot/routers/schedule.py:76
+#: src/bot/routers/schedule.py:78
 msgid "Sending image for the next week..."
 msgstr ""
 
@@ -148,15 +150,15 @@ msgstr ""
 msgid "Choose the action you're interested in."
 msgstr ""
 
-#: src/bot/routers/booking/create_booking_routes.py:48
+#: src/bot/routers/booking/create_booking_routes.py:56
 msgid "You must choose both start and end time"
 msgstr ""
 
-#: src/bot/routers/booking/create_booking_routes.py:56
+#: src/bot/routers/booking/create_booking_routes.py:64
 msgid "You have successfully booked on <b>{date}, {timeslot}</b>."
 msgstr ""
 
-#: src/bot/routers/booking/create_booking_routes.py:60
+#: src/bot/routers/booking/create_booking_routes.py:70
 msgid "Error occurred: {error}"
 msgstr ""
 
