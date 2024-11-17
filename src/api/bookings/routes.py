@@ -82,8 +82,9 @@ async def get_my_bookings(verified: VerifiedDepWithUserID) -> list[ViewBooking]:
 )
 async def form_schedule(
     start_of_week: datetime.date | None = Query(default_factory=_get_start_of_week, example=_get_start_of_week()),
+    from_user_id: int | None = None,
 ) -> Response:
-    image_bytes = await booking_repository.form_schedule(start_of_week)
+    image_bytes = await booking_repository.form_schedule(start_of_week, from_user_id)
     return Response(content=image_bytes, media_type="image/png")
 
 

@@ -119,8 +119,8 @@ class InNoHassleMusicRoomAPI:
             response = await client.delete(f"/bookings/{booking_id}")
             return True if response.status_code == 200 else False
 
-    async def get_image_schedule(self, start_of_week: datetime.date) -> bytes | None:
-        params = {"start_of_week": start_of_week.isoformat()}
+    async def get_image_schedule(self, start_of_week: datetime.date, from_user_id: int) -> bytes | None:
+        params = {"start_of_week": start_of_week.isoformat(), "from_user_id": from_user_id}
         async with self._create_client() as client:
             response = await client.get("/bookings/form_schedule", params=params)
             if response.status_code == 200:

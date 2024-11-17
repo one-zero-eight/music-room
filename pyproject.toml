@@ -32,6 +32,7 @@ redis = "^5.1.0"
 ruff = "^0.7.4"
 sqlalchemy = "^2.0.23"
 uvicorn = "^0.32.1"
+cairosvg = "^2.7.1"
 
 [tool.ruff]
 line-length = 120
