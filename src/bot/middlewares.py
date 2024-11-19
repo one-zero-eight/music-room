@@ -104,7 +104,7 @@ class DialogI18nMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         lang = self.default_lang
-        if event.from_user:
+        if hasattr(event, "from_user") and event.from_user:
             lang = event.from_user.language_code
 
         l10n = self.l10ns[lang]
