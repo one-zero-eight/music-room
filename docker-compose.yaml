@@ -17,9 +17,6 @@ services:
       - "./settings.yaml:/code/settings.yaml:ro" # Read-only settings file
     environment:
       - TZ=Europe/Moscow # Set the timezone for correct calendar image generation
-    networks:
-      - default
-      - music-room
 
   api:
     build:
@@ -37,9 +34,6 @@ services:
     env_file: .env # You can specify some Uvicorn settings in .env file
     environment:
       - TZ=Europe/Moscow # Set the timezone for correct calendar image generation
-    networks:
-      - default
-      - music-room
 
   db:
     # See more: https://hub.docker.com/_/postgres
@@ -72,9 +66,3 @@ services:
 volumes:
   postgres:
   redis:
-
-networks:
-  # Create a 'music-room' network for connecting MusicRoom service with other services
-  music-room:
-    driver: bridge
-    name: music-room
