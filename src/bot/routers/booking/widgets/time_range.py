@@ -209,7 +209,7 @@ class TimeRangeWidget(Keyboard):
         else:
             endpoint_timepoints.append(clicked_timepoint)
         for i in range(len(endpoint_timepoints)):
-            if isinstance(endpoint_timepoints[i], (datetime.time,)):
+            if isinstance(endpoint_timepoints[i], datetime.time):
                 endpoint_timepoints[i] = endpoint_timepoints[i].isoformat()
         self.set_widget_data(manager, endpoint_timepoints)
         return True

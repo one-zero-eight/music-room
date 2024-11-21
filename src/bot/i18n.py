@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict, List, Protocol
+from typing import Any, Protocol
 
 from aiogram_dialog.api.protocols import DialogManager
 from aiogram_dialog.widgets.common import WhenCondition
@@ -20,7 +20,7 @@ class I18NFormat(Text):
         super().__init__(when)
         self.text = text
 
-    async def _render_text(self, data: Dict, manager: DialogManager) -> str:
+    async def _render_text(self, data: dict, manager: DialogManager) -> str:
         format_text = manager.middleware_data.get(
             DIALOG_I18N_FORMAT_KEY,
             default_format_text,
@@ -32,7 +32,7 @@ def default_format_text(text: str, data: Values) -> str:
     return text.format_map(data)
 
 
-def make_i18n_middleware(locales: List[str], default_locale: str = "en"):
+def make_i18n_middleware(locales: list[str], default_locale: str = "en"):
     loader = FluentResourceLoader(
         os.path.join(
             os.getcwd(),

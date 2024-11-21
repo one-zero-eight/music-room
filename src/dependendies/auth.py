@@ -1,6 +1,6 @@
 __all__ = ["VerifiedDep", "VerifiedDepWithUserID", "verify_request"]
 
-from typing import Annotated, TypeAlias, cast
+from typing import Annotated, cast
 
 from fastapi import Depends
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
@@ -72,5 +72,5 @@ def verify_request_with_user_id(
     return cast(VerificationResultWithUserId, verification)
 
 
-VerifiedDep: TypeAlias = Annotated[SucceedVerificationResult, Depends(verify_request)]
-VerifiedDepWithUserID: TypeAlias = Annotated[VerificationResultWithUserId, Depends(verify_request_with_user_id)]
+VerifiedDep = Annotated[SucceedVerificationResult, Depends(verify_request)]
+VerifiedDepWithUserID = Annotated[VerificationResultWithUserId, Depends(verify_request_with_user_id)]

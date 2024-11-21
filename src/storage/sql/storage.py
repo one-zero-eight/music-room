@@ -7,16 +7,13 @@ from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker
 
 class AbstractSQLAlchemyStorage(ABC):
     @abstractmethod
-    def create_session(self) -> AsyncSession:
-        ...
+    def create_session(self) -> AsyncSession: ...
 
     @abstractmethod
-    async def create_all(self) -> None:
-        ...
+    async def create_all(self) -> None: ...
 
     @abstractmethod
-    async def close_connection(self):
-        ...
+    async def close_connection(self): ...
 
 
 class SQLAlchemyStorage(AbstractSQLAlchemyStorage):

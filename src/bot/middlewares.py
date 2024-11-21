@@ -3,7 +3,7 @@ import inspect
 import logging
 import os
 from collections.abc import Awaitable, Callable, Set
-from typing import Any, Dict, Optional, Union
+from typing import Any
 
 from aiogram import BaseMiddleware, Router
 from aiogram.dispatcher.event.handler import HandlerObject
@@ -87,7 +87,7 @@ class LogAllEventsMiddleware(BaseMiddleware):
 class DialogI18nMiddleware(BaseMiddleware):
     def __init__(
         self,
-        l10ns: Dict[str, FluentLocalization],
+        l10ns: dict[str, FluentLocalization],
         default_lang: str,
     ):
         super().__init__()
@@ -97,11 +97,11 @@ class DialogI18nMiddleware(BaseMiddleware):
     async def __call__(
         self,
         handler: Callable[
-            [Union[Message, CallbackQuery], Dict[str, Any]],
+            [Message | CallbackQuery, dict[str, Any]],
             Awaitable[Any],
         ],
-        event: Union[Message, CallbackQuery],
-        data: Dict[str, Any],
+        event: Message | CallbackQuery,
+        data: dict[str, Any],
     ) -> Any:
         lang = self.default_lang
         if hasattr(event, "from_user") and event.from_user:
@@ -115,7 +115,7 @@ class DialogI18nMiddleware(BaseMiddleware):
     def setup(
         self: BaseMiddleware,
         router: Router,
-        exclude: Optional[Set[str]] = None,
+        exclude: Set[str] | None = None,
     ) -> BaseMiddleware:
         """
         Register middleware for all events in the Router
