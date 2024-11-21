@@ -14,12 +14,13 @@ class Environment(StrEnum):
 
 class BotSettings(BaseModel):
     environment: Environment = Environment.DEVELOPMENT
-    bot_token: SecretStr = Field(..., description="Bot token from @BotFather")
-    webhook_url: str
-    api_url: str
+    bot_token: SecretStr
+    "Bot token from @BotFather"
+    api_url: str = "http://127.0.0.1:8001"
     redis_url: SecretStr | None = None
     users: list[int] = []
-    notification_time: datetime.time | None = Field(None, description="According to UTC")
+    notification_time: datetime.time | None = None
+    "According to UTC"
 
 
 class Accounts(BaseModel):
@@ -36,24 +37,23 @@ class Accounts(BaseModel):
 
 
 class ApiSettings(BaseModel):
-    app_root_path: str = Field("", description='Prefix for the API path (e.g. "/api/v0")')
+    app_root_path: str = Field("")
+    'Prefix for the API path (e.g. "/api/v0")'
     cors_allow_origin_regex: str = ".*"
     "Allowed origins for CORS: from which domains requests to the API are allowed. Specify as a regex: `https://.*.innohassle.ru`"
-
     db_url: str = Field(
-        "postgresql+asyncpg://postgres:postgres@localhost:5433/postgres",
-        example="postgresql+asyncpg://user:password@localhost:5433/db_name",
-    )
-
-    bot_token: str = Field(
-        ..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx", description="Bot token from @BotFather"
-    )
-
-    api_key: str = Field(
         ...,
-        example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
-        description="API key for access to the Music Room API",
+        examples=[
+            "postgresql+asyncpg://postgres:postgres@localhost:5432/postgres",
+            "postgresql+asyncpg://postgres:postgres@db:5432/postgres",
+        ],
     )
+    "PostgreSQL database connection URL"
+    bot_token: str = Field(..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    "Bot token from @BotFather"
+    bot_webhook_url: str = "http://127.0.0.1:8002"
+    api_key: str = Field(..., example="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+    "API key for access to the Music Room API"
 
 
 class Settings(BaseModel):

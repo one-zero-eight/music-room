@@ -28,7 +28,6 @@ $defs:
     properties:
       app_root_path:
         default: ''
-        description: Prefix for the API path (e.g. "/api/v0")
         title: App Root Path
         type: string
       cors_allow_origin_regex:
@@ -36,21 +35,25 @@ $defs:
         title: Cors Allow Origin Regex
         type: string
       db_url:
-        default: postgresql+asyncpg://postgres:postgres@localhost:5433/postgres
-        example: postgresql+asyncpg://user:password@localhost:5433/db_name
+        examples:
+        - postgresql+asyncpg://postgres:postgres@localhost:5432/postgres
+        - postgresql+asyncpg://postgres:postgres@db:5432/postgres
         title: Db Url
         type: string
       bot_token:
-        description: Bot token from @BotFather
         example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         title: Bot Token
         type: string
+      bot_webhook_url:
+        default: http://127.0.0.1:8002
+        title: Bot Webhook Url
+        type: string
       api_key:
-        description: API key for access to the Music Room API
         example: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
         title: Api Key
         type: string
     required:
+    - db_url
     - bot_token
     - api_key
     title: ApiSettings
@@ -61,15 +64,12 @@ $defs:
         $ref: '#/$defs/Environment'
         default: development
       bot_token:
-        description: Bot token from @BotFather
         format: password
         title: Bot Token
         type: string
         writeOnly: true
-      webhook_url:
-        title: Webhook Url
-        type: string
       api_url:
+        default: http://127.0.0.1:8001
         title: Api Url
         type: string
       redis_url:
@@ -92,12 +92,9 @@ $defs:
           type: string
         - type: 'null'
         default: null
-        description: According to UTC
         title: Notification Time
     required:
     - bot_token
-    - webhook_url
-    - api_url
     title: BotSettings
     type: object
   Environment:

@@ -1,11 +1,20 @@
 import asyncio
 import os
-from pathlib import Path
 
 import uvicorn
 
-# Change dir to project root (three levels up from this file)
-os.chdir(Path(__file__).parents[2])
+from src.prepare import (
+    BASE_DIR,
+    check_and_prompt_bot_token,
+    ensure_pre_commit_hooks,
+    ensure_settings_file,
+)
+
+os.chdir(BASE_DIR)
+
+ensure_settings_file()
+ensure_pre_commit_hooks()
+check_and_prompt_bot_token(use_bot_settings=True)
 
 from src.bot.app import main  # noqa: E402
 from src.bot.webserver import app  # noqa: E402

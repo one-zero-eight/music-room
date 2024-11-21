@@ -5,7 +5,6 @@ from pydantic import BaseModel
 
 from src.bot.app import bot
 from src.bot.logging_ import logger
-from src.config import bot_settings
 from src.dependendies.auth import VerifiedDep
 from src.exceptions import ForbiddenException
 from src.schemas.auth import VerificationSource
@@ -18,7 +17,7 @@ class BookingInfo(BaseModel):
     time_end: datetime.datetime
 
 
-app = FastAPI(root_path=bot_settings.webhook_url)
+app = FastAPI()
 
 
 @app.post("/booking/notify")

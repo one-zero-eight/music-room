@@ -58,6 +58,6 @@ COPY --chown=poetry:poetry . /code
 USER poetry
 WORKDIR /code
 
-EXPOSE 8000
+EXPOSE 8001
 ENTRYPOINT [ "/docker-entrypoint-alembic.sh" ]
-CMD [ "uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips=*" ]
+CMD [ "uvicorn", "src.api.app:app", "--host", "0.0.0.0", "--port", "8001", "--proxy-headers", "--forwarded-allow-ips=*" ]

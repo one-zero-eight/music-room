@@ -34,120 +34,55 @@ This is the API for music room service in InNoHassle ecosystem.
 
 ## Development
 
-### Getting started
+### Set up for development
 
-1. Install [Python 3.12](https://www.python.org/downloads/)
-2. Install [Poetry](https://python-poetry.org/docs/)
-3. Install project dependencies with [Poetry](https://python-poetry.org/docs/cli/#options-2).
+1. Install [Python 3.12+](https://www.python.org/downloads/) & [Poetry](https://python-poetry.org/docs/)
+2. Install project dependencies with [Poetry](https://python-poetry.org/docs/cli/#options-2).
    ```bash
    poetry install
    ```
-4. Set up [pre-commit](https://pre-commit.com/) hooks:
-
-   ```bash
-   poetry run pre-commit install --install-hooks -t pre-commit -t commit-msg
-   ```
-5. Set up project settings file (check [settings.schema.yaml](settings.schema.yaml) for more info).
-   ```bash
-   cp settings.example.yaml settings.yaml
-   ```
-   Edit `settings.yaml` according to your needs.
-6. Set up a [PostgreSQL](https://www.postgresql.org/) database instance.
-   <details>
-    <summary>Using docker container</summary>
-
-    - Set up database settings for [docker-compose](https://docs.docker.com/compose/) container
-      in `.env` file:х
-      ```bash
-      cp .env.example .env
-      ```
-    - Run the database instance:
-      ```bash
-      docker compose up -d db
-      ```
-    - Make sure to set up the actual database connection in `settings.yaml`, for example:
-      ```yaml
-      db_url: postgresql+asyncpg://postgres:postgres@localhost:5433/postgres
-      ```
-
-   </details>
-   <details>
-    <summary>Using pgAdmin</summary>
-
-    - Connect to the PostgreSQL server using pgAdmin
-    - Set up a new database in the server: `Edit > New Object > New database`
-    - Use the database name in `settings.yaml` file, for example `innohassle-events`:
-      ```yaml
-      db_url: postgresql+asyncpg://postgres:your_password@localhost:5432/innohassle-events
-      ```
-   </details>
-7. Compile translation (`.po`) files:
-   ```bash
-   poetry run pybabel compile -d locales -D messages
-   ```
-
-**Set up PyCharm integrations**
-
-1. Ruff ([plugin](https://plugins.jetbrains.com/plugin/20574-ruff)).
-   It will lint and format your code.
-   Make sure to enable `Use ruff format` option in plugin settings.
-2. Pydantic ([plugin](https://plugins.jetbrains.com/plugin/12861-pydantic)).
-   It will fix PyCharm issues with
-   type-hinting.
-3. Conventional commits ([plugin](https://plugins.jetbrains.com/plugin/13389-conventional-commit)).
-   It will help you
-   to write [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
-
-### Run for development [API]
-
-1. Install dependencies for api if needed:
-   ```bash
-   poetry install
-   ```
-2. Run the database if you have not done it yet
-3. Upgrade the database schema using [alembic](https://alembic.sqlalchemy.org/en/latest/):
-   ```bash
-   poetry run alembic upgrade head
-   ```
-4. Run the ASGI server
+3. Start the API:
    ```bash
    poetry run python -m src.api
    ```
-   OR using uvicorn directly
+   > Follow provided instructions if needed
+4. Start the Bot:
    ```bash
-   poetry run uvicorn src.api.app:app --use-colors --proxy-headers --forwarded-allow-ips=* --port=8001
+   poetry run python -m src.bot
    ```
+   > Follow provided instructions if needed
 
-Now the API is running on http://localhost:8001. Good job!
+> [!IMPORTANT]
+> For endpoints requiring authorization click "Authorize" button in Swagger UI
 
-### Run for development [Bot]
+> [!TIP]
+> Edit `settings.yaml` according to your needs, you can view schema in
+> [config_schema.py](src/config_schema.py) and in [settings.schema.yaml](settings.schema.yaml)
 
-1. Install dependencies for bot if needed:
-   ```bash
-   poetry install
-   ```
-2. Run the [API service](#run-for-development-api) or configure the bot to work with the real(production) API.
-3. Run the Redis server if needed:
-   ```bash
-   docker compose up -d redis
-   ```
-4. Run the bot:
-   ```bash
-    poetry run python -m src.bot
-    ```
+**Set up PyCharm integrations**
+
+1. Run configurations ([docs](https://www.jetbrains.com/help/pycharm/run-debug-configuration.html#createExplicitly)).
+   Right-click the `__main__.py` file in the project explorer, select `Run '__main__'` from the context menu.
+2. Ruff ([plugin](https://plugins.jetbrains.com/plugin/20574-ruff)).
+   It will lint and format your code. Make sure to enable `Use ruff format` option in plugin settings.
+3. Pydantic ([plugin](https://plugins.jetbrains.com/plugin/12861-pydantic)). It will fix PyCharm issues with
+   type-hinting.
+4. Conventional commits ([plugin](https://plugins.jetbrains.com/plugin/13389-conventional-commit)). It will help you
+   to write [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/).
 
 ### Localization
 
 **Aiogram:**
 
+All localized bot messages should be wrapped: `__("Hello world"")`
+
 1. Extract messages:
    ```bash
    poetry run pybabel extract -k __ --input-dirs=. -o locales/messages.pot
    ```
-2. Initialize languages:
+2. Update translations:
    ```bash
-   poetry run pybabel init -i locales/messages.pot -d locales -D messages -l en
-   poetry run pybabel init -i locales/messages.pot -d locales -D messages -l ru
+   poetry run pybabel update -i locales/messages.pot -d locales -D messages --ignore-pot-creation-date
    ```
 3. Translate messages in created `.po` files
 4. Compile translations:
@@ -172,6 +107,20 @@ We use Docker with Docker Compose plugin to run the website on servers.
 6. Build a Docker image: `docker compose build --pull`
 7. Run the container: `docker compose up --detach`
 8. Check the logs: `docker compose logs -f`
+
+# How to update dependencies
+
+## Project dependencies
+
+1. Run `poetry update` to update all dependencies (it may update nothing, so double-check)
+2. Run `poetry show --outdated --all` to check for outdated dependencies
+3. Run `poetry add <package>@latest` to add a new dependency if needed
+
+## Pre-commit hooks
+
+1. Run `poetry run pre-commit autoupdate`
+
+Also, Dependabot will help you to keep your dependencies up-to-date, see [dependabot.yml](.github/dependabot.yml).
 
 ## Contributing
 

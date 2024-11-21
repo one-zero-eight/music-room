@@ -36,7 +36,7 @@ rules_message = __(
     "to teach or help you with it.\n"
     "⚠️ Unnecessarily, do not move the equipment.\n"
 )
-rules_confirmation_message = __("""I agree to and will abide by the stated rules.""")
+rules_confirmation_message = __("I agree to and will abide by the stated rules.")
 
 # TODO: Specify contact information or change message
 ban_message = __(

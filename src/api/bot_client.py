@@ -3,7 +3,7 @@ import asyncio
 import httpx
 
 from src.api.logging_ import logger
-from src.config import bot_settings
+from src.config import api_settings, bot_settings
 from src.schemas.booking import ViewBooking
 
 
@@ -47,4 +47,4 @@ class TgBotClient:
                 await asyncio.sleep(5)
 
 
-tg_bot_client = TgBotClient(bot_settings.webhook_url)
+tg_bot_client = TgBotClient(api_settings.bot_webhook_url)
