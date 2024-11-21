@@ -1,4 +1,4 @@
-name: [Bot] Build and publish a Docker image
+name: "[Bot] Build and publish a Docker image"
 
 on:
   # Allow manual trigger of the workflow
