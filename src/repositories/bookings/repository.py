@@ -95,6 +95,25 @@ class SqlBookingRepository:
         with open(Path(__file__).parent / "resources/Plain.svg", encoding="utf-8") as file:
             svg_string = file.read()
 
+        end = svg_string.index("</tspan>", svg_string.index("month"))
+        svg_string = f"{svg_string[:end]}{dict({
+            1: "Jan",
+            2: "Feb",
+            3: "Mar",
+            4: "Apr",
+            5: "May",
+            6: "Jun",
+            7: "Jul",
+            8: "Aug",
+            9: "Sep",
+            10: "Oct",
+            11: "Nov",
+            12: "Dec"
+        })[datetime.date.today().month]}{svg_string[end:]}"
+
+        end = svg_string.index("</tspan>", svg_string.index("monthnum"))
+        svg_string = f"{svg_string[:end]}{datetime.date.today().year % 100}{svg_string[end:]}"
+
         weekdays_numbers, wide = await get_week_numbers(await self.is_start_of_week(start_of_week))
         today = datetime.datetime.today().day
 
@@ -102,12 +121,11 @@ class SqlBookingRepository:
             zip(weekdays_numbers, "monnum tuenum wednum thunum frinum satnum sunnum".split())
         ):
             text = f"""
-            <tspan xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-            sodipodi:role="line" id="tspan40"
+            <tspan
             x="{266.9544915 + (0 if i == 0 else 126.16007 if i == 1 else 122.16095 * (i - 1) + 126.16007)}"
             y="{66}" style="font-style:normal;
             font-variant:normal;font-weight:bold;font-stretch:normal;font-size:20px;font-family:Roboto;
-            -inkscape-font-specification:'Roboto Bold';text-align:start;text-anchor:middle;fill:#000000;
+            text-align:start;text-anchor:middle;fill:#000000;
             fill-opacity:1;stroke:none">{identifier[:3].capitalize()} {number}</tspan>
             """
 
@@ -189,14 +207,13 @@ class SqlBookingRepository:
         current_hour = datetime.datetime.now().hour
         cell_size = [124.161, 83.451]
         middle_offset = 17.739
+        try:
+            end = svg_string.index(f"i{current_hour}")
+            end = svg_string.rfind('"opacity:', 0, end) + 8
+            svg_string = f"{svg_string[:end]}1{svg_string[end + 1:]}"
+        except ValueError:
+            pass
         for booking in bookings:
-            if booking.time_start.hour == current_hour:
-                try:
-                    end = svg_string.index(f"i{current_hour}")
-                    end = svg_string.rfind('"opacity:', 0, end) + 8
-                    svg_string = f"{svg_string[:end]}1{svg_string[end + 1:]}"
-                except ValueError:
-                    pass
             duration = count_duration(booking.time_start, booking.time_end)
             day = booking.time_start.weekday()
             coordinates = [
@@ -208,21 +225,20 @@ class SqlBookingRepository:
 
             symbol = f"""<svg x="{coordinates[0]}" y="{coordinates[1]}">
             <rect style="opacity:1;
-            fill:{"#e5e2e5" if user.telegram_id == from_user_id else "none"};
+            fill:{"#e5e2e5" if user.telegram_id == from_user_id else "#ffffff"};
             fill-opacity:1;stroke:#e5e2e5;stroke-width:2;
             stroke-linecap:round;stroke-linejoin:round;
-            stroke-opacity:1" id="rect119"
+            stroke-opacity:1"
             width="122.16101" height="{duration * (cell_size[1] - 2)}"
             x="207.87349" y="119.77097"
             rx="0" ry="0"/></svg>"""
             perceptual_text_y_offset = 5
             perceptual_text_x_offset = -33.5
             text_time_symbol = f"""
-            <tspan id="tspan89" x="{268.955 + coordinates[0] + perceptual_text_x_offset}"
+            <tspan x="{268.955 + coordinates[0] + perceptual_text_x_offset}"
             y="{119.77097 + coordinates[1] + duration * (cell_size[1] - 2) / 2 + perceptual_text_y_offset}"
             style="font-style:normal;font-variant:normal;font-weight:normal;
             font-stretch:normal;font-family:'Roboto';text-align:start;text-anchor:middle;
-            -inkscape-font-specification:'Roboto';
             fill:#000000;fill-opacity:1;stroke:none;font-size:20px">
             {booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}</tspan>"""
             text_alias_symbol = ""
@@ -240,12 +256,19 @@ class SqlBookingRepository:
             y="{119.77097 + coordinates[1] + duration * (cell_size[1] - 2) / 2
                 + perceptual_text_y_offset * 2 + middle_offset}"
             style="font-style:normal;font-variant:normal;font-weight:normal;
-            font-stretch:normal;font-family:'Roboto';text-anchor:middle;-inkscape-font-specification:'Roboto';
+            font-stretch:normal;font-family:'Roboto';text-anchor:middle;
             fill:#000000;fill-opacity:1;stroke:none;font-size:20px">
             {alias}</tspan>"""
-            end = svg_string.index(">", svg_string.index(">") + 1) + 1
+            end = svg_string.rfind("<")
             svg_string = f"{svg_string[:end]}{symbol}{text_alias_symbol}{text_time_symbol}{svg_string[end:]}"
-        open("TEST.txt", "w").write(svg_string)
+        end = svg_string.rfind("<")
+        svg_string = f"""{svg_string[:end]}<path
+            style="color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-linecap:round;
+            stroke-linejoin:round;stroke-opacity:1;-inkscape-stroke:none"
+            d="m 227.87305,118.77148 c -11.61669,0 -21,9.38331 -21,21 V 1485.4492 c 0,11.6167 9.38331,21 21,21 H
+            1043 c 11.6167,0 21,-9.3833 21,-21 V 139.77148 c 0,-11.61669 -9.3833,-21 -21,-21 z M 192.87389,104.72179 H
+            1080 v 0 V 1520 v 0 H 192.87389 v 0 z"
+            />{svg_string[end:]}"""
         image_stream = io.BytesIO()
         svg2png(bytestring=svg_string, write_to=image_stream, scale=2)
         val = image_stream.getvalue()
