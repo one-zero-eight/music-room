@@ -287,7 +287,6 @@ class SqlBookingRepository:
             1043 c 11.6167,0 21,-9.3833 21,-21 V 139.77148 c 0,-11.61669 -9.3833,-21 -21,-21 z M 192.87389,104.72179 H
             1080 v 0 V 1520 v 0 H 192.87389 v 0 z"
             />{svg_string[end:]}"""
-        open("TEST.svg", "w").write(svg_string)
         image_stream = io.BytesIO()
         svg2png(bytestring=svg_string, write_to=image_stream, scale=2)
         val = image_stream.getvalue()
