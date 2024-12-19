@@ -225,7 +225,7 @@ class SqlBookingRepository:
 
             symbol = f"""<svg x="{coordinates[0]}" y="{coordinates[1]}">
             <rect style="opacity:1;
-            fill:{"#e5e2e5" if user.telegram_id == from_user_id else "#ffffff"};
+            fill:{"#cbe7cb" if user.telegram_id == from_user_id else "#e5e2e5"};
             fill-opacity:1;stroke:#e5e2e5;stroke-width:2;
             stroke-linecap:round;stroke-linejoin:round;
             stroke-opacity:1"
@@ -261,6 +261,24 @@ class SqlBookingRepository:
             {alias}</tspan>"""
             end = svg_string.rfind("<")
             svg_string = f"{svg_string[:end]}{symbol}{text_alias_symbol}{text_time_symbol}{svg_string[end:]}"
+
+        # mark current time with red
+        end = svg_string.rfind("<")
+        height = 2
+        symbol = f"""<svg x="{(cell_size[0] - 2) * datetime.datetime.today().weekday()}"
+                    y="{((cell_size[1] - 2) * 17) *
+                        (datetime.datetime.today().hour + datetime.datetime.today().minute / 60 - 7) / 17}">
+                    <rect style="opacity:1;
+                    fill:#d31109;
+                    fill-opacity:1;stroke:#d31109;stroke-width:2;
+                    stroke-linecap:round;stroke-linejoin:round;
+                    stroke-opacity:1"
+                    width="122.16101" height="{height}"
+                    x="207.87349" y="119.77097"
+                    rx="0" ry="0"/></svg>"""
+        svg_string = f"""{svg_string[:end]}{symbol}{svg_string[end:]}"""
+
+        # add schedule table border
         end = svg_string.rfind("<")
         svg_string = f"""{svg_string[:end]}<path
             style="color:#000000;fill:#ffffff;fill-opacity:1;stroke:none;stroke-linecap:round;
@@ -269,6 +287,7 @@ class SqlBookingRepository:
             1043 c 11.6167,0 21,-9.3833 21,-21 V 139.77148 c 0,-11.61669 -9.3833,-21 -21,-21 z M 192.87389,104.72179 H
             1080 v 0 V 1520 v 0 H 192.87389 v 0 z"
             />{svg_string[end:]}"""
+        open("TEST.svg", "w").write(svg_string)
         image_stream = io.BytesIO()
         svg2png(bytestring=svg_string, write_to=image_stream, scale=2)
         val = image_stream.getvalue()
