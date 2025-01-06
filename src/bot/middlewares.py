@@ -107,7 +107,7 @@ class DialogI18nMiddleware(BaseMiddleware):
         if hasattr(event, "from_user") and event.from_user:
             lang = event.from_user.language_code
 
-        l10n = self.l10ns[lang]
+        l10n = self.l10ns.get(lang, self.l10ns[self.default_lang])
         data[DIALOG_I18N_FORMAT_KEY] = l10n.format_value
 
         return await handler(event, data)
