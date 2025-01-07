@@ -56,10 +56,11 @@ msgstr ""
 msgid "I agree to and will abide by the stated rules."
 msgstr "I agree to and will abide by the stated rules."
 
-#: src/bot/constants.py:42
+#: src/bot/constants.py:41
+#, fuzzy
 msgid ""
 "You are banned and can't book the music room. In case you believe it's a "
-"mistake, please contact: @"
+"mistake, please contact: @Leon_Parepko"
 msgstr ""
 "You are banned and can't book the music room. In case you believe it's a "
 "mistake, please contact: @"

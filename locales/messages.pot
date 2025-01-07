@@ -1,14 +1,14 @@
 # Translations template for PROJECT.
-# Copyright (C) 2024 ORGANIZATION
+# Copyright (C) 2025 ORGANIZATION
 # This file is distributed under the same license as the PROJECT project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-11-17 21:47+0300\n"
+"POT-Creation-Date: 2025-01-07 19:10+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -40,10 +40,10 @@ msgstr ""
 msgid "I agree to and will abide by the stated rules."
 msgstr ""
 
-#: src/bot/constants.py:42
+#: src/bot/constants.py:41
 msgid ""
 "You are banned and can't book the music room. In case you believe it's a "
-"mistake, please contact: @"
+"mistake, please contact: @Leon_Parepko"
 msgstr ""
 
 #: src/bot/constants.py:45
