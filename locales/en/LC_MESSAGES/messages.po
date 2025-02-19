@@ -65,15 +65,15 @@ msgstr ""
 "You are banned and can't book the music room. In case you believe it's a "
 "mistake, please contact: @"
 
-#: src/bot/constants.py:45
+#: src/bot/constants.py:46
 msgid "Create a booking"
 msgstr "Create a booking"
 
-#: src/bot/constants.py:47
+#: src/bot/constants.py:48
 msgid "My bookings"
 msgstr "My bookings"
 
-#: src/bot/constants.py:49
+#: src/bot/constants.py:50
 msgid "Show the image with bookings"
 msgstr "Show the image with bookings"
 

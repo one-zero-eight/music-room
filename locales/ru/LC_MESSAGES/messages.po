@@ -67,15 +67,15 @@ msgstr ""
 "Вы заблокированы и не можете бронировать комнату. Если вы уверены, что "
 "это ошибка, пожалуйста, обратитесь к: @Leon_Parepko"
 
-#: src/bot/constants.py:45
+#: src/bot/constants.py:46
 msgid "Create a booking"
 msgstr "Забронировать"
 
-#: src/bot/constants.py:47
+#: src/bot/constants.py:48
 msgid "My bookings"
 msgstr "Мои бронирования"
 
-#: src/bot/constants.py:49
+#: src/bot/constants.py:50
 msgid "Show the image with bookings"
 msgstr "Показать изображение с бронированиями"
 
