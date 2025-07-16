@@ -52,15 +52,19 @@ class TokenRepository:
     async def verify_user_token(cls, token: str) -> VerificationResult:
         try:
             payload = cls.decode_token(token)
-            innohassle_id: str = payload.get("uid")
+            innohassle_id: str | None = payload.get("uid")
             if innohassle_id is None:
                 return VerificationResult(success=False)
             user_data = await innohassle_accounts.get_user_by_innohassle_id(innohassle_id)
             if user_data is None:
                 return VerificationResult(success=False)
-            if user_data.telegram is None:
-                return VerificationResult(success=False)
-            return VerificationResult(success=True, telegram_id=user_data.telegram.id)
+            return VerificationResult(
+                success=True,
+                telegram_id=user_data.telegram.id if user_data.telegram else None,
+                email=user_data.innopolis_sso.email if user_data.innopolis_sso else None,
+                innohassle_id=innohassle_id,
+                source=VerificationSource.USER,
+            )
         except JoseError:
             return VerificationResult(success=False)
 

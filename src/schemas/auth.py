@@ -9,13 +9,15 @@ from pydantic import BaseModel
 class VerificationSource(StrEnum):
     BOT = "bot"
     API = "api"
+    USER = "user"
 
 
 class VerificationResult(BaseModel):
     success: bool
     user_id: int | None = None
     telegram_id: int | None = None
-    innohassle_id: int | None = None
+    innohassle_id: str | None = None
+    email: str | None = None
     source: VerificationSource | None = None
 
 

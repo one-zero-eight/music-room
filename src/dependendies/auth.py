@@ -56,8 +56,9 @@ async def verify_request(
 
     user_verification_result = await TokenRepository.verify_user_token(bearer.credentials)
     if user_verification_result.success:
+        # add user_id to the result
         user_verification_result.user_id = await user_repository.get_user_id(
-            telegram_id=user_verification_result.telegram_id
+            telegram_id=user_verification_result.telegram_id, email=user_verification_result.email
         )
         return cast(SucceedVerificationResult, user_verification_result)
 
