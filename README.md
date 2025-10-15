@@ -98,7 +98,7 @@ Add translations identifiers (strings inside `I18Format`) and their translations
 
 We use Docker with Docker Compose plugin to run the website on servers.
 
-1. Copy the file with environment variables: `cp .env.example .env`
+1. Copy the file with environment variables: `cp .example.env .env`
 2. Change environment variables in the `.env` file
 3. Copy the file with settings: `cp settings.example.yaml settings.yaml`
 4. Change settings in the `settings.yaml` file according to your needs
