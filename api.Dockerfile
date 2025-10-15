@@ -26,7 +26,7 @@ RUN apt-get update \
         fonts-roboto \
         libcairo2-dev \
         libffi-dev \
-    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the applicant from the builder
 COPY --from=builder /app /app
