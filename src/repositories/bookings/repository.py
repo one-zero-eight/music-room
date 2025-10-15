@@ -96,20 +96,24 @@ class SqlBookingRepository:
             svg_string = file.read()
 
         end = svg_string.index("</tspan>", svg_string.index("month"))
-        svg_string = f"{svg_string[:end]}{dict({
-            1: "Jan",
-            2: "Feb",
-            3: "Mar",
-            4: "Apr",
-            5: "May",
-            6: "Jun",
-            7: "Jul",
-            8: "Aug",
-            9: "Sep",
-            10: "Oct",
-            11: "Nov",
-            12: "Dec"
-        })[datetime.date.today().month]}{svg_string[end:]}"
+        svg_string = f"{svg_string[:end]}{
+            dict(
+                {
+                    1: 'Jan',
+                    2: 'Feb',
+                    3: 'Mar',
+                    4: 'Apr',
+                    5: 'May',
+                    6: 'Jun',
+                    7: 'Jul',
+                    8: 'Aug',
+                    9: 'Sep',
+                    10: 'Oct',
+                    11: 'Nov',
+                    12: 'Dec',
+                }
+            )[datetime.date.today().month]
+        }{svg_string[end:]}"
 
         end = svg_string.index("</tspan>", svg_string.index("monthnum"))
         svg_string = f"{svg_string[:end]}{datetime.date.today().year % 100}{svg_string[end:]}"
@@ -135,7 +139,7 @@ class SqlBookingRepository:
             if today == number:
                 end = svg_string.index(identifier[:3])
                 end = svg_string.rfind('"opacity:', 0, end) + 8
-                svg_string = f"{svg_string[:end]}1{svg_string[end + 1:]}"
+                svg_string = f"{svg_string[:end]}1{svg_string[end + 1 :]}"
 
         character_widths = {
             "a": 11.2,
@@ -210,7 +214,7 @@ class SqlBookingRepository:
         try:
             end = svg_string.index(f"i{current_hour}")
             end = svg_string.rfind('"opacity:', 0, end) + 8
-            svg_string = f"{svg_string[:end]}1{svg_string[end + 1:]}"
+            svg_string = f"{svg_string[:end]}1{svg_string[end + 1 :]}"
         except ValueError:
             pass
         for booking in bookings:
@@ -240,7 +244,7 @@ class SqlBookingRepository:
             style="font-style:normal;font-variant:normal;font-weight:normal;
             font-stretch:normal;font-family:'Roboto';text-align:start;text-anchor:middle;
             fill:#000000;fill-opacity:1;stroke:none;font-size:20px">
-            {booking.time_start.strftime('%H:%M')}-{booking.time_end.strftime('%H:%M')}</tspan>"""
+            {booking.time_start.strftime("%H:%M")}-{booking.time_end.strftime("%H:%M")}</tspan>"""
             text_alias_symbol = ""
             if duration > 0.5:
                 max_width = 112
@@ -253,8 +257,13 @@ class SqlBookingRepository:
                         break
                 text_alias_symbol = f"""
             <tspan id="tspan89" x="{268.955 + coordinates[0] + perceptual_text_x_offset}"
-            y="{119.77097 + coordinates[1] + duration * (cell_size[1] - 2) / 2
-                + perceptual_text_y_offset * 2 + middle_offset}"
+            y="{
+                    119.77097
+                    + coordinates[1]
+                    + duration * (cell_size[1] - 2) / 2
+                    + perceptual_text_y_offset * 2
+                    + middle_offset
+                }"
             style="font-style:normal;font-variant:normal;font-weight:normal;
             font-stretch:normal;font-family:'Roboto';text-anchor:middle;
             fill:#000000;fill-opacity:1;stroke:none;font-size:20px">
@@ -266,8 +275,11 @@ class SqlBookingRepository:
         end = svg_string.rfind("<")
         height = 2
         symbol = f"""<svg x="{(cell_size[0] - 2) * datetime.datetime.today().weekday()}"
-                    y="{((cell_size[1] - 2) * 17) *
-                        (datetime.datetime.today().hour + datetime.datetime.today().minute / 60 - 7) / 17}">
+                    y="{
+            ((cell_size[1] - 2) * 17)
+            * (datetime.datetime.today().hour + datetime.datetime.today().minute / 60 - 7)
+            / 17
+        }">
                     <rect style="opacity:1;
                     fill:#d31109;
                     fill-opacity:1;stroke:#d31109;stroke-width:2;

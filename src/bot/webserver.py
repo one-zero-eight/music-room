@@ -31,7 +31,7 @@ async def notify_user_about_booking(booking: BookingInfo, verification: Verified
             booking.telegram_id,
             f"Don't forget about your booking! It will start in {seconds_till_booking // 60} minutes. "
             "If you can't attend, please cancel the booking.\n"
-            f"Your booking time: {booking.time_start.strftime("%H:%M")} - {booking.time_end.strftime("%H:%M")}.",
+            f"Your booking time: {booking.time_start.strftime('%H:%M')} - {booking.time_end.strftime('%H:%M')}.",
         )
         logger.info(f"Notification booking(id={booking.booking_id}), user(id={booking.telegram_id}) sent")
     else:

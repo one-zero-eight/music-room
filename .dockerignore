@@ -3,11 +3,10 @@
 
 # Except code
 !/src/
+!/pyproject.toml
+!/uv.lock
 !/alembic/
 !/alembic.ini
-!/deploy/
-!/pyproject.toml
-!/poetry.lock
 !/logging-api.yaml
 !/logging-bot.yaml
 !/locales
