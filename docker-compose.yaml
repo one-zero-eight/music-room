@@ -35,7 +35,9 @@ services:
       TZ: Europe/Moscow # Set the timezone for correct calendar image generation
 
   alembic-migrate:
-    build: . # See Dockerfile for more details
+    build:
+      context: .
+      dockerfile: api.Dockerfile
     restart: no
     depends_on:
       db:

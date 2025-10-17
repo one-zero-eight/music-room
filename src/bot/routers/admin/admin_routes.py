@@ -10,9 +10,9 @@ from aiogram_dialog.widgets.input import TextInput
 from aiogram_dialog.widgets.kbd import Cancel, Group, Select
 from aiogram_dialog.widgets.text import Const, Format
 
-from bot.i18n import I18NFormat
 from src.bot.api import api_client
 from src.bot.constants import admin_commands, bot_commands
+from src.bot.i18n import I18NFormat
 from src.bot.routers.admin import router
 from src.bot.routers.admin.states import ChangeStatusStates
 from src.schemas import UserStatus
