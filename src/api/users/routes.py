@@ -8,6 +8,8 @@ from docx.document import Document
 from docx.shared import Emu
 from docx.table import _Cell
 from fastapi import APIRouter, Query, Response
+from fastapi.responses import JSONResponse
+from sqlalchemy.exc import NoResultFound
 
 from src.dependendies.auth import VerifiedDep, VerifiedDepWithUserID
 from src.exceptions import ForbiddenException
@@ -28,7 +30,7 @@ async def get_list_of_all_users(verified: VerifiedDep, as_bot: bool = False):
         if verified.user_id is None:
             raise ForbiddenException()
         issuer = await user_repository.get_user(verified.user_id)
-        if issuer.status != UserStatus.LORD:
+        if issuer.status != UserStatus.LORD and issuer.status != UserStatus.ADMIN:
             raise ForbiddenException()
 
     users = await user_repository.get_all_users()
@@ -120,9 +122,48 @@ async def get_remaining_daily_hours(
 
 @router.get("/users/user_id")
 async def get_user_id(
-    verification: VerifiedDep, telegram_id: int | None = None, email: str | None = None
+    verification: VerifiedDep, telegram_id: int | None = None, email: str | None = None, alias: str | None = None
 ) -> int | None:
     if verification.source not in (VerificationSource.BOT, VerificationSource.API):
         raise ForbiddenException()
-    res = await user_repository.get_user_id(telegram_id=telegram_id, email=email)
+    res = await user_repository.get_user_id(telegram_id=telegram_id, email=email, alias=alias)
     return res
+
+
+@router.get("/users/get_user")
+async def get_user(
+    verification: VerifiedDep, telegram_id: int | None = None, email: str | None = None, alias: str | None = None
+) -> ViewUser:
+    if verification.source not in (VerificationSource.BOT, VerificationSource.API):
+        raise ForbiddenException()
+
+    user_id = await user_repository.get_user_id(telegram_id=telegram_id, email=email, alias=alias)
+    res = await user_repository.get_user(user_id=user_id)
+    return res
+
+
+@router.post("/users/set_status")
+async def set_user_status(
+    verified: VerifiedDep,
+    status: UserStatus,
+    telegram_id: int | None = None,
+    email: str | None = None,
+    alias: str | None = None,
+    as_bot: bool = False,
+):
+    if as_bot:
+        if verified.source != VerificationSource.BOT:
+            raise ForbiddenException()
+    else:
+        if verified.user_id is None:
+            raise ForbiddenException()
+        issuer = await user_repository.get_user(verified.user_id)
+        if issuer.status != UserStatus.ADMIN:
+            raise ForbiddenException()
+
+    user_id = await user_repository.get_user_id(telegram_id=telegram_id, email=email, alias=alias)
+    try:
+        await user_repository.set_status(user_id=user_id, status=status)
+        return {"status": "success"}
+    except NoResultFound:
+        return JSONResponse(status_code=404, content={"status": "error, no such user"})

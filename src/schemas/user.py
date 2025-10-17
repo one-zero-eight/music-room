@@ -9,6 +9,7 @@ class UserStatus(StrEnum):
     MIDDLE = "middle"
     SENIOR = "senior"
     LORD = "lord"
+    ADMIN = "admin"
 
     def max_hours_to_book_per_day(self) -> int | None:
         if self == UserStatus.BANNED:
@@ -19,7 +20,7 @@ class UserStatus(StrEnum):
             return 3
         elif self == UserStatus.SENIOR:
             return 4
-        elif self == UserStatus.LORD:
+        elif self == UserStatus.LORD or self == UserStatus.ADMIN:
             return 15
         return None
 
@@ -32,7 +33,7 @@ class UserStatus(StrEnum):
             return 8
         elif self == UserStatus.SENIOR:
             return 10
-        elif self == UserStatus.LORD:
+        elif self == UserStatus.LORD or self == UserStatus.ADMIN:
             return 150
         return None
 

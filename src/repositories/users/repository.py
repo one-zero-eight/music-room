@@ -5,6 +5,7 @@ from datetime import timedelta
 from typing import Self
 
 from sqlalchemy import and_, between, extract, insert, or_, select, update
+from sqlalchemy.exc import NoResultFound
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.schemas import CreateUser, FillUserProfile, ViewBooking, ViewUser
@@ -72,6 +73,16 @@ class SqlUserRepository:
                 return UserStatus.FREE
             return UserStatus(status)
 
+    async def set_status(self, user_id: int, status: UserStatus) -> None:
+        async with self._create_session() as session:
+            query = select(User).where(User.id == user_id)
+            user = await session.scalar(query)
+            if not user:
+                raise NoResultFound("No such user")
+
+            user.status = status
+            await session.commit()
+
     async def remaining_weekly_hours(self, user_id: int, start_of_week: datetime.date | None = None) -> float:
         async with self._create_session() as session:
             if start_of_week is None:
@@ -106,15 +117,19 @@ class SqlUserRepository:
             status = await self.get_status(user_id)
             return status.max_hours_to_book_per_day() - spent_hours
 
-    async def get_user_id(self, telegram_id: int | None = None, email: str | None = None) -> int | None:
+    async def get_user_id(
+        self, telegram_id: int | None = None, email: str | None = None, alias: str | None = None
+    ) -> int | None:
         async with self._create_session() as session:
-            if telegram_id is None and email is None:
+            if telegram_id is None and email is None and alias is None:
                 return None
             clauses = []
             if email is not None:
                 clauses.append(User.email == email)
             if telegram_id is not None:
                 clauses.append(User.telegram_id == telegram_id)
+            if alias is not None:
+                clauses.append(User.alias == alias)
             query = select(User.id).where(or_(*clauses))
             user_id = await session.scalar(query)
             return user_id

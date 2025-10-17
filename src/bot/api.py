@@ -57,6 +57,20 @@ class InNoHassleMusicRoomAPI:
             if response.status_code == 200:
                 return ViewUser.model_validate(response.json())
 
+    async def get_user(
+        self, requester_tg_id: int, telegram_id: int | None = None, email: str | None = None, alias: str | None = None
+    ) -> ViewUser | None:
+        params = {
+            key: value
+            for key, value in {"telegram_id": telegram_id, "email": email, "alias": alias}.items()
+            if value is not None
+        }
+
+        async with self._create_client(telegram_id=requester_tg_id) as client:
+            response = await client.get("/users/get_user", params=params)
+            if response.status_code == 200:
+                return ViewUser.model_validate(response.json())
+
     async def fill_profile(self, telegram_id: int, name: str, alias: str) -> tuple[bool, Any]:
         body = {"name": name, "alias": alias}
         async with self._create_client(telegram_id=telegram_id) as client:
@@ -141,6 +155,18 @@ class InNoHassleMusicRoomAPI:
                 bytes_ = response.read()
                 filename = response.headers["Content-Disposition"].split("filename=")[1]
                 return bytes_, filename
+
+    async def set_user_status(self, requester_tg_id: int, telegram_id: int, status: UserStatus) -> bool:
+        async with self._create_client(telegram_id=requester_tg_id) as client:
+            response = await client.post("/users/set_status", params={"telegram_id": telegram_id, "status": status})
+            return response.status_code == 200
+
+    async def set_user_status_as_bot(self, telegram_id: int, status: UserStatus):
+        async with self._create_client() as client:
+            response = await client.post(
+                "/users/set_status", params={"telegram_id": telegram_id, "status": status, "as_bot": True}
+            )
+            return response.status_code == 200
 
 
 api_client: InNoHassleMusicRoomAPI = InNoHassleMusicRoomAPI(bot_settings.api_url)
