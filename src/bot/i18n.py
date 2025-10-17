@@ -25,7 +25,8 @@ class I18NFormat(Text):
             DIALOG_I18N_FORMAT_KEY,
             default_format_text,
         )
-        return format_text(self.text, data)
+        translated_text = format_text(self.text, data)
+        return translated_text.format(**data)
 
 
 def default_format_text(text: str, data: Values) -> str:
