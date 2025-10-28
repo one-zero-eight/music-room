@@ -32,7 +32,7 @@ async def booking_notifications_loop() -> None:
         try:
             await notification_use_case.notify_users_about_upcoming_bookings()
         except Exception as e:
-            logger.error(f"Error in notification loop: {str(e)}")
+            logger.error(f"Error in notification loop: {str(e)}", exc_info=True)
         await asyncio.sleep(60)
 
 
