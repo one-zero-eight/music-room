@@ -27,7 +27,7 @@ if bot_settings.proxy_url:
     session = AiohttpSession(proxy=bot_settings.proxy_url.get_secret_value())
 else:
     session = None
-bot = Bot(token=bot_settings.bot_token.get_secret_value())
+bot = Bot(token=bot_settings.bot_token.get_secret_value(), session=session)
 
 if bot_settings.redis_url:
     storage = RedisStorage.from_url(
