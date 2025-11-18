@@ -21,6 +21,8 @@ class BotSettings(BaseModel):
     users: list[int] = []
     notification_time: datetime.time | None = None
     "According to UTC"
+    proxy_url: SecretStr | None = Field(None, examples=["protocol://user:password@host:port"])
+    "Proxy URL for the bot session"
 
 
 class Accounts(BaseModel):

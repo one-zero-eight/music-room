@@ -3,6 +3,7 @@ import datetime
 
 import pytz
 from aiogram import Bot, F, types
+from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.filters import ExceptionTypeFilter
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import DefaultKeyBuilder, RedisStorage
@@ -21,7 +22,13 @@ from src.bot.logging_ import logger
 from src.bot.middlewares import LogAllEventsMiddleware
 from src.config import bot_settings, settings
 
+if bot_settings.proxy_url:
+    logger.info("Using proxy")
+    session = AiohttpSession(proxy=bot_settings.proxy_url.get_secret_value())
+else:
+    session = None
 bot = Bot(token=bot_settings.bot_token.get_secret_value())
+
 if bot_settings.redis_url:
     storage = RedisStorage.from_url(
         bot_settings.redis_url.get_secret_value(), key_builder=DefaultKeyBuilder(with_destiny=True)
