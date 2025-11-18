@@ -86,6 +86,19 @@ wheels = [
 ]
 
 [[package]]
+name = "aiohttp-socks"
+version = "0.10.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "aiohttp" },
+    { name = "python-socks" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/75/07/1598f292433bcdceb069515811ba5221034f4f12535d06c3372a1b71a785/aiohttp_socks-0.10.2.tar.gz", hash = "sha256:942d7c86e2e579418fc7a734610dd97daaf00707c7462f6ccf679b2325767930", size = 11307, upload-time = "2025-11-10T08:50:44.723Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/7f/51/906d2ef2e9dfe2f3e76e53696f2d73c508f99b54c05d7e9acd8e7033d505/aiohttp_socks-0.10.2-py3-none-any.whl", hash = "sha256:84b29d14356bcda4affa03ef267108416390e1c9029922c66be18ef4b106f980", size = 10470, upload-time = "2025-11-10T08:50:42.065Z" },
+]
+
+[[package]]
 name = "aiosignal"
 version = "1.4.0"
 source = { registry = "https://pypi.org/simple" }
@@ -502,6 +515,8 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/ee/43/3cecdc0349359e1a527cbf2e3e28e5f8f06d3343aaf82ca13437a9aa290f/greenlet-3.2.4-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:23768528f2911bcd7e475210822ffb5254ed10d71f4028387e5a99b4c6699671", size = 610497, upload-time = "2025-08-07T13:18:31.636Z" },
     { url = "https://files.pythonhosted.org/packages/b8/19/06b6cf5d604e2c382a6f31cafafd6f33d5dea706f4db7bdab184bad2b21d/greenlet-3.2.4-cp313-cp313-musllinux_1_1_aarch64.whl", hash = "sha256:00fadb3fedccc447f517ee0d3fd8fe49eae949e1cd0f6a611818f4f6fb7dc83b", size = 1121662, upload-time = "2025-08-07T13:42:41.117Z" },
     { url = "https://files.pythonhosted.org/packages/a2/15/0d5e4e1a66fab130d98168fe984c509249c833c1a3c16806b90f253ce7b9/greenlet-3.2.4-cp313-cp313-musllinux_1_1_x86_64.whl", hash = "sha256:d25c5091190f2dc0eaa3f950252122edbbadbb682aa7b1ef2f8af0f8c0afefae", size = 1149210, upload-time = "2025-08-07T13:18:24.072Z" },
+    { url = "https://files.pythonhosted.org/packages/1c/53/f9c440463b3057485b8594d7a638bed53ba531165ef0ca0e6c364b5cc807/greenlet-3.2.4-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:6e343822feb58ac4d0a1211bd9399de2b3a04963ddeec21530fc426cc121f19b", size = 1564759, upload-time = "2025-11-04T12:42:19.395Z" },
+    { url = "https://files.pythonhosted.org/packages/47/e4/3bb4240abdd0a8d23f4f88adec746a3099f0d86bfedb623f063b2e3b4df0/greenlet-3.2.4-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:ca7f6f1f2649b89ce02f6f229d7c19f680a6238af656f61e0115b24857917929", size = 1634288, upload-time = "2025-11-04T12:42:21.174Z" },
     { url = "https://files.pythonhosted.org/packages/0b/55/2321e43595e6801e105fcfdee02b34c0f996eb71e6ddffca6b10b7e1d771/greenlet-3.2.4-cp313-cp313-win_amd64.whl", hash = "sha256:554b03b6e73aaabec3745364d6239e9e012d64c68ccd0b8430c64ccc14939a8b", size = 299685, upload-time = "2025-08-07T13:24:38.824Z" },
 ]
 
@@ -727,6 +742,7 @@ dependencies = [
     { name = "aiogram" },
     { name = "aiogram-dialog" },
     { name = "aiohttp" },
+    { name = "aiohttp-socks" },
     { name = "alembic" },
     { name = "asyncpg" },
     { name = "authlib" },
@@ -757,6 +773,7 @@ requires-dist = [
     { name = "aiogram", specifier = ">=3.4.1" },
     { name = "aiogram-dialog", specifier = ">=2.2.0" },
     { name = "aiohttp", specifier = ">=3.9.3" },
+    { name = "aiohttp-socks", specifier = ">=0.10.2" },
     { name = "alembic", specifier = ">=1.13.3" },
     { name = "asyncpg", specifier = ">=0.30.0" },
     { name = "authlib", specifier = ">=1.6.5" },
@@ -977,6 +994,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/a9/f7/eddfe33871520adab45aaa1a71f0402a2252050c14c7e3009446c8f4701c/python_docx-1.2.0.tar.gz", hash = "sha256:7bc9d7b7d8a69c9c02ca09216118c86552704edc23bac179283f2e38f86220ce", size = 5723256, upload-time = "2025-06-16T20:46:27.921Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/d0/00/1e03a4989fa5795da308cd774f05b704ace555a70f9bf9d3be057b680bcf/python_docx-1.2.0-py3-none-any.whl", hash = "sha256:3fd478f3250fbbbfd3b94fe1e985955737c145627498896a8a6bf81f4baf66c7", size = 252987, upload-time = "2025-06-16T20:46:22.506Z" },
+]
+
+[[package]]
+name = "python-socks"
+version = "2.7.3"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/09/13/24c319ca6a19852d50850893a09e44c72d0f8eee38e62c55d2ee10e9149e/python_socks-2.7.3.tar.gz", hash = "sha256:06f4ae34c5828c96f631872e102425bbf44ad841d65ce68329e8dc1af428c1f1", size = 273160, upload-time = "2025-11-10T08:32:08.483Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/21/ab/b1bb545bcbb72d4e65662988c79ff6d4601c43424439030cb62027f45540/python_socks-2.7.3-py3-none-any.whl", hash = "sha256:e0fda261fa8d08bbcbb7852cdf5e7f576f15d5e55559f6bc16db1bad8bad399b", size = 55076, upload-time = "2025-11-10T08:32:05.928Z" },
 ]
 
 [[package]]

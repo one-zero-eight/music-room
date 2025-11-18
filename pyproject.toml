@@ -34,6 +34,7 @@ dependencies = [
     "uvicorn>=0.32.1",
     "cairosvg>=2.7.1",
     "gunicorn>=23.0.0",
+    "aiohttp-socks>=0.10.2",
 ]
 
 [tool.ruff]
