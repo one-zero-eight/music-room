@@ -14,7 +14,7 @@ from src.storage.sql import SQLAlchemyStorage
 async def setup_repositories() -> SQLAlchemyStorage:
     from src.repositories.auth.repository import auth_repository
     from src.repositories.bookings.repository import booking_repository
-    from src.repositories.innohassle_accounts import innohassle_accounts
+    from src.repositories.inh_accounts_sdk import inh_accounts
     from src.repositories.users.repository import user_repository
 
     storage = SQLAlchemyStorage.from_url(api_settings.db_url)
@@ -22,7 +22,7 @@ async def setup_repositories() -> SQLAlchemyStorage:
     booking_repository.update_storage(storage)
     auth_repository.update_storage(storage)
 
-    await innohassle_accounts.update_key_set()
+    await inh_accounts.update_key_set()
 
     return storage
 

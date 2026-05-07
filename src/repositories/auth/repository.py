@@ -1,13 +1,11 @@
 __all__ = ["SqlAuthRepository", "auth_repository", "TokenRepository"]
 
-import time
 from typing import Self
 
-from authlib.jose import JoseError, JWTClaims, jwt
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.config import api_settings
-from src.repositories.innohassle_accounts import innohassle_accounts
+from src.repositories.inh_accounts_sdk import inh_accounts
 from src.schemas.auth import VerificationResult, VerificationSource
 from src.storage.sql import AbstractSQLAlchemyStorage
 
@@ -27,15 +25,6 @@ class TokenRepository:
     ALGORITHM = "RS256"
 
     @classmethod
-    def decode_token(cls, token: str) -> JWTClaims:
-        now = time.time()
-        pub_key = innohassle_accounts.get_public_key()
-        payload = jwt.decode(token, pub_key)
-        payload.validate_exp(now, leeway=0)
-        payload.validate_iat(now, leeway=0)
-        return payload
-
-    @classmethod
     def verify_bot_token(cls, auth_token: str) -> VerificationResult:
         if auth_token.endswith(api_settings.bot_token):
             telegram_id = auth_token[: -len(api_settings.bot_token)]
@@ -50,23 +39,20 @@ class TokenRepository:
 
     @classmethod
     async def verify_user_token(cls, token: str) -> VerificationResult:
-        try:
-            payload = cls.decode_token(token)
-            innohassle_id: str | None = payload.get("uid")
-            if innohassle_id is None:
-                return VerificationResult(success=False)
-            user_data = await innohassle_accounts.get_user_by_innohassle_id(innohassle_id)
-            if user_data is None:
-                return VerificationResult(success=False)
-            return VerificationResult(
-                success=True,
-                telegram_id=user_data.telegram.id if user_data.telegram else None,
-                email=user_data.innopolis_sso.email if user_data.innopolis_sso else None,
-                innohassle_id=innohassle_id,
-                source=VerificationSource.USER,
-            )
-        except JoseError:
+        payload = inh_accounts.decode_token(token)
+        if payload is None:
             return VerificationResult(success=False)
+        innohassle_id: str | None = payload.innohassle_id
+        user_data = await inh_accounts.get_user(innohassle_id=innohassle_id)
+        if user_data is None:
+            return VerificationResult(success=False)
+        return VerificationResult(
+            success=True,
+            telegram_id=user_data.telegram_info.id if user_data.telegram_info else None,
+            email=user_data.innopolis_info.email if user_data.innopolis_info else None,
+            innohassle_id=innohassle_id,
+            source=VerificationSource.USER,
+        )
 
     @classmethod
     def verify_api_token(cls, auth_token: str) -> VerificationResult:

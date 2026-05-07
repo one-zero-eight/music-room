@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from src.dependendies.auth import VerifiedDep
 from src.exceptions import ForbiddenException, UserDidNotConnectTelegram, UserExists
-from src.repositories.innohassle_accounts import innohassle_accounts
+from src.repositories.inh_accounts_sdk import inh_accounts
 from src.repositories.users.repository import user_repository
 from src.schemas import CreateUser, UserStatus, ViewUser
 from src.schemas.auth import VerificationSource
@@ -20,19 +20,19 @@ async def registration(telegram_id: int, verification: VerifiedDep) -> ViewUser 
     if await user_repository.get_user_id(telegram_id=telegram_id):
         raise UserExists()
 
-    user_from_innohassle = await innohassle_accounts.get_user_by_telegram_id(telegram_id)
+    user_from_innohassle = await inh_accounts.get_user(telegram_id=telegram_id)
 
     if (
         user_from_innohassle is None
-        or user_from_innohassle.telegram is None
-        or user_from_innohassle.innopolis_sso is None
+        or user_from_innohassle.telegram_info is None
+        or user_from_innohassle.innopolis_info is None
     ):
         raise UserDidNotConnectTelegram()
 
     user = CreateUser(
-        email=user_from_innohassle.innopolis_sso.email,
-        alias=user_from_innohassle.telegram.username,
-        name=user_from_innohassle.innopolis_sso.name,
+        email=user_from_innohassle.innopolis_info.email,
+        alias=user_from_innohassle.telegram_info.username,
+        name=user_from_innohassle.innopolis_info.name,
         status=UserStatus.FREE,
         telegram_id=telegram_id,
     )
