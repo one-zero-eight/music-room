@@ -73,16 +73,19 @@ services:
     image: "postgres:17.1"
     restart: no
     ports:
-      - "5432:5432"
+      # Host port is configurable so it does not clash with a local PostgreSQL
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - "postgres:/var/lib/postgresql/data"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}" ]
       timeout: 5s
       start_period: 30s
       interval: 1m
     environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      POSTGRES_DB: ${POSTGRES_DB:-postgres}
 
   redis:
     # See more: https://hub.docker.com/_/redis

@@ -13,21 +13,31 @@ contents [by default](https://github.blog/changelog/2021-04-13-table-of-contents
 
 ## About
 
-This is the API for music room service in InNoHassle ecosystem.
+This is the API and Telegram bot for the Music room service in the InNoHassle ecosystem.
 
 ### Features
 
 - 🎵 Booking Music room
 - 📅 Schedule of Music room
 - 🔒 Roles and permissions
+- 🔔 Notifications (upcoming bookings, receptionist digests) orchestrated with Prefect
+
+### Components
+
+The repository ships two runnable apps that share the same code and `settings.yaml`:
+
+- **API** (`src/api`) — FastAPI app served by Uvicorn on port `8001`, Swagger UI at `/docs`.
+- **Bot** (`src/bot`) — Aiogram 3 long-polling bot plus a small Uvicorn webserver on port `8002`.
 
 ### Technologies
 
-- [Python 3.12](https://www.python.org/downloads/) & [Poetry](https://python-poetry.org/docs/)
+- [Python 3.13](https://www.python.org/downloads/) & [uv](https://docs.astral.sh/uv/)
 - [FastAPI](https://fastapi.tiangolo.com/) & [Pydantic](https://docs.pydantic.dev/latest/)
 - [Aiogram 3](https://docs.aiogram.dev/en/latest/) & [aiogram-dialog](https://aiogram-dialog.readthedocs.io/)
+- [Prefect 3](https://docs.prefect.io/) for notification workflow orchestration
 - Database and ORM: [PostgreSQL](https://www.postgresql.org/), [SQLAlchemy](https://www.sqlalchemy.org/),
-  [Alembic](https://alembic.sqlalchemy.org/en/latest/)
+  [asyncpg](https://magicstack.github.io/asyncpg/), [Alembic](https://alembic.sqlalchemy.org/en/latest/)
+- [Redis](https://redis.io/) for bot FSM storage
 - Formatting and linting: [Ruff](https://docs.astral.sh/ruff/), [prek](https://prek.j178.dev/)
 - Deployment: [Docker](https://www.docker.com/), [Docker Compose](https://docs.docker.com/compose/),
   [GitHub Actions](https://github.com/features/actions)
@@ -36,28 +46,62 @@ This is the API for music room service in InNoHassle ecosystem.
 
 ### Set up for development
 
-1. Install [Python 3.12+](https://www.python.org/downloads/) & [Poetry](https://python-poetry.org/docs/)
-2. Install project dependencies with [Poetry](https://python-poetry.org/docs/cli/#options-2).
+1. Install [Python 3.13](https://www.python.org/downloads/) and [uv](https://docs.astral.sh/uv/getting-started/installation/).
+2. Install project dependencies:
    ```bash
-   poetry install
+   uv sync
    ```
 3. Start the API:
    ```bash
-   poetry run python -m src.api
+   uv run python -m src.api
    ```
-   > Follow provided instructions if needed
+   > Follow provided instructions if needed. Swagger UI: http://localhost:8001/docs
 4. Start the Bot:
    ```bash
-   poetry run python -m src.bot
+   uv run python -m src.bot
    ```
-   > Follow provided instructions if needed
+   > Follow provided instructions if needed.
+
+> [!NOTE]
+> On the first run each app goes through `src/prepare.py`, which:
+> - copies `settings.example.yaml` to `settings.yaml` if it is missing;
+> - installs the prek git hooks;
+> - prompts for the InNoHassle Accounts JWT token and the bot token (opening the relevant page in your browser);
+> - generates a random `api_settings.api_key`;
+> - checks the database connection, starts the `db` container with `docker compose up -d --wait db` if it is
+>   unreachable, and runs `alembic upgrade head`.
+
+> [!NOTE]
+> The bot and API schedule their notification flows through Prefect. To record runs on a real
+> Prefect server instead of the ephemeral one, start it with `prefect server start` and export
+> `PREFECT_API_URL=http://127.0.0.1:4200/api` before launching them. Without it, Prefect falls
+> back to an ephemeral local API and the schedulers still work. The Prefect UI is available at
+> http://localhost:4200 (also started as the `prefect-server` service in Docker Compose).
 
 > [!IMPORTANT]
 > For endpoints requiring authorization click "Authorize" button in Swagger UI
 
 > [!TIP]
-> Edit `settings.yaml` according to your needs, you can view schema in
-> [config_schema.py](src/config_schema.py) and in [settings.schema.yaml](settings.schema.yaml)
+> Edit `settings.yaml` according to your needs, you can view the schema in
+> [config_schema.py](src/config_schema.py) and in [settings.schema.yaml](settings.schema.yaml).
+> Point at a different file with the `SETTINGS_PATH` environment variable.
+
+### Database migrations
+
+Migrations are managed with Alembic and applied automatically on the first app run. Run them manually with:
+
+```bash
+uv run alembic upgrade head            # apply latest
+uv run alembic revision --autogenerate -m "message"   # create a new migration
+```
+
+### Running checks
+
+```bash
+uv run prek run --all-files   # ruff lint + format, translations, settings schema
+uv run ruff check .
+uv run ruff format .
+```
 
 **Set up PyCharm integrations**
 
@@ -78,16 +122,16 @@ All localized bot messages should be wrapped: `__("Hello world"")`
 
 1. Extract messages:
    ```bash
-   poetry run pybabel extract -k __ --input-dirs=. -o locales/messages.pot
+   uv run pybabel extract -k __ --input-dirs=. -o locales/messages.pot
    ```
 2. Update translations:
    ```bash
-   poetry run pybabel update -i locales/messages.pot -d locales -D messages --ignore-pot-creation-date
+   uv run pybabel update -i locales/messages.pot -d locales -D messages --ignore-pot-creation-date
    ```
 3. Translate messages in created `.po` files
 4. Compile translations:
    ```bash
-   poetry run pybabel compile -d locales -D messages
+   uv run pybabel compile -d locales -D messages
    ```
 
 **Aiogram dialog:**
@@ -96,29 +140,37 @@ Add translations identifiers (strings inside `I18Format`) and their translations
 
 ### Deployment
 
-We use Docker with Docker Compose plugin to run the website on servers.
+We use Docker with the Docker Compose plugin to run the service on servers.
 
-1. Copy the file with environment variables: `cp .example.env .env`
-2. Change environment variables in the `.env` file
-3. Copy the file with settings: `cp settings.example.yaml settings.yaml`
-4. Change settings in the `settings.yaml` file according to your needs
+1. Copy the settings file: `cp settings.example.yaml settings.yaml`
+2. Change settings in the `settings.yaml` file according to your needs
    (check [settings.schema.yaml](settings.schema.yaml) for more info)
-5. Install Docker with Docker Compose
-6. Build a Docker image: `docker compose build --pull`
-7. Run the container: `docker compose up --detach`
-8. Check the logs: `docker compose logs -f`
+3. (Optional) put database overrides in a `.env` file next to `docker-compose.yaml` — the `db` service reads
+   `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` (all default to `postgres`) and `POSTGRES_PORT`
+   (default `5432`, the host-side port). Keep `api_settings.db_url` in `settings.yaml` in sync with them.
+4. Install Docker with the Docker Compose plugin
+5. Build and start all services: `docker compose up --build --wait`
+6. Check the logs: `docker compose logs -f`
+
+Exposed ports: API on `localhost:8001`, Prefect UI on `localhost:4200`, PostgreSQL on `5432`, Redis on `6379`.
+The `alembic-migrate` one-shot service applies migrations before the API starts.
 
 # How to update dependencies
 
 ## Project dependencies
 
-1. Run `poetry update` to update all dependencies (it may update nothing, so double-check)
-2. Run `poetry show --outdated --all` to check for outdated dependencies
-3. Run `poetry add <package>@latest` to add a new dependency if needed
+1. Run `uv lock --upgrade` to update the lockfile (it may update nothing, so double-check).
+2. Run `uv sync` to install the updated versions.
+3. Run `uv lock --upgrade-package <package>` to bump a single dependency, or
+   `uv add <package>` to add a new one.
+
+> [!NOTE]
+> Keep the `prefecthq/prefect` image tag in [docker-compose.yaml](docker-compose.yaml) in sync with the
+> `prefect` version in [pyproject.toml](pyproject.toml).
 
 ## Pre-commit hooks
 
-1. Run `uv run prek auto-update`
+1. Run `uv run prek auto-update`.
 
 Also, Dependabot will help you to keep your dependencies up-to-date, see [dependabot.yml](.github/dependabot.yml).
 
