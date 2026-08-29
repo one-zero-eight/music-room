@@ -35,6 +35,7 @@ dependencies = [
     "gunicorn>=26.0.0",
     "aiohttp-socks>=0.11.0",
     "prek>=0.3.13",
+    "prefect>=3.8.4",
 ]
 
 [tool.ruff]

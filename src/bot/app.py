@@ -12,8 +12,8 @@ from aiogram.utils.i18n import I18n
 from aiogram.utils.i18n.middleware import SimpleI18nMiddleware
 from aiogram_dialog import setup_dialogs
 from aiogram_dialog.api.exceptions import UnknownIntent
+from prefect import flow, task
 
-import src.bot.logging_  # noqa: F401
 from src.bot.api import api_client
 from src.bot.constants import bot_commands, bot_description, bot_name, bot_short_description
 from src.bot.dispatcher import CustomDispatcher
@@ -70,9 +70,35 @@ i18n_middleware.setup(dp)
 dialog_i18n_middleware.setup(dp)
 
 
-async def receptionist_notifications_loop():
-    if not settings.bot_settings.users or not settings.bot_settings.notification_time:
-        return
+@task(retries=2, retry_delay_seconds=5, log_prints=True)
+async def get_users_list_from_api() -> BufferedInputFile:
+    response = await api_client.export_users_as_bot()
+    if not response:
+        raise RuntimeError("Couldn't fetch the list of users from API")
+    bytes_, filename = response
+    return BufferedInputFile(bytes_, filename)
+
+
+@task(retries=3, retry_delay_seconds=5, log_prints=True)
+async def send_users_list_document(telegram_id: int, document: BufferedInputFile):
+    try:
+        await bot.send_document(telegram_id, document, caption="Here is the list of users.")
+        logger.info(f"Successfully sent the list of users to {telegram_id}")
+    except Exception as e:  # noqa: E722
+        logger.warning("Couldn't send the list of users to %s. Please check: %s", telegram_id, e)
+
+
+@flow(name="receptionist-notifications", log_prints=True)
+async def run_receptionist_scheduler() -> None:
+
+    # Fetch the list of users from API
+    document = await get_users_list_from_api()
+    # Send document to receptionists
+    for telegram_id in settings.bot_settings.users:
+        await send_users_list_document(telegram_id, document)
+
+
+async def receptionist_scheduler_loop():
     while True:
         # Calculate the time until the next notification
         current_date = datetime.datetime.now(datetime.UTC)
@@ -94,31 +120,7 @@ async def receptionist_notifications_loop():
         logger.info(f"Waiting {wait} seconds until next notification")
         await asyncio.sleep(wait)
         logger.info("Sending the list of users")
-
-        # Fetch the list of users from API
-        try:
-            response = await api_client.export_users_as_bot()
-            if response:
-                bytes_, filename = response
-                document = BufferedInputFile(bytes_, filename)
-            else:
-                raise RuntimeError("Couldn't fetch the list of users from API")
-        except Exception as e:  # noqa: E722
-            logger.warning("Couldn't fetch the list of users from API: %s", e)
-            continue
-
-        # Send the document to each receptionist
-        for telegram_id in settings.bot_settings.users:
-            tries = 0
-            while tries < 3:
-                tries += 1
-                try:
-                    await bot.send_document(telegram_id, document, caption="Here is the list of users.")
-                    logger.info(f"Successfully sent the list of users to {telegram_id}")
-                    break
-                except Exception as e:  # noqa: E722
-                    logger.warning("Couldn't send the list of users to %s. Please check: %s", telegram_id, e)
-                    await asyncio.sleep(5)
+        await run_receptionist_scheduler()
 
 
 async def configure_bot() -> None:
@@ -142,6 +144,9 @@ async def configure_bot() -> None:
 async def main():
     await configure_bot()
     await bot.delete_webhook(drop_pending_updates=True)
-    asyncio.create_task(receptionist_notifications_loop())
+    if settings.bot_settings.users and settings.bot_settings.notification_time:
+        asyncio.create_task(receptionist_scheduler_loop())
+    else:
+        logger.info("Receptionist notifications disabled (need bot_settings.users and bot_settings.notification_time)")
     # Start long-polling
     await dp.start_polling(bot, allowed_updates=dp.resolve_used_update_types())

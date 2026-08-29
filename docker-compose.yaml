@@ -10,12 +10,17 @@ services:
       dockerfile: bot.Dockerfile
     restart: no
     depends_on:
-      - api
-      - redis # Wait for the database to be ready before starting the application
+      api:
+        condition: service_started
+      redis:
+        condition: service_started
+      prefect-server:
+        condition: service_healthy
     volumes:
       - "./settings.yaml:/app/settings.yaml:ro" # Read-only settings file
     environment:
       TZ: Europe/Moscow # Set the timezone for correct calendar image generation
+      PREFECT_API_URL: http://prefect-server:4200/api # Prefect API for the notification scheduler
     deploy:
       # Change limits if project needs more RAM, though try to stay within limits
       resources:
@@ -34,12 +39,15 @@ services:
         condition: service_healthy
       alembic-migrate:
         condition: service_completed_successfully
+      prefect-server:
+        condition: service_healthy
     ports:
       - "8001:8000"
     volumes:
       - "./settings.yaml:/app/settings.yaml:ro" # Read-only settings file
     environment:
       TZ: Europe/Moscow # Set the timezone for correct calendar image generation
+      PREFECT_API_URL: http://prefect-server:4200/api # Prefect API for the booking-notifications flow
     deploy:
       # Change limits if project needs more RAM, though try to stay within limits
       resources:
@@ -87,6 +95,23 @@ services:
       - "redis:/data"
       - "./redis/redis.conf:/usr/local/etc/redis/redis.conf"
 
+  prefect-server:
+    # Orchestrates the notification flows. Keep the tag in sync with the `prefect` version in pyproject.toml.
+    image: "prefecthq/prefect:3.8.4-python3.13"
+    restart: no
+    command: prefect server start --host 0.0.0.0
+    ports:
+      - "4200:4200"
+    volumes:
+      - "prefect:/root/.prefect" # SQLite metadata DB; point at Postgres later if needed
+    healthcheck:
+      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4200/api/health')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+
 volumes:
   postgres:
   redis:
+  prefect:
