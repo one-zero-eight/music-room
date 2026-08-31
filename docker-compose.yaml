@@ -42,7 +42,7 @@ services:
       prefect-server:
         condition: service_healthy
     ports:
-      - "8001:8000"
+      - "8000:8000"
     volumes:
       - "./settings.yaml:/app/settings.yaml:ro" # Read-only settings file
     environment:
@@ -78,7 +78,11 @@ services:
     volumes:
       - "postgres:/var/lib/postgresql/data"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}" ]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-postgres}",
+        ]
       timeout: 5s
       start_period: 30s
       interval: 1m
@@ -91,7 +95,7 @@ services:
     # See more: https://hub.docker.com/_/redis
     image: "redis:7.2.4-alpine"
     restart: no
-    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     ports:
       - "6379:6379"
     volumes:
@@ -108,7 +112,13 @@ services:
     volumes:
       - "prefect:/root/.prefect" # SQLite metadata DB; point at Postgres later if needed
     healthcheck:
-      test: [ "CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:4200/api/health')" ]
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:4200/api/health')",
+        ]
       interval: 10s
       timeout: 5s
       retries: 10

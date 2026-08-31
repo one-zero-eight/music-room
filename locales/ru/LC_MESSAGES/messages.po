@@ -209,3 +209,27 @@ msgstr "Отменено"
 #: src/bot/routers/booking/my_bookings_routes.py:76
 msgid "No such booking found"
 msgstr "Бронирование не найдено"
+
+#: src/bot/routers/registration.py:134
+msgid ""
+"Please write your full name (first and last name) in Russian, using "
+"Cyrillic letters only."
+msgstr ""
+"Пожалуйста, укажите своё полное имя (имя и фамилию) на русском языке, "
+"используя только кириллицу."
+
+#: src/bot/routers/registration.py:144
+msgid "Something went wrong while saving your name. Please try again later."
+msgstr "Не удалось сохранить ваше имя. Пожалуйста, попробуйте позже."
+
+#: src/bot/routers/registration.py:151
+msgid "Thank you! Your name has been saved, you can now create a booking."
+msgstr "Спасибо! Ваше имя сохранено — теперь вы можете создать бронирование."
+
+#: src/bot/routers/booking/create_booking_routes.py:40
+msgid ""
+"To create a booking, please first write your full name (first and last "
+"name) in Russian, using Cyrillic letters only."
+msgstr ""
+"Чтобы создать бронирование, сначала укажите своё полное имя (имя и фамилию) "
+"на русском языке, используя только кириллицу."

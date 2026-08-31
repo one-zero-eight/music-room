@@ -208,3 +208,27 @@ msgstr "Cancelled"
 #: src/bot/routers/booking/my_bookings_routes.py:76
 msgid "No such booking found"
 msgstr "No such booking found"
+
+#: src/bot/routers/registration.py:134
+msgid ""
+"Please write your full name (first and last name) in Russian, using "
+"Cyrillic letters only."
+msgstr ""
+"Please write your full name (first and last name) in Russian, using "
+"Cyrillic letters only."
+
+#: src/bot/routers/registration.py:144
+msgid "Something went wrong while saving your name. Please try again later."
+msgstr "Something went wrong while saving your name. Please try again later."
+
+#: src/bot/routers/registration.py:151
+msgid "Thank you! Your name has been saved, you can now create a booking."
+msgstr "Thank you! Your name has been saved, you can now create a booking."
+
+#: src/bot/routers/booking/create_booking_routes.py:40
+msgid ""
+"To create a booking, please first write your full name (first and last "
+"name) in Russian, using Cyrillic letters only."
+msgstr ""
+"To create a booking, please first write your full name (first and last "
+"name) in Russian, using Cyrillic letters only."

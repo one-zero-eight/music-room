@@ -1,6 +1,6 @@
 import asyncio
 
-from aiogram import Bot, Router, types
+from aiogram import Bot, F, Router, types
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup, any_state
 from aiogram.types import LoginUrl, Message
@@ -9,6 +9,7 @@ from aiogram.utils.i18n import gettext as _
 from src.bot.constants import rules_confirmation_message
 from src.bot.filters import EmptyUsernameFilter, RegisteredUserFilter
 from src.bot.menu import get_help_kb, get_menu_kb
+from src.bot.validators import is_russian_name
 from src.config import settings
 
 router = Router(name="registration")
@@ -16,6 +17,7 @@ router = Router(name="registration")
 
 class RegistrationStates(StatesGroup):
     rules_confirmation_requested = State()
+    russian_name_requested = State()
 
 
 @router.message(any_state, ~EmptyUsernameFilter())
@@ -113,7 +115,39 @@ async def confirm_rules(message: Message, state: FSMContext):
             _("If you have any questions, you can ask them in the chat or read the instructions."),
             reply_markup=get_help_kb(),
         )
-
         await state.clear()
     else:
         await message.answer(_("You haven't confirmed the rules. Please, try again."))
+
+
+# A registered user without a Russian name is asked for one only when they try to book
+# (see `start_booking`); viewing bookings and other read-only actions stay available.
+# Commands (/menu, /my_bookings, ...) are let through so the user is never trapped here.
+@router.message(RegistrationStates.russian_name_requested, ~F.text.startswith("/"))
+async def set_russian_name(message: Message, bot: Bot, state: FSMContext, event_from_user: types.User):
+    from src.bot.api import api_client
+
+    name = (message.text or "").strip()
+    if not is_russian_name(name):
+        await bot.send_message(
+            event_from_user.id,
+            _("Please write your full name (first and last name) in Russian, using Cyrillic letters only."),
+        )
+        return
+
+    me = await api_client.get_me(event_from_user.id)
+    alias = me.alias if me and me.alias else event_from_user.username
+    ok, detail = await api_client.fill_profile(event_from_user.id, name=name, alias=alias)
+    if not ok:
+        await bot.send_message(
+            event_from_user.id,
+            _("Something went wrong while saving your name. Please try again later."),
+        )
+        return
+
+    await state.clear()
+    await bot.send_message(
+        event_from_user.id,
+        _("Thank you! Your name has been saved, you can now create a booking."),
+        reply_markup=get_menu_kb(),
+    )

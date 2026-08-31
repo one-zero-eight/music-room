@@ -3,6 +3,7 @@ from typing import Any
 
 from aiogram import F
 from aiogram.filters import Command
+from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import any_state
 from aiogram.types import CallbackQuery, Message, User
 from aiogram.utils.i18n import gettext as _
@@ -18,6 +19,8 @@ from src.bot.routers.booking import router
 from src.bot.routers.booking.states import CreateBookingStates
 from src.bot.routers.booking.widgets.calendar import CustomCalendar
 from src.bot.routers.booking.widgets.time_range import TimeRangeWidget
+from src.bot.routers.registration import RegistrationStates
+from src.bot.validators import is_russian_name
 from src.schemas import UserStatus
 
 
@@ -25,10 +28,19 @@ from src.schemas import UserStatus
 @router.message(
     any_state, (F.text == constants.create_booking_message) | (F.text == constants.create_booking_message_en)
 )
-async def start_booking(_message: Message, dialog_manager: DialogManager):
+async def start_booking(_message: Message, dialog_manager: DialogManager, state: FSMContext):
     user = await api_client.get_me(_message.from_user.id)
     if user.status == UserStatus.BANNED:
         await _message.answer(str(ban_message))
+        return
+    if not is_russian_name(user.name):
+        await state.set_state(RegistrationStates.russian_name_requested)
+        await _message.answer(
+            _(
+                "To create a booking, please first write your full name (first and last name) "
+                "in Russian, using Cyrillic letters only."
+            )
+        )
         return
     await dialog_manager.start(
         CreateBookingStates.choose_date,
