@@ -168,5 +168,13 @@ class InNoHassleMusicRoomAPI:
             )
             return response.status_code == 200
 
+    async def submit_still_using_answer(self, telegram_id: int, is_using_music_room: bool) -> bool:
+        async with self._create_client(telegram_id=telegram_id) as client:
+            response = await client.post(
+                "/users/is_using_music_room",
+                params={"telegram_id": telegram_id, "is_using_music_room": is_using_music_room},
+            )
+            return response.status_code == 200
+
 
 api_client: InNoHassleMusicRoomAPI = InNoHassleMusicRoomAPI(bot_settings.api_url)

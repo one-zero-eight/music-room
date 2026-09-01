@@ -35,6 +35,7 @@ async def get_list_of_all_users(verified: VerifiedDep, as_bot: bool = False):
 
     users = await user_repository.get_all_users()
     users = list(filter(lambda u: u.status != UserStatus.BANNED, users))
+    users = list(filter(lambda u: u.is_using_music_room, users))
     users.sort(key=lambda x: x.name or "")
 
     document: Document = create_docx()
@@ -164,6 +165,28 @@ async def set_user_status(
     user_id = await user_repository.get_user_id(telegram_id=telegram_id, email=email, alias=alias)
     try:
         await user_repository.set_status(user_id=user_id, status=status)
+        return {"status": "success"}
+    except NoResultFound:
+        return JSONResponse(status_code=404, content={"status": "error, no such user"})
+
+
+@router.post("/users/is_using_music_room")
+async def set_is_using_music_room(
+    verification: VerifiedDep,
+    is_using_music_room: bool,
+    telegram_id: int | None = None,
+    email: str | None = None,
+    alias: str | None = None,
+):
+    if verification.source not in (VerificationSource.BOT, VerificationSource.API):
+        raise ForbiddenException()
+
+    user_id = await user_repository.get_user_id(telegram_id=telegram_id, email=email, alias=alias)
+    if user_id is None:
+        return JSONResponse(status_code=404, content={"status": "error, no such user"})
+
+    try:
+        await user_repository.set_is_using_music_room(user_id=user_id, value=is_using_music_room)
         return {"status": "success"}
     except NoResultFound:
         return JSONResponse(status_code=404, content={"status": "error, no such user"})

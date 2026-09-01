@@ -83,6 +83,16 @@ class SqlUserRepository:
             user.status = status
             await session.commit()
 
+    async def set_is_using_music_room(self, user_id: int, value: bool) -> None:
+        async with self._create_session() as session:
+            query = select(User).where(User.id == user_id)
+            user = await session.scalar(query)
+            if not user:
+                raise NoResultFound("No such user")
+
+            user.is_using_music_room = value
+            await session.commit()
+
     async def remaining_weekly_hours(self, user_id: int, start_of_week: datetime.date | None = None) -> float:
         async with self._create_session() as session:
             if start_of_week is None:

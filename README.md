@@ -106,7 +106,7 @@ uv run ruff format .
 
 ### Scripts
 
-One-off maintenance scripts live in `scripts/` and run with `uv run python scripts/<name>.py`:
+One-off maintenance scripts live in `scripts/` and run with `uv run python scripts/<name>.py` settings for the scripts is loaded from the `settings.yaml`:
 
 - **`notify_english_named_users.py`** — messages every user whose stored profile name is
   written in English (Latin letters, no Cyrillic) and who has at least one booking in the
@@ -115,8 +115,14 @@ One-off maintenance scripts live in `scripts/` and run with `uv run python scrip
   (seconds between messages, default `0.1`).
 
   ```bash
-  uv run python scripts/notify_english_named_users.py --dry-run
   uv run python scripts/notify_english_named_users.py
+  ```
+
+- **`notify_still_using_music_room.py`** — Ask old non-banned user whether they still want to use the music room (recent users is skipped), via a Yes/No inline-keyboard poll  with addition to Russian-full-name reminder. Flags: `--dry-run` (list
+  recipients, send nothing), `--delay` (seconds between messages, default `0.1`).
+
+  ```bash
+  uv run python scripts/notify_still_using_music_room.py
   ```
 
 **Set up PyCharm integrations**

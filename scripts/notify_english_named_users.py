@@ -23,25 +23,12 @@ sys.path.append(str(Path(__file__).parents[1]))
 from aiogram import Bot  # noqa: E402
 from aiogram.exceptions import TelegramForbiddenError, TelegramRetryAfter  # noqa: E402
 
+from src.bot.constants import russian_name_reminder_message as MESSAGE  # noqa: E402
 from src.bot.validators import is_english_name  # noqa: E402
 from src.config import api_settings, bot_settings  # noqa: E402
 from src.repositories.bookings.repository import booking_repository  # noqa: E402
 from src.repositories.users.repository import user_repository  # noqa: E402
 from src.storage.sql import SQLAlchemyStorage  # noqa: E402
-
-MESSAGE = (
-    "Привет! Пожалуйста, укажите своё имя в профиле бота музыкальной комнаты на русском "
-    "языке (кириллицей). Так администраторам проще сверять списки для доступа в "
-    "спортивный комплекс.\n\n"
-    "Откройте бота, начните бронирование командой /create_booking и введите своё полное "
-    "имя на русском, когда бот попросит.\n\n"
-    "— — —\n\n"
-    "Hi! Please set your name in the music room bot profile in Russian (Cyrillic "
-    "letters). It helps the administrators match the access lists for the sports "
-    "complex.\n\n"
-    "Open the bot, start a booking with /create_booking and type your full name in "
-    "Russian when prompted."
-)
 
 
 def setup_storage() -> SQLAlchemyStorage:

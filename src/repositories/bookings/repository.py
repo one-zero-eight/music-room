@@ -36,7 +36,11 @@ class SqlBookingRepository:
             obj = await session.scalar(query)
             await session.commit()
             await session.refresh(obj)
-            return ViewBooking.model_validate(obj)
+            view_booking = ViewBooking.model_validate(obj)
+
+        # a user who's actively booking is clearly still using the room
+        await user_repository.set_is_using_music_room(user_id=user_id, value=True)
+        return view_booking
 
     async def get_booking(self, booking_id: int) -> Optional["ViewBooking"]:
         async with self._create_session() as session:
