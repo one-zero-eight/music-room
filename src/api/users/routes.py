@@ -82,6 +82,13 @@ async def get_list_of_all_users(verified: VerifiedDep, as_bot: bool = False):
     )
 
 
+@router.get("/users/")
+async def get_all_users(verification: VerifiedDep) -> list[ViewUser]:
+    if verification.source not in (VerificationSource.BOT, VerificationSource.API):
+        raise ForbiddenException()
+    return await user_repository.get_all_users()
+
+
 @router.get("/users/me")
 async def get_me(verified: VerifiedDepWithUserID) -> ViewUser:
     user = await user_repository.get_user(verified.user_id)
