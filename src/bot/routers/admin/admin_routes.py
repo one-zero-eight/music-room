@@ -61,10 +61,11 @@ async def export_users(message: types.Message):
 
 
 @router.message(any_state, Command("change_status"), StatusFilter([UserStatus.ADMIN]))
-async def change_status(_message: types.Message, dialog_manager: DialogManager):
+async def change_status(message: types.Message, dialog_manager: DialogManager):
     await dialog_manager.start(
         ChangeStatusStates.input_username,
         mode=StartMode.RESET_STACK,
+        data={"requester_tg_id": message.from_user.id},
     )
 
 
@@ -106,11 +107,40 @@ async def get_dialog_data(dialog_manager, **kwargs):
     return dialog_manager.dialog_data
 
 
+CUSTOM_STATUSES = [status for status in UserStatus if status != UserStatus.FREE]
+
+
+async def get_users_with_status(dialog_manager: DialogManager, **_kwargs):
+    requester_tg_id = dialog_manager.start_data["requester_tg_id"]
+    users = await api_client.get_all_users(requester_tg_id)
+
+    grouped: dict[UserStatus, list[str]] = {}
+    for user in users:
+        if user.status == UserStatus.FREE:
+            continue
+        label = f"@{user.alias}" if user.alias else (user.name or f"id:{user.telegram_id}")
+        grouped.setdefault(user.status, []).append(label)
+
+    lines: list[str] = []
+    for status in CUSTOM_STATUSES:
+        members = grouped.get(status)
+        if not members:
+            continue
+        lines.append(f"[{status.value}]")
+        lines.extend(f"   {member}" for member in sorted(members, key=str.lower))
+
+    return {"users_list": "\n".join(lines) if lines else "—"}
+
+
 username_window = Window(
-    I18NFormat("Please enter the username of the user whose status you want to change:"),
+    I18NFormat(
+        "List of current users with a custom status:\n{users_list}\n\n"
+        "Please enter the username of the user whose status you want to change:"
+    ),
     TextInput(id="username", on_success=on_username_input),
     Cancel(Const("❌")),
     state=ChangeStatusStates.input_username,
+    getter=get_users_with_status,
 )
 
 status_window = Window(

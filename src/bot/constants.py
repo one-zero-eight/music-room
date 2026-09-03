@@ -51,3 +51,21 @@ image_schedule_message = __("Show the image with bookings")
 image_schedule_message_en = "Show the image with bookings"
 
 DIALOG_I18N_FORMAT_KEY = "dialog_i18n_format"
+
+still_using_poll_message = "Вы всё ещё хотите пользоваться музыкальной комнатой?"
+still_using_poll_ack_yes = "Спасибо за ответ! ✅"
+still_using_poll_ack_no = "Спасибо за ответ! Жаль, что вы уходите. ❌"
+
+russian_name_reminder_message = (
+    "Привет! Пожалуйста, укажите своё имя в профиле бота музыкальной комнаты на русском "
+    "языке (кириллицей). Так администраторам проще сверять списки для доступа в "
+    "спортивный комплекс.\n\n"
+    "Откройте бота, начните бронирование командой /create_booking и введите своё полное "
+    "имя на русском, когда бот попросит.\n\n"
+    "— — —\n\n"
+    "Hi! Please set your name in the music room bot profile in Russian (Cyrillic "
+    "letters). It helps the administrators match the access lists for the sports "
+    "complex.\n\n"
+    "Open the bot, start a booking with /create_booking and type your full name in "
+    "Russian when prompted."
+)

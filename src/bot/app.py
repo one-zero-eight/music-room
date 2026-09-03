@@ -51,6 +51,7 @@ async def unknown_intent_handler(event: ErrorEvent, callback_query: types.Callba
 
 from src.bot.routers.admin import router as router_admin  # noqa: E402
 from src.bot.routers.booking import router as router_bookings  # noqa: E402
+from src.bot.routers.poll import router as router_poll  # noqa: E402
 from src.bot.routers.registration import router as router_registration  # noqa: E402
 from src.bot.routers.schedule import router as router_image_schedule  # noqa: E402
 from src.bot.routers.start_help_menu import router as start_help_menu_router  # noqa: E402
@@ -60,6 +61,7 @@ dp.include_router(start_help_menu_router)  # start, help, menu commands
 dp.include_router(router_admin)  # admin commands
 dp.include_router(router_bookings)  # everything about bookings (create, show, etc.)
 dp.include_router(router_image_schedule)  # schedule commands (show image)
+dp.include_router(router_poll)  # still-using-music-room poll
 
 setup_dialogs(dp)
 

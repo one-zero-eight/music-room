@@ -20,6 +20,7 @@ This is the API and Telegram bot for the Music room service in the InNoHassle ec
 - 🎵 Booking Music room
 - 📅 Schedule of Music room
 - 🔒 Roles and permissions
+- 🇷🇺 Russian (Cyrillic) full name required before creating a booking
 - 🔔 Notifications (upcoming bookings, receptionist digests) orchestrated with Prefect
 
 ### Components
@@ -102,6 +103,27 @@ uv run prek run --all-files   # ruff lint + format, translations, settings schem
 uv run ruff check .
 uv run ruff format .
 ```
+
+### Scripts
+
+One-off maintenance scripts live in `scripts/` and run with `uv run python scripts/<name>.py` settings for the scripts is loaded from the `settings.yaml`:
+
+- **`notify_english_named_users.py`** — messages every user whose stored profile name is
+  written in English (Latin letters, no Cyrillic) and who has at least one booking in the
+  last 6 months, asking them to switch their name to Russian. Flags: `--dry-run` (list
+  recipients, send nothing), `--months N` (look-back window, default `6`), `--delay`
+  (seconds between messages, default `0.1`).
+
+  ```bash
+  uv run python scripts/notify_english_named_users.py
+  ```
+
+- **`notify_still_using_music_room.py`** — Ask old non-banned user whether they still want to use the music room (recent users is skipped), via a Yes/No inline-keyboard poll  with addition to Russian-full-name reminder. Flags: `--dry-run` (list
+  recipients, send nothing), `--delay` (seconds between messages, default `0.1`).
+
+  ```bash
+  uv run python scripts/notify_still_using_music_room.py
+  ```
 
 **Set up PyCharm integrations**
 

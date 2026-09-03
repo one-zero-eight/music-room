@@ -17,4 +17,5 @@ class User(Base, IdMixin):
     email: Mapped[str] = mapped_column(unique=True, nullable=False)
     status: Mapped[str] = mapped_column(nullable=False, default="free")
     telegram_id: Mapped[int] = mapped_column(BigInteger(), nullable=True, default="null")
+    is_using_music_room: Mapped[bool] = mapped_column(nullable=False, default=True)
     booking: Mapped[list["Booking"]] = relationship(back_populates="user")

@@ -58,5 +58,6 @@ class ViewUser(BaseModel):
     email: str
     telegram_id: int
     status: UserStatus
+    is_using_music_room: bool
 
     model_config = ConfigDict(from_attributes=True)

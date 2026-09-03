@@ -57,6 +57,13 @@ class InNoHassleMusicRoomAPI:
             if response.status_code == 200:
                 return ViewUser.model_validate(response.json())
 
+    async def get_all_users(self, requester_tg_id: int) -> list[ViewUser]:
+        async with self._create_client(telegram_id=requester_tg_id) as client:
+            response = await client.get("/users/")
+            if response.status_code == 200:
+                return [ViewUser.model_validate(item) for item in response.json()]
+            return []
+
     async def get_user(
         self, requester_tg_id: int, telegram_id: int | None = None, email: str | None = None, alias: str | None = None
     ) -> ViewUser | None:
@@ -165,6 +172,14 @@ class InNoHassleMusicRoomAPI:
         async with self._create_client() as client:
             response = await client.post(
                 "/users/set_status", params={"telegram_id": telegram_id, "status": status, "as_bot": True}
+            )
+            return response.status_code == 200
+
+    async def submit_still_using_answer(self, telegram_id: int, is_using_music_room: bool) -> bool:
+        async with self._create_client(telegram_id=telegram_id) as client:
+            response = await client.post(
+                "/users/is_using_music_room",
+                params={"telegram_id": telegram_id, "is_using_music_room": is_using_music_room},
             )
             return response.status_code == 200
 

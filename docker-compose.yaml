@@ -42,7 +42,7 @@ services:
       prefect-server:
         condition: service_healthy
     ports:
-      - "8001:8000"
+      - "8000:8000"
     volumes:
       - "./settings.yaml:/app/settings.yaml:ro" # Read-only settings file
     environment:
@@ -91,7 +91,7 @@ services:
     # See more: https://hub.docker.com/_/redis
     image: "redis:7.2.4-alpine"
     restart: no
-    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     ports:
       - "6379:6379"
     volumes:
