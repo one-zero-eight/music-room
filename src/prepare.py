@@ -89,9 +89,13 @@ def ensure_pre_commit_hooks():
     """
     Ensure `pre-commit` hooks are installed.
     """
+    git_dir = BASE_DIR / ".git"
+    if not git_dir.exists():
+        # Not a git checkout (e.g. running inside a Docker container) — skip.
+        return
 
     def is_pre_commit_installed():
-        pre_commit_hook = BASE_DIR / ".git" / "hooks" / "pre-commit"
+        pre_commit_hook = git_dir / "hooks" / "pre-commit"
         return pre_commit_hook.exists() and os.access(pre_commit_hook, os.X_OK)
 
     if not PRE_COMMIT_CONFIG.exists():
