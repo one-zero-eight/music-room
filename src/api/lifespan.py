@@ -40,7 +40,19 @@ async def booking_notifications_loop() -> None:
 async def lifespan(_app: FastAPI):
     # Application startup
     storage = await setup_repositories()
+
+    # Pre-warm Prefect ephemeral server so it's ready before the notification loop
+    # fires its first @flow call (avoids startup timeout / port-collision race).
+    try:
+        from prefect.client.orchestration import get_client
+
+        async with get_client() as client:
+            logger.info("Prefect ephemeral server initialized")
+    except Exception as e:
+        logger.warning(f"Failed to pre-warm Prefect server: {e}")
+
     asyncio.create_task(booking_notifications_loop())
     yield
     # Application shutdown
     await storage.close_connection()
+
