@@ -9,6 +9,7 @@ bot_settings:
   users: [1111]
   notification_time: "09:00:00"
   api_url: http://api:8000
+  # support_contact: "@example" # handle shown to banned users; defaults to @example
 accounts:
   # Get from https://api.innohassle.ru/accounts/v0/tokens/generate-service-token?sub=music-room-local-dev&scopes=users&only_for_me=true
   api_jwt_token: null

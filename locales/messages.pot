@@ -40,10 +40,11 @@ msgstr ""
 msgid "I agree to and will abide by the stated rules."
 msgstr ""
 
-#: src/bot/constants.py:41
+#: src/bot/constants.py:43
+#, python-brace-format
 msgid ""
 "You are banned and can't book the music room. In case you believe it's a "
-"mistake, please contact: @Leon_Parepko"
+"mistake, please contact: {support_contact}"
 msgstr ""
 
 #: src/bot/constants.py:45
