@@ -8,6 +8,7 @@ from aiogram.fsm.state import any_state
 from aiogram.types import CallbackQuery, Message, User
 from aiogram.utils.i18n import gettext as _
 from aiogram_dialog import Dialog, DialogManager, StartMode, Window
+from aiogram_dialog.widgets.common import Whenable
 from aiogram_dialog.widgets.kbd import Back, Button, Cancel, Group, Row
 from aiogram_dialog.widgets.text import Const
 
@@ -153,12 +154,22 @@ async def getter_for_time_selection(dialog_manager: DialogManager, event_from_us
     return data
 
 
+def show_done_condition(
+    data: dict,
+    widget: Whenable,
+    manager: DialogManager,
+) -> bool:
+    time_selection: TimeRangeWidget = manager.find("time_selection")
+    selected_timepoints = len(time_selection.get_widget_data(manager, []))
+    return selected_timepoints == 2
+
+
 time_selection = Window(
     I18NFormat("Select-time-slot"),
     Group(time_selection_widget, width=4),
     Row(
         Back(Const("🔙"), on_click=clear_selection),
-        Button(Const("✅"), id="done", on_click=on_time_confirmed),
+        Button(Const("✅"), id="done", on_click=on_time_confirmed, when=show_done_condition),
     ),
     getter=getter_for_time_selection,
     state=CreateBookingStates.choose_time,
