@@ -234,7 +234,7 @@ class SqlBookingRepository:
             symbol = f"""<svg x="{coordinates[0]}" y="{coordinates[1]}">
             <rect style="opacity:1;
             fill:{"#cbe7cb" if user.telegram_id == from_user_id else "#e5e2e5"};
-            fill-opacity:1;stroke:#e5e2e5;stroke-width:2;
+            fill-opacity:1;stroke:#aaa9aa;stroke-width:2;
             stroke-linecap:round;stroke-linejoin:round;
             stroke-opacity:1"
             width="122.16101" height="{duration * (cell_size[1] - 2)}"
