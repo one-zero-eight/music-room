@@ -46,7 +46,7 @@ async def lifespan(_app: FastAPI):
     try:
         from prefect.client.orchestration import get_client
 
-        async with get_client() as client:
+        async with get_client() as client:  # noqa: F841
             logger.info("Prefect ephemeral server initialized")
     except Exception as e:
         logger.warning(f"Failed to pre-warm Prefect server: {e}")
@@ -55,4 +55,3 @@ async def lifespan(_app: FastAPI):
     yield
     # Application shutdown
     await storage.close_connection()
-
