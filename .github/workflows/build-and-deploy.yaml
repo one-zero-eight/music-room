@@ -23,8 +23,8 @@ on:
         default: all
         options:
           - all
-          - api
-          - bot
+          - music-room-api
+          - music-room-bot
   push:
     branches:
       - main
@@ -183,14 +183,14 @@ jobs:
           }
 
           case "$SERVICE" in
-            api)
-              deploy_service "$API_IMAGE_ID" "api"
+            music-room-api)
+              deploy_service "$API_IMAGE_ID" "music-room-api"
               ;;
-            bot)
-              deploy_service "$BOT_IMAGE_ID" "bot"
+            music-room-bot)
+              deploy_service "$BOT_IMAGE_ID" "music-room-bot"
               ;;
             all)
-              deploy_service "$API_IMAGE_ID" "api"
-              deploy_service "$BOT_IMAGE_ID" "bot"
+              deploy_service "$API_IMAGE_ID" "music-room-api"
+              deploy_service "$BOT_IMAGE_ID" "music-room-bot"
               ;;
           esac

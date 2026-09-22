@@ -4,13 +4,13 @@
 # docker compose up --build --wait
 
 services:
-  bot:
+  music-room-bot:
     build:
       context: .
       dockerfile: bot.Dockerfile
     restart: no
     depends_on:
-      api:
+      music-room-api:
         condition: service_started
       redis:
         condition: service_started
@@ -29,7 +29,7 @@ services:
         reservations:
           memory: 500m
 
-  api:
+  music-room-api:
     build:
       context: .
       dockerfile: api.Dockerfile
