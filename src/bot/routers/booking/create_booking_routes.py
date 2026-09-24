@@ -32,7 +32,7 @@ from src.schemas import UserStatus
 async def start_booking(_message: Message, dialog_manager: DialogManager, state: FSMContext):
     user = await api_client.get_me(_message.from_user.id)
     if user.status == UserStatus.BANNED:
-        await _message.answer(str(ban_message))
+        await _message.answer(str(ban_message).format(support_contact=constants.support_contact))
         return
     if not is_russian_name(user.name):
         await state.set_state(RegistrationStates.russian_name_requested)

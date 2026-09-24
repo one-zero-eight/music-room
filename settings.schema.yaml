@@ -72,6 +72,10 @@ $defs:
         default: http://127.0.0.1:8001
         title: Api Url
         type: string
+      support_contact:
+        default: '@example'
+        title: Support Contact
+        type: string
       redis_url:
         anyOf:
         - format: password

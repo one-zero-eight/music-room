@@ -17,6 +17,8 @@ class BotSettings(BaseModel):
     bot_token: SecretStr
     "Bot token from @BotFather"
     api_url: str = "http://127.0.0.1:8001"
+    support_contact: str = "@example"
+    "Telegram handle shown to users who need to reach an administrator (e.g. banned users)"
     redis_url: SecretStr | None = None
     users: list[int] = []
     notification_time: datetime.time | None = None

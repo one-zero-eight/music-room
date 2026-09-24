@@ -58,14 +58,14 @@ msgstr ""
 msgid "I agree to and will abide by the stated rules."
 msgstr "Я согласен, и буду соблюдать правила"
 
-#: src/bot/constants.py:41
-#, fuzzy
+#: src/bot/constants.py:43
+#, python-brace-format
 msgid ""
 "You are banned and can't book the music room. In case you believe it's a "
-"mistake, please contact: @Leon_Parepko"
+"mistake, please contact: {support_contact}"
 msgstr ""
 "Вы заблокированы и не можете бронировать комнату. Если вы уверены, что "
-"это ошибка, пожалуйста, обратитесь к: @Leon_Parepko"
+"это ошибка, пожалуйста, обратитесь к: {support_contact}"
 
 #: src/bot/constants.py:46
 msgid "Create a booking"

@@ -7,6 +7,7 @@ instructions_url = "https://innohassle.ru/music-room/instructions"
 how_to_get_url = "https://www.youtube.com/watch?v=mGfdun8ah3g"
 tg_chat_url = "https://t.me/joinchat/DjhyZkBN-FmZStxTB40qwQ"
 bot_name = "Music Room Bot" if bot_settings.environment == "production" else "[dev] Music Room Bot"
+support_contact = bot_settings.support_contact
 bot_description = "Book a music room in the Innopolis Sport Complex. Made by @one_zero_eight"
 bot_short_description = "Book a music room in the Innopolis Sport Complex. Made by @one_zero_eight"
 bot_commands = [
@@ -40,7 +41,8 @@ rules_message = __(
 rules_confirmation_message = __("I agree to and will abide by the stated rules.")
 
 ban_message = __(
-    "You are banned and can't book the music room. In case you believe it's a mistake, please contact: @Leon_Parepko"
+    "You are banned and can't book the music room. In case you believe it's a mistake, "
+    "please contact: {support_contact}"
 )
 
 create_booking_message = __("Create a booking")
