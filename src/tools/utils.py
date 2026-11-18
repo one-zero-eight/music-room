@@ -10,9 +10,10 @@ def count_duration(start_time: datetime.datetime, end_time: datetime.datetime):
 
 
 async def is_sc_working(start_time: datetime.datetime, end_time: datetime.datetime) -> bool:
-    if start_time.hour < 7 or (end_time.hour > 22 and end_time.minute > 30):
-        return False
-    return True
+    booking_date = start_time.date()
+    opens_at = datetime.datetime.combine(booking_date, datetime.time(7, 0))
+    closes_at = datetime.datetime.combine(booking_date, datetime.time(22, 30))
+    return opens_at <= start_time and end_time <= closes_at
 
 
 async def is_offset_correct(booking_date: datetime.datetime) -> bool:
